@@ -1,5 +1,6 @@
 <div align="center">
-# TechScope
+  
+#TechScope
 
 TechScope is a tech market analysis platform that evaluates the demand for programming languages, frameworks, and tools based on real job market data.
 
@@ -15,8 +16,6 @@ The goal is to help developers make informed decisions about what technologies a
 ![Static Badge](https://img.shields.io/badge/.NET) ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 
 </div>
-
----
 
 # Architecture
 
