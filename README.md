@@ -2,18 +2,16 @@
   
 # TechScope
 
-TechScope is a tech market analysis platform that evaluates the demand for programming languages, frameworks, and tools based on real job market data.
 
-The system collects job postings from multiple sources, analyses the technologies mentioned, and provides insights about:
-- Technology demand
-- Market growth trends
-- Technology comparisons
-- Salary information (when available)
-- Related technologies
+TechScope is a technology market analysis platform that evaluates the demand for programming languages, frameworks, and tools based on real-world job market data.
 
-The goal is to help developers make informed decisions about what technologies are worth learning.
+The system collects job postings from multiple sources, analyses the technologies mentioned in each listing, and transforms this information into valuable insights about the current technology landscape.
 
-![Static Badge](https://img.shields.io/badge/.NET) ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+The platform provides information about technology demand, market growth trends, technology comparisons, salary information when available, and relationships between technologies that are commonly used together.
+
+The goal of TechScope is to help developers make more informed decisions about which technologies are worth learning, allowing them to better understand market requirements and identify professional growth opportunities.
+
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 
 </div>
 
