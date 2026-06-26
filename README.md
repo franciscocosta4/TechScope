@@ -1,6 +1,6 @@
 <div align="center">
   
-#TechScope
+# TechScope
 
 TechScope is a tech market analysis platform that evaluates the demand for programming languages, frameworks, and tools based on real job market data.
 
