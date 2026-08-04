@@ -1,7 +1,8 @@
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
+import random
 
-url = "https://www.indeed.com/jobs?q=python&l=Texas"
+url = "https://www.indeed.com/jobs?q=python&l=Texas&radius=50&start=30"
 
 with sync_playwright() as p:
 
@@ -20,6 +21,8 @@ with sync_playwright() as p:
 
     # Abre a página
     page.goto(url, wait_until="networkidle")
+    
+    page.wait_for_timeout(random.randint(2000,5000))
 
     # Obtém o HTML já renderizado
     html = page.content()
