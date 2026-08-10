@@ -176,6 +176,44 @@ erDiagram
 
 ---
 
+# PostgreSQL Setup
+
+Create a `.env` file in the project root. You can copy from `.env.example`:
+
+```bash
+copy .env.example .env
+```
+
+The Python scrapers read the following variables from `.env`:
+
+- `DATABASE_URL`
+- `PGHOST`
+- `PGPORT`
+- `PGDATABASE`
+- `PGUSER`
+- `PGPASSWORD`
+
+Legacy fallbacks are also supported:
+
+- `DB_HOST`
+- `DB_PORT`
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+
+On first run, the scrapers create the base schema from `data-pipeline/database/migrations/001_initial.sql`.
+
+The `.env` file is ignored by Git so secrets are not committed.
+
+Run the scrapers from the repository root:
+
+```bash
+python data-pipeline/scrapers/indeed.py
+python data-pipeline/scrapers/linkedin.py
+```
+
+---
+
 # Database Rules
 
 ## Job Deduplication
@@ -289,20 +327,20 @@ React          +15%
 TechScope/
 
 ├── backend/
-│   ├── TechScope.API/
-│   ├── TechScope.Application/
-│   ├── TechScope.Domain/
-│   └── TechScope.Infrastructure/
-
+│   └── TechScope.Mvc/
+│
 ├── data-pipeline/
 │   ├── scrapers/
+│   │   ├── indeed.py
+│   │   └── linkedin.py
 │   ├── processors/
 │   ├── analyzers/
 │   └── database/
-
-├── database/
-│   └── migrations/
-
+│       └── migrations/
+│
+├── .env
+├── .env.example
+├── .gitignore
 └── README.md
 ```
 
