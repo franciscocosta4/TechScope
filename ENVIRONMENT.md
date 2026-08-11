@@ -44,5 +44,20 @@ Indeed:
 
 LinkedIn:
 `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=web%20dev&start=0`
+ 
+ou para Lisboa: 
+`https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=web%20dev&location=Lisbon%2C%20Portugal&start=0`~
+
+
+## Filtros úteis
+
+| Filtro           | LinkedIn / Google Jobs | Indeed            |
+|------------------|------------------------|-------------------|
+| Últimas 24h      | `f_TPR=r86400`         | `fromage=1`       |
+| Última semana    | `f_TPR=r604800`        | `fromage=7`       |
+| Full-time        | `f_JT=F`               | `jt=fulltime`     |
+| Remote           | `f_WT=2`               | `remotejob=1`     |
+| Júnior / Entry   | `f_E=2`                | `explvl=entry_level` |
+
 
 Estes links servem como base para testar a paginação e confirmar rapidamente se o scraper está a ler os dados correctos.

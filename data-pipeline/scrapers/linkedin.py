@@ -14,6 +14,7 @@ if str(PIPELINE_ROOT) not in sys.path:
 from database import ensure_schema, get_connection, save_jobs
 
 QUERY = "web dev"
+LOCATION = "Lisbon, Portugal"
 MAX_START = 250
 PAGE_SIZE = 25
 SOURCE = "linkedin"
@@ -31,7 +32,7 @@ with get_connection() as conn:
     seen = set()
 
     for start in range(0, MAX_START, PAGE_SIZE):
-        params = urlencode({"keywords": QUERY, "start": start})
+        params = urlencode({"keywords": QUERY, "location": LOCATION, "start": start})
         url = (
             "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
             f"?{params}"
