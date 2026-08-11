@@ -14,17 +14,23 @@ if str(PIPELINE_ROOT) not in sys.path:
 
 from database import ensure_schema, get_connection, save_jobs
 
-QUERY = ".net"
-LOCATION = "Texas"
+QUERY = "java"
+LOCATION = "Portugal"
 RADIUS = 50
 PAGE_SIZE = 15
-MAX_START = 45
+MAX_START = 30
 SOURCE = "indeed"
 
 
 # Liga à base de dados e garante que o esquema existe.
 with get_connection() as conn:
     ensure_schema(conn)
+
+    total_pages = 0
+    total_cards_found = 0
+    total_jobs_ready = 0
+    total_jobs_skipped = 0
+    total_jobs_saved = 0
 
     # Inicia o Playwright.
     with sync_playwright() as p:
@@ -38,11 +44,12 @@ with get_connection() as conn:
                     "start": start,
                 }
             )
-            url = f"https://www.indeed.com/jobs?{params}"
+            url = f"https://pt.indeed.com/jobs?{params}"
             print(f"\nPágina start={start}")
 
             # Abre um novo browser para cada página.
             browser = p.chromium.launch(headless=False)
+            total_pages += 1
 
             try:
                 # Cria um contexto com aspeto mais próximo de um browser real.
@@ -68,6 +75,7 @@ with get_connection() as conn:
 
                 # Selecciona os anúncios directamente pela estrutura real do Indeed.
                 job_cards = soup.select("td.resultContent")
+                total_cards_found += len(job_cards)
 
                 if not job_cards:
                     print("Não foram encontrados cartões de anúncio nesta página.")
@@ -126,10 +134,21 @@ with get_connection() as conn:
                 if skipped_jobs:
                     print(f"Anúncios ignorados por falta de dados: {skipped_jobs}")
 
+                total_jobs_ready += len(page_jobs)
+                total_jobs_skipped += skipped_jobs
+
                 # Guarda os anúncios recolhidos na base de dados.
                 if page_jobs:
                     saved_count = save_jobs(conn, page_jobs, SOURCE)
+                    total_jobs_saved += saved_count
                     print(f"Anúncios guardados na base de dados: {saved_count}")
             finally:
                 # Fecha sempre o browser, mesmo que ocorra algum erro.
                 browser.close()
+
+    print("\nResumo total do run:")
+    print(f"Páginas processadas: {total_pages}")
+    print(f"Cartões encontrados no total: {total_cards_found}")
+    print(f"Anúncios válidos preparados: {total_jobs_ready}")
+    print(f"Anúncios ignorados: {total_jobs_skipped}")
+    print(f"Anúncios guardados na base de dados: {total_jobs_saved}")

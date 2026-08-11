@@ -40,7 +40,7 @@ O schema fica em `data-pipeline/database/migrations/001_initial.sql` porque a cr
 # Links base para testar
 
 Indeed:
-`https://www.indeed.com/jobs?q=python&l=Texas&radius=50&start=0`
+`https://pt.indeed.com/jobs?q=python&l=Porto&radius=50&start=0`
 
 LinkedIn:
 `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=web%20dev&start=0`
