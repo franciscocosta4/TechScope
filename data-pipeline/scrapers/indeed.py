@@ -14,7 +14,7 @@ if str(PIPELINE_ROOT) not in sys.path:
 
 from database import ensure_schema, get_connection, save_jobs
 
-QUERY = "python"
+QUERY = ".net"
 LOCATION = "Texas"
 RADIUS = 50
 PAGE_SIZE = 15
