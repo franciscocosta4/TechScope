@@ -14,7 +14,11 @@ if str(PIPELINE_ROOT) not in sys.path:
 
 from database import ensure_schema, get_connection, save_jobs
 
+# QUERY é o termo usado no site.
+# TECHNOLOGY_NAME é o nome canónico guardado na BD.
+# Se quiseres analisar .NET, por exemplo, usa QUERY=".net" e TECHNOLOGY_NAME=".NET".
 QUERY = "java"
+TECHNOLOGY_NAME = QUERY
 LOCATION = "Portugal"
 RADIUS = 50
 PAGE_SIZE = 15
@@ -139,7 +143,13 @@ with get_connection() as conn:
 
                 # Guarda os anúncios recolhidos na base de dados.
                 if page_jobs:
-                    saved_count = save_jobs(conn, page_jobs, SOURCE)
+                    saved_count = save_jobs(
+                        conn,
+                        page_jobs,
+                        SOURCE,
+                        TECHNOLOGY_NAME,
+                        QUERY,
+                    )
                     total_jobs_saved += saved_count
                     print(f"Anúncios guardados na base de dados: {saved_count}")
             finally:

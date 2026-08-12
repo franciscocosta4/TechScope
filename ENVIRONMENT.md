@@ -37,6 +37,20 @@ Isso facilita manutenção, organização e crescimento futuro do projeto.
 
 O schema fica em `data-pipeline/database/migrations/001_initial.sql` porque a criação da estrutura da base deve viver ao lado da lógica de persistência e da pipeline que a usa.
 
+# Como ligamos jobs a tecnologias
+
+Cada scraper tem duas variáveis importantes: `QUERY` e `TECHNOLOGY_NAME`.
+`QUERY` é o termo usado no site para fazer a pesquisa.
+`TECHNOLOGY_NAME` é o nome que guardamos na tabela `technologies`.
+
+Por exemplo, se quisermos analisar `.NET`, podemos usar `QUERY=".net"` e `TECHNOLOGY_NAME=".NET"`.
+Se o título ou a descrição mencionar claramente a tecnologia, o score vai para `1.0`.
+Se a query for exactamente a tecnologia, o score fica em `0.9`.
+Se a relação vier apenas do contexto da pesquisa, o score fica em `0.7`.
+
+A tabela `technologies` usa um ID simples auto-incrementado porque facilita leitura e manutenção.
+A relação final é guardada em `job_technologies` com `confidence_score`.
+
 # Links base para testar
 
 Indeed:
@@ -44,10 +58,6 @@ Indeed:
 
 LinkedIn:
 `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=web%20dev&start=0`
- 
-ou para Lisboa: 
-`https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=web%20dev&location=Lisbon%2C%20Portugal&start=0`~
-
 
 ## Filtros úteis
 
@@ -59,5 +69,3 @@ ou para Lisboa:
 | Remote           | `f_WT=2`               | `remotejob=1`     |
 | Júnior / Entry   | `f_E=2`                | `explvl=entry_level` |
 
-
-Estes links servem como base para testar a paginação e confirmar rapidamente se o scraper está a ler os dados correctos.

@@ -1,7 +1,7 @@
 """Utilitários para guardar anúncios no PostgreSQL.
 
 Este ficheiro concentra a ligação à base de dados e a lógica de gravação,
-para que os scrapers não tenham de repetir código de SQL e configuração.
+para que os scrapers não tenham de repetir SQL, deduplicação e configuração.
 """
 
 from __future__ import annotations
@@ -15,31 +15,30 @@ from typing import Any
 import psycopg
 from dotenv import load_dotenv
 
-# Calculamos a raiz do repositório para conseguir encontrar o .env e o schema
-# mesmo quando o script é executado a partir de qualquer pasta.
+# Calculamos a raiz do repositório para encontrar o .env e o schema sem depender
+# da pasta onde o script é executado.
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PIPELINE_ROOT = REPO_ROOT / "data-pipeline"
 SCHEMA_PATH = PIPELINE_ROOT / "database" / "migrations" / "001_initial.sql"
 ENV_PATH = REPO_ROOT / ".env"
 
-# Carrega as variáveis do .env automaticamente.
-# Isto evita ter credenciais hardcoded no código e mantém o repo seguro.
+# Carrega automaticamente as variáveis do .env.
+# Assim, as credenciais ficam fora do repositório público.
 load_dotenv(ENV_PATH)
 
 
 def get_connection() -> psycopg.Connection:
     """Abre uma ligação ao PostgreSQL.
 
-    Primeiro tenta `DATABASE_URL` porque é a forma mais simples de configurar
-    ambientes locais e de produção. Se não existir, usa as variáveis separadas
-    da base de dados.
+    Damos prioridade a `DATABASE_URL` porque simplifica ambientes locais e de
+    produção. Se não existir, usamos as variáveis separadas da ligação.
     """
     database_url = os.getenv("DATABASE_URL")
     if database_url:
         return psycopg.connect(database_url)
 
-    # Estes fallbacks permitem usar o projeto mesmo que o .env esteja dividido
-    # em variáveis individuais em vez de uma única URL.
+    # Estes fallbacks permitem configurar a base de dados de forma mais explícita
+    # quando não se quer usar uma única URL.
     host = os.getenv("PGHOST", os.getenv("DB_HOST", "localhost"))
     port = int(os.getenv("PGPORT", os.getenv("DB_PORT", "5432")))
     dbname = os.getenv("PGDATABASE", os.getenv("DB_NAME", "techscope"))
@@ -56,10 +55,10 @@ def get_connection() -> psycopg.Connection:
 
 
 def ensure_schema(conn: psycopg.Connection) -> None:
-    """Cria as tabelas base se ainda não existirem.
+    """Cria as tabelas base caso ainda não existam.
 
-    O schema fica num ficheiro SQL separado para ser mais fácil de versionar,
-    rever e reutilizar sem espalhar SQL pelo código Python.
+    O schema fica num ficheiro SQL separado para ser mais fácil de rever,
+    versionar e reutilizar pela pipeline.
     """
     schema_sql = SCHEMA_PATH.read_text(encoding="utf-8")
 
@@ -83,10 +82,10 @@ def _normalise_text(value: Any) -> str | None:
 
 
 def _build_external_id(job: dict[str, Any]) -> str:
-    """Gera um identificador estável para evitar duplicados.
+    """Gera um identificador estável para deduplicação.
 
     Se o anúncio já trouxer URL ou ID próprio, usamos isso. Caso contrário,
-    criamos um hash a partir dos campos principais para identificar o job.
+    geramos um hash com os campos principais para manter consistência.
     """
     external_id = _normalise_text(job.get("url") or job.get("link") or job.get("external_id"))
     if external_id:
@@ -104,30 +103,84 @@ def _build_external_id(job: dict[str, Any]) -> str:
     return f"generated:{digest}"
 
 
-def save_jobs(conn: psycopg.Connection, jobs: list[dict[str, Any]], source: str) -> int:
-    """Guarda uma lista de anúncios na base de dados.
+def _technology_is_explicitly_mentioned(text: str, technology_name: str) -> bool:
+    """Verifica se a tecnologia aparece de forma clara no texto.
 
-    A lógica está separada em duas tabelas principais:
-    - `companies`: evita repetir a mesma empresa em vários anúncios
-    - `jobs`: guarda cada anúncio com `source + external_id` como chave lógica
+    Usamos uma verificação simples por substring porque é fácil de manter.
+    Para `.NET`, também aceitamos `dotnet` como forma comum de escrita.
+    """
+    text_lower = text.casefold()
+    tech_lower = technology_name.casefold()
 
-    Isto facilita deduplicação e deixa o modelo pronto para análises futuras.
+    if tech_lower in text_lower:
+        return True
+
+    if tech_lower == ".net" and "dotnet" in text_lower:
+        return True
+
+    return False
+
+
+def _confidence_score(
+    query: str,
+    technology_name: str,
+    title: str | None,
+    description: str | None = None,
+) -> float:
+    """Calcula o score de confiança da relação job-tecnologia.
+
+    Regras simples:
+    - 1.0: a tecnologia aparece explicitamente no título ou descrição
+    - 0.9: a query é exactamente a tecnologia pesquisada
+    - 0.7: a relação vem apenas do contexto da pesquisa
+    """
+    text = " ".join(filter(None, [title, description]))
+    if text and _technology_is_explicitly_mentioned(text, technology_name):
+        return 1.0
+
+    if query.casefold().strip() == technology_name.casefold().strip():
+        return 0.9
+
+    return 0.7
+
+
+def save_jobs(
+    conn: psycopg.Connection,
+    jobs: list[dict[str, Any]],
+    source: str,
+    technology_name: str,
+    query: str,
+) -> int:
+    """Guarda uma lista de anúncios e relaciona-os com uma tecnologia.
+
+    O fluxo é este:
+    1. garantir que a empresa existe;
+    2. gravar o job sem duplicar;
+    3. garantir que a tecnologia existe;
+    4. criar a relação em `job_technologies` com `confidence_score`.
     """
     saved_jobs = 0
+
+    technology_name = _normalise_text(technology_name)
+    query = _normalise_text(query) or ""
+
+    if not technology_name:
+        raise ValueError("technology_name é obrigatório para guardar jobs.")
 
     with conn.cursor() as cur:
         for job in jobs:
             title = _normalise_text(job.get("title"))
             company_name = _normalise_text(job.get("company") or job.get("company_name"))
             location = _normalise_text(job.get("location"))
+            description = _normalise_text(job.get("description"))
 
-            # Sem título ou empresa não vale a pena gravar, porque o registo fica
-            # pouco útil para análises e deduplicação.
+            # Sem título ou empresa o registo fica fraco para análise, por isso
+            # ignoramos antes de tocar na base de dados.
             if not title or not company_name:
                 continue
 
             # Primeiro garantimos que a empresa existe.
-            # Usamos ON CONFLICT para não criar duplicados com o mesmo nome.
+            # O UNIQUE(name) impede duplicados e permite reaproveitar o mesmo id.
             cur.execute(
                 """
                 INSERT INTO companies (id, name, location)
@@ -140,11 +193,12 @@ def save_jobs(conn: psycopg.Connection, jobs: list[dict[str, Any]], source: str)
             )
             company_id = cur.fetchone()[0]
 
-            # Depois geramos o identificador do anúncio.
+            # O external_id é a chave lógica do anúncio.
+            # Quando existe URL usamos-a; caso contrário, geramos um hash.
             external_id = _build_external_id(job)
 
-            # Finalmente gravamos o job. O ON CONFLICT evita duplicados e permite
-            # actualizar dados se o mesmo anúncio aparecer novamente.
+            # Gravamos o job principal. O ON CONFLICT evita duplicados na mesma
+            # fonte e actualiza o registo se o anúncio aparecer novamente.
             cur.execute(
                 """
                 INSERT INTO jobs (
@@ -177,15 +231,53 @@ def save_jobs(conn: psycopg.Connection, jobs: list[dict[str, Any]], source: str)
                     location,
                     job.get("salary_min"),
                     job.get("salary_max"),
-                    _normalise_text(job.get("description")),
+                    description,
                     source,
                     external_id,
                     job.get("date_posted"),
                 ),
             )
-            cur.fetchone()
+            job_id = cur.fetchone()[0]
+
+            # Guardamos a tecnologia separadamente para normalizar o modelo.
+            cur.execute(
+                """
+                INSERT INTO technologies (name)
+                VALUES (%s)
+                ON CONFLICT (name) DO UPDATE
+                SET name = EXCLUDED.name
+                RETURNING id
+                """,
+                (technology_name,),
+            )
+            technology_id = cur.fetchone()[0]
+
+            # O score é simples e ajuda-nos a perceber quanta confiança existe
+            # nesta relação job-tecnologia.
+            confidence_score = _confidence_score(
+                query=query,
+                technology_name=technology_name,
+                title=title,
+                description=description,
+            )
+
+            # A relação final fica na tabela pivot. O UPSERT impede duplicados e
+            # mantém o score mais alto caso o mesmo vínculo seja reencontrado.
+            cur.execute(
+                """
+                INSERT INTO job_technologies (job_id, technology_id, confidence_score)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (job_id, technology_id) DO UPDATE
+                SET confidence_score = GREATEST(
+                    job_technologies.confidence_score,
+                    EXCLUDED.confidence_score
+                )
+                """,
+                (job_id, technology_id, confidence_score),
+            )
+
             saved_jobs += 1
 
-    # Commit no fim para gravar tudo de uma vez e manter a operação consistente.
+    # Gravamos tudo no fim para manter a operação consistente.
     conn.commit()
     return saved_jobs
