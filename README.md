@@ -218,50 +218,37 @@ python data-pipeline/scrapers/linkedin.py
 
 ## Job Deduplication
 
-Jobs must not be duplicated.
+To keep the database clean, each job posting should be stored only once.
 
-Identification strategy:
+The system first tries to identify a job using the unique identifier provided by the source itself. When the source exposes a stable external job ID, that value is used as the primary deduplication key because it is the most reliable way to recognise the same posting again in a later crawl.
 
-Priority:
+If the source does not provide a usable external ID, the system falls back to a generated fingerprint built from the most relevant job fields, such as title, company, location, and posting date. This gives the pipeline a consistent way to detect repeated records even when the source data is incomplete.
 
-1. External job ID from source
-2. Generated hash:
+In practice, the deduplication flow works like this:
 
-```
-title + company + location + date_posted
-```
+1. Check whether the job has an external ID from the source.
+2. If it does, use that ID to decide whether the job already exists.
+3. If it does not, generate a deterministic hash from the job details.
+4. Use that hash as the fallback identifier for deduplication.
+
+This approach reduces duplicates while still allowing the scraper to work with sources that expose different levels of metadata.
 
 ---
 
 ## Technology Detection
 
-Example:
+After jobs are stored, the pipeline analyses the job description and the surrounding text to identify technologies mentioned in the listing.
 
-Input:
+The goal is to understand which tools, languages, and frameworks are associated with a given job. For example, a backend developer role might mention Java, Spring Boot, Docker, and PostgreSQL. The processor reads those mentions and turns them into structured data that can later be queried for analytics.
 
-```
-Backend Developer
+This extraction step is important because it allows the platform to answer questions such as:
 
-Required:
-Java
-Spring Boot
-Docker
-PostgreSQL
-```
+* Which technologies are most in demand?
+* Which technologies appear together most often?
+* How does demand change over time?
+* Which skills are commonly requested for a specific role or market segment?
 
-Processing result:
-
-```
-Job
- |
- +-- Java
- |
- +-- Spring Boot
- |
- +-- Docker
- |
- +-- PostgreSQL
-```
+The resulting structured representation links each job to one or more technologies, making it possible to build comparisons, trend charts, and market insights on top of the raw job data.
 
 ---
 

@@ -25,6 +25,12 @@ HEADERS = {"User-Agent": "Mozilla/5.0"}
 with get_connection() as conn:
     ensure_schema(conn)
 
+    total_pages = 0
+    total_cards_found = 0
+    total_jobs_ready = 0
+    total_jobs_skipped = 0
+    total_jobs_saved = 0
+
     # O LinkedIn devolve resultados por blocos de 25.
     # start=0   -> primeiros 25 resultados
     # start=25  -> resultados 26-50
@@ -32,6 +38,7 @@ with get_connection() as conn:
     seen = set()
 
     for start in range(0, MAX_START, PAGE_SIZE):
+        total_pages += 1
         params = urlencode({"keywords": QUERY, "location": LOCATION, "start": start})
         url = (
             "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
@@ -42,12 +49,16 @@ with get_connection() as conn:
         response = requests.get(url, headers=HEADERS, timeout=20)
         soup = BeautifulSoup(response.text, "html.parser")
 
+        job_cards = soup.select("li.base-search-card, li > div.base-card")
+        total_cards_found += len(job_cards)
+
         # Conta quantos anúncios novos foram encontrados nesta página.
         new_found = 0
         page_jobs = []
+        skipped_jobs = 0
 
         # Selecciona possíveis cartões de anúncio.
-        for card in soup.select("li.base-search-card, li > div.base-card"):
+        for card in job_cards:
             title = card.select_one(".base-search-card__title")
             company = card.select_one(".base-search-card__subtitle")
             location = card.select_one("[class*='_location']")
@@ -55,10 +66,12 @@ with get_connection() as conn:
 
             # Confirma que existem elementos essenciais antes de continuar.
             if not title or not company or not link:
+                skipped_jobs += 1
                 continue
 
             url_job = link.get("href")
             if not url_job or url_job in seen:
+                skipped_jobs += 1
                 continue
 
             seen.add(url_job)
@@ -85,11 +98,25 @@ with get_connection() as conn:
                 job_data["url"],
             )
 
+        total_jobs_ready += len(page_jobs)
+        total_jobs_skipped += skipped_jobs
+
+        if skipped_jobs:
+            print(f"Anúncios ignorados por falta de dados ou duplicados: {skipped_jobs}")
+
         # Guarda os anúncios recolhidos na base de dados.
         if page_jobs:
             saved_count = save_jobs(conn, page_jobs, SOURCE)
+            total_jobs_saved += saved_count
             print(f"Anúncios guardados na base de dados: {saved_count}")
 
         # Se não apareceram anúncios novos, pára a paginação.
         if new_found == 0:
             break
+
+    print("\nResumo total do run:")
+    print(f"Páginas processadas: {total_pages}")
+    print(f"Cartões encontrados no total: {total_cards_found}")
+    print(f"Anúncios válidos preparados: {total_jobs_ready}")
+    print(f"Anúncios ignorados: {total_jobs_skipped}")
+    print(f"Anúncios guardados na base de dados: {total_jobs_saved}")
