@@ -116,15 +116,6 @@ flowchart TD
 
 # Database Model
 
-Main entities:
-
-* Jobs
-* Companies
-* Technologies
-* JobTechnologies
-
-## Entity Relationship Diagram
-
 ```mermaid
 erDiagram
 
@@ -193,17 +184,7 @@ The Python scrapers read the following variables from `.env`:
 - `PGUSER`
 - `PGPASSWORD`
 
-Legacy fallbacks are also supported:
-
-- `DB_HOST`
-- `DB_PORT`
-- `DB_NAME`
-- `DB_USER`
-- `DB_PASSWORD`
-
 On first run, the scrapers create the base schema from `data-pipeline/database/migrations/001_initial.sql`.
-
-The `.env` file is ignored by Git so secrets are not committed.
 
 Run the scrapers from the repository root:
 
