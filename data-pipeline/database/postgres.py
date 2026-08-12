@@ -193,51 +193,59 @@ def save_jobs(
             )
             company_id = cur.fetchone()[0]
 
-            # O external_id é a chave lógica do anúncio.
-            # Quando existe URL usamos-a; caso contrário, geramos um hash.
-            external_id = _build_external_id(job)
-
-            # Gravamos o job principal. O ON CONFLICT evita duplicados na mesma
-            # fonte e actualiza o registo se o anúncio aparecer novamente.
+            # A deduplicação aqui é simples: mesma empresa, mesmo título e mesma localização.
+            # Assim evitamos guardar a mesma vaga duas vezes, mesmo que a URL mude.
             cur.execute(
                 """
-                INSERT INTO jobs (
-                    id,
-                    company_id,
-                    title,
-                    location,
-                    salary_min,
-                    salary_max,
-                    description,
-                    source,
-                    external_id,
-                    date_posted
-                )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (source, external_id) DO UPDATE
-                SET company_id = EXCLUDED.company_id,
-                    title = EXCLUDED.title,
-                    location = EXCLUDED.location,
-                    salary_min = EXCLUDED.salary_min,
-                    salary_max = EXCLUDED.salary_max,
-                    description = EXCLUDED.description,
-                    date_posted = EXCLUDED.date_posted
-                RETURNING id
+                SELECT id
+                FROM jobs
+                WHERE company_id = %s
+                  AND title = %s
+                  AND COALESCE(location, '') = COALESCE(%s, '')
+                LIMIT 1
                 """,
-                (
-                    uuid.uuid4(),
-                    company_id,
-                    title,
-                    location,
-                    job.get("salary_min"),
-                    job.get("salary_max"),
-                    description,
-                    source,
-                    external_id,
-                    job.get("date_posted"),
-                ),
+                (company_id, title, location),
             )
-            job_id = cur.fetchone()[0]
+            existing_job = cur.fetchone()
+
+            if existing_job:
+                job_id = existing_job[0]
+            else:
+                # O external_id continua a ser guardado para manter a origem do anúncio,
+                # mas já não é ele que define se o job é novo ou não.
+                external_id = _build_external_id(job)
+
+                cur.execute(
+                    """
+                    INSERT INTO jobs (
+                        id,
+                        company_id,
+                        title,
+                        location,
+                        salary_min,
+                        salary_max,
+                        description,
+                        source,
+                        external_id,
+                        date_posted
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    RETURNING id
+                    """,
+                    (
+                        uuid.uuid4(),
+                        company_id,
+                        title,
+                        location,
+                        job.get("salary_min"),
+                        job.get("salary_max"),
+                        description,
+                        source,
+                        external_id,
+                        job.get("date_posted"),
+                    ),
+                )
+                job_id = cur.fetchone()[0]
 
             # Guardamos a tecnologia separadamente para normalizar o modelo.
             cur.execute(

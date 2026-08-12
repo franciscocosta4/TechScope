@@ -11,12 +11,18 @@ Assim, a configuração fica num único sítio e é mais fácil de manter.
 # Como evitamos empresas duplicadas
 
 A tabela `companies` tem `UNIQUE(name)` porque o mesmo nome deve representar a mesma empresa ao longo da pipeline.
-Quando a empresa já existe, o código reaproveita o registo em vez de criar outro igual.
+Antes de guardar um job, o script confirma se a empresa já existe e reutiliza o `company_id` dessa linha.
+Se não existir, a empresa é criada primeiro.
 
-# Como evitamos jobs duplicados
+# Fluxo para gravar uma empresa e um job
 
-A tabela `jobs` tem `UNIQUE(source, external_id)` porque o mesmo anúncio pode aparecer várias vezes na mesma fonte.
-Se já existir um registo com a mesma fonte e o mesmo identificador, o script faz update em vez de criar duplicados.
+Primeiro o script garante que a empresa existe na tabela `companies`.
+Se a empresa ainda não existir, ela é criada e o código recebe o `company_id` dessa linha.
+Depois o script procura um job com a mesma combinação de `company_id`, `title` e `location`.
+Se encontrar, não grava outro igual.
+Se não encontrar, cria o job novo ligado à empresa certa.
+
+Isto evita duplicados simples e mantém a relação entre empresas e anúncios limpa.
 
 # O que é o `external_id`
 

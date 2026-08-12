@@ -19,8 +19,8 @@ from database import ensure_schema, get_connection, save_jobs
 QUERY = "react"
 TECHNOLOGY_NAME = QUERY
 LOCATION = "Lisbon, Portugal"
-MAX_START = 250
-PAGE_SIZE = 25
+MAX_START = 2500
+PAGE_SIZE = 20
 SOURCE = "linkedin"
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
