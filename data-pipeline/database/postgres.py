@@ -15,15 +15,15 @@ from typing import Any
 import psycopg
 from dotenv import load_dotenv
 
-# Calculamos a raiz do repositório para encontrar o .env e o schema sem depender
-# da pasta onde o script é executado.
+# Calculamos a raiz do repositório para encontrar o `.env` e o schema
+# mesmo quando o script é executado a partir de outra pasta.
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PIPELINE_ROOT = REPO_ROOT / "data-pipeline"
 SCHEMA_PATH = PIPELINE_ROOT / "database" / "migrations" / "001_initial.sql"
 ENV_PATH = REPO_ROOT / ".env"
 
-# Carrega automaticamente as variáveis do .env.
-# Assim, as credenciais ficam fora do repositório público.
+# Carrega automaticamente as variáveis do `.env`.
+# Isto evita credenciais hardcoded e mantém o repo seguro.
 load_dotenv(ENV_PATH)
 
 
@@ -37,8 +37,8 @@ def get_connection() -> psycopg.Connection:
     if database_url:
         return psycopg.connect(database_url)
 
-    # Estes fallbacks permitem configurar a base de dados de forma mais explícita
-    # quando não se quer usar uma única URL.
+    # Se não houver `DATABASE_URL`, usamos variáveis separadas.
+    # Isto dá flexibilidade para ambientes locais e produção.
     host = os.getenv("PGHOST", os.getenv("DB_HOST", "localhost"))
     port = int(os.getenv("PGPORT", os.getenv("DB_PORT", "5432")))
     dbname = os.getenv("PGDATABASE", os.getenv("DB_NAME", "techscope"))
@@ -63,8 +63,10 @@ def ensure_schema(conn: psycopg.Connection) -> None:
     schema_sql = SCHEMA_PATH.read_text(encoding="utf-8")
 
     with conn.cursor() as cur:
+        # O schema fica num ficheiro SQL separado para ser mais fácil de rever.
         cur.execute(schema_sql)
 
+    # O commit garante que as tabelas ficam realmente criadas na base de dados.
     conn.commit()
 
 
@@ -78,6 +80,7 @@ def _normalise_text(value: Any) -> str | None:
         return None
 
     text = str(value).strip()
+    # Strings vazias não ajudam na BD; `None` é mais consistente.
     return text or None
 
 
@@ -91,6 +94,7 @@ def _build_external_id(job: dict[str, Any]) -> str:
     if external_id:
         return external_id
 
+    # Se não houver URL/ID estável, criamos uma assinatura simples do anúncio.
     fingerprint = "|".join(
         [
             _normalise_text(job.get("title")) or "",
@@ -109,7 +113,7 @@ def _technology_is_explicitly_mentioned(text: str, technology_name: str) -> bool
     Usamos uma verificação simples por substring porque é fácil de manter.
     Para `.NET`, também aceitamos `dotnet` como forma comum de escrita.
     """
-    text_lower = text.casefold()
+    text_lower = text.casefold()     # `casefold()` é melhor do que `lower()` para comparações de texto.
     tech_lower = technology_name.casefold()
 
     if tech_lower in text_lower:
@@ -139,8 +143,10 @@ def _confidence_score(
         return 1.0
 
     if query.casefold().strip() == technology_name.casefold().strip():
+        # Quando a query já é a tecnologia, a confiança é alta mas não total, daí o 0.9.
         return 0.9
 
+    # Caso contrário, a relação vem só do contexto da pesquisa.
     return 0.7
 
 
@@ -150,16 +156,24 @@ def save_jobs(
     source: str,
     technology_name: str,
     query: str,
-) -> int:
+) -> dict[str, int]:
     """Guarda uma lista de anúncios e relaciona-os com uma tecnologia.
 
-    O fluxo é este:
+    O fluxo mantém-se simples:
     1. garantir que a empresa existe;
-    2. gravar o job sem duplicar;
-    3. garantir que a tecnologia existe;
-    4. criar a relação em `job_technologies` com `confidence_score`.
+    2. verificar se já existe um job igual para essa empresa;
+    3. se não existir, criar o job;
+    4. guardar a tecnologia e a relação na tabela pivot.
+
+    Também devolvemos estatísticas básicas para o scraper mostrar o que aconteceu
+    de forma real, sem inventar contagens.
     """
-    saved_jobs = 0
+    stats = {
+        "processed": 0,
+        "inserted": 0,
+        "skipped_existing": 0,
+        "skipped_invalid": 0,
+    }
 
     technology_name = _normalise_text(technology_name)
     query = _normalise_text(query) or ""
@@ -174,13 +188,17 @@ def save_jobs(
             location = _normalise_text(job.get("location"))
             description = _normalise_text(job.get("description"))
 
+            # Contamos o job logo no início para saber quantos chegaram à camada de BD.
+            stats["processed"] += 1
+
             # Sem título ou empresa o registo fica fraco para análise, por isso
             # ignoramos antes de tocar na base de dados.
             if not title or not company_name:
+                stats["skipped_invalid"] += 1
                 continue
 
             # Primeiro garantimos que a empresa existe.
-            # O UNIQUE(name) impede duplicados e permite reaproveitar o mesmo id.
+            # O `UNIQUE(name)` impede duplicados e permite reaproveitar o mesmo id.
             cur.execute(
                 """
                 INSERT INTO companies (id, name, location)
@@ -194,7 +212,7 @@ def save_jobs(
             company_id = cur.fetchone()[0]
 
             # A deduplicação aqui é simples: mesma empresa, mesmo título e mesma localização.
-            # Assim evitamos guardar a mesma vaga duas vezes, mesmo que a URL mude.
+            # Isto evita guardar a mesma vaga duas vezes, mesmo que a URL mude.
             cur.execute(
                 """
                 SELECT id
@@ -210,8 +228,10 @@ def save_jobs(
 
             if existing_job:
                 job_id = existing_job[0]
+                # Se já existir, não criamos outro registo igual.
+                stats["skipped_existing"] += 1
             else:
-                # O external_id continua a ser guardado para manter a origem do anúncio,
+                # O `external_id` continua a ser guardado para manter a origem do anúncio,
                 # mas já não é ele que define se o job é novo ou não.
                 external_id = _build_external_id(job)
 
@@ -248,6 +268,7 @@ def save_jobs(
                 job_id = cur.fetchone()[0]
 
             # Guardamos a tecnologia separadamente para normalizar o modelo.
+            # `ON CONFLICT` evita duplicar o mesmo nome na tabela `technologies`.
             cur.execute(
                 """
                 INSERT INTO technologies (name)
@@ -269,8 +290,9 @@ def save_jobs(
                 description=description,
             )
 
-            # A relação final fica na tabela pivot. O UPSERT impede duplicados e
-            # mantém o score mais alto caso o mesmo vínculo seja reencontrado.
+            # A relação final fica na tabela pivot.
+            # O UPSERT impede duplicados e mantém o score mais alto se o mesmo
+            # vínculo for encontrado de novo.
             cur.execute(
                 """
                 INSERT INTO job_technologies (job_id, technology_id, confidence_score)
@@ -284,8 +306,8 @@ def save_jobs(
                 (job_id, technology_id, confidence_score),
             )
 
-            saved_jobs += 1
+            stats["inserted"] += 1
 
     # Gravamos tudo no fim para manter a operação consistente.
     conn.commit()
-    return saved_jobs
+    return stats

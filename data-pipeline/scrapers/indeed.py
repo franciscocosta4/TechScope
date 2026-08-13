@@ -143,15 +143,23 @@ with get_connection() as conn:
 
                 # Guarda os anúncios recolhidos na base de dados.
                 if page_jobs:
-                    saved_count = save_jobs(
+                    # As stats vêm da camada de BD (postegres.py), porque é lá que a decisão
+                    # real acontece: inserir, ignorar existentes ou rejeitar inválidos.
+                    stats = save_jobs(
                         conn,
                         page_jobs,
                         SOURCE,
                         TECHNOLOGY_NAME,
                         QUERY,
                     )
-                    total_jobs_saved += saved_count
-                    print(f"Anúncios guardados na base de dados: {saved_count}")
+                    total_jobs_saved += stats["inserted"]
+                    print(
+                        "BD -> "
+                        f"processados: {stats['processed']}, "
+                        f"novos: {stats['inserted']}, "
+                        f"existentes: {stats['skipped_existing']}, "
+                        f"inválidos: {stats['skipped_invalid']}"
+                    )
             finally:
                 # Fecha sempre o browser, mesmo que ocorra algum erro.
                 browser.close()
