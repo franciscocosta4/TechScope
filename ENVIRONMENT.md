@@ -34,6 +34,9 @@ Quando não existe um identificador estável, é gerado um hash com campos como 
 A tabela `companies` existe para normalizar empresas e evitar duplicados.
 A tabela `jobs` guarda o anúncio principal para depois servir análises na app .NET.
 
+`date_posted` fica como `DATE` e não `TIMESTAMPTZ`, porque nos scrapers o que normalmente vem do LinkedIn/Indeed é só a data do anúncio e não uma hora exata.
+O `created_at` continua como `TIMESTAMPTZ` porque aí sim interessa saber o momento exacto em que o registo entrou na base de dados.
+
 # Porque a pipeline está separada do backend .NET
 
 A separação em `data-pipeline/scrapers` e `data-pipeline/database` foi feita para manter a pipeline Python isolada do backend .NET.

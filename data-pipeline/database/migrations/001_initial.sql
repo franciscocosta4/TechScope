@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS jobs (
     description TEXT,
     source TEXT NOT NULL,
     external_id TEXT NOT NULL,
-    date_posted TIMESTAMPTZ,
+    date_posted DATE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE (source, external_id)
 );

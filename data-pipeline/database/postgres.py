@@ -188,6 +188,12 @@ def save_jobs(
             location = _normalise_text(job.get("location"))
             description = _normalise_text(job.get("description"))
 
+            # `date_posted` é guardada como data pura, porque no LinkedIn e no
+            # Indeed normalmente não existe hora exata do anúncio.
+            date_posted = job.get("date_posted")
+            if hasattr(date_posted, "date") and not isinstance(date_posted, str):
+                date_posted = date_posted.date()
+
             # Contamos o job logo no início para saber quantos chegaram à camada de BD.
             stats["processed"] += 1
 

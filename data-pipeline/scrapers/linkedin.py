@@ -66,6 +66,7 @@ with get_connection() as conn:
             title = card.select_one(".base-search-card__title")
             company = card.select_one(".base-search-card__subtitle")
             location = card.select_one("[class*='_location']")
+            timetag = card.select_one("[class*='job-search-card__listdate']")
             link = card.select_one("a.base-card__full-link")
 
             # Confirma que existem elementos essenciais antes de continuar.
@@ -85,6 +86,7 @@ with get_connection() as conn:
                 "title": title.get_text(strip=True),
                 "company": company.get_text(strip=True),
                 "location": location.get_text(strip=True) if location else "",
+                "date_posted": timetag["datetime"],
                 "url": url_job,
             }
             page_jobs.append(job_data)
@@ -98,6 +100,8 @@ with get_connection() as conn:
                 job_data["company"],
                 "|",
                 job_data["location"],
+                "|",
+                job_data["date_posted"],
                 "|",
                 job_data["url"],
             )
