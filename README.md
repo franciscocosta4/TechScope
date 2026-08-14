@@ -4,58 +4,58 @@
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 
-TechScope is a technology market analysis web app that evaluates the demand for programming languages, frameworks, and tools based on real-world job market data. 
+O TechScope é uma aplicação web de análise do mercado tecnológico que avalia a procura por linguagens de programação, frameworks e ferramentas com base em dados reais de anúncios de emprego.
 
 </div>
 
-The system collects job postings from multiple sources, analyses the technologies mentioned in each listing, and transforms this information into valuable insights about the current technology landscape. The platform provides information about technology demand, market growth trends, technology comparisons, salary information when available, and relationships between technologies that are commonly used together.
-The goal of TechScope is to help developers make more informed decisions about which technologies are worth learning, allowing them to better understand market requirements and identify professional growth opportunities.
+O sistema recolhe ofertas de emprego de várias fontes, analisa as tecnologias mencionadas em cada anúncio e transforma essa informação em insights úteis sobre o panorama tecnológico actual. A plataforma fornece informação sobre procura de tecnologias, tendências de crescimento do mercado, comparações entre tecnologias, informação salarial quando disponível e relações entre tecnologias que costumam ser usadas em conjunto.
+O objectivo do TechScope é ajudar developers a tomar decisões mais informadas sobre que tecnologias vale a pena aprender, para melhor compreenderem os requisitos do mercado e identificarem oportunidades de crescimento profissional.
 
-# Architecture
+# Arquitectura
 
-TechScope follows a data ingestion and analytics architecture.
+O TechScope segue uma arquitectura de ingestão e análise de dados.
 
-The system is divided into three main components:
+O sistema está dividido em três componentes principais:
 
-- **Python Data Pipeline**
-  - Crawling job sources
-  - Data processing
-  - Technology extraction
-  - Data normalization
+- **Pipeline de Dados em Python**
+  - Recolha de anúncios de emprego
+  - Processamento de dados
+  - Extração de tecnologias
+  - Normalização de dados
 
-- **PostgreSQL Database**
-  - Stores jobs
-  - Stores companies
-  - Stores technologies
-  - Stores relationships between jobs and technologies
+- **Base de Dados PostgreSQL**
+  - Guarda anúncios de emprego
+  - Guarda empresas
+  - Guarda tecnologias
+  - Guarda relações entre anúncios e tecnologias
 
-- **.NET API**
-  - Provides data access
-  - Handles business logic
-  - Exposes analytics endpoints
+- **API .NET**
+  - Fornece acesso aos dados
+  - Trata da lógica de negócio
+  - Expõe endpoints de análise
 
-## System Architecture
+## Arquitectura do Sistema
 
 ```mermaid
 flowchart LR
 
-    Sources[(Job Sources)]
+    Sources[(Fontes de Emprego)]
 
     subgraph Python Pipeline
-        Scheduler[Daily Scheduler]
-        Scrapers[Job Scrapers]
-        Processor[Data Processing]
-        NLP[Technology Extraction]
+        Scheduler[Agendador Diário]
+        Scrapers[Scrapers de Emprego]
+        Processor[Processamento de Dados]
+        NLP[Extração de Tecnologias]
     end
 
     DB[(PostgreSQL)]
 
     subgraph .NET Application
         API[ASP.NET Core API]
-        Analytics[Analytics Engine]
+        Analytics[Motor de Análise]
     end
 
-    Frontend[Web Dashboard]
+    Frontend[Dashboard Web]
 
     Sources --> Scheduler
     Scheduler --> Scrapers
@@ -70,40 +70,40 @@ flowchart LR
 
 ---
 
-# Data Pipeline
+# Pipeline de Dados
 
-The ingestion process runs as a scheduled background job.
+O processo de ingestão corre como uma tarefa agendada em background.
 
-Example:
+Exemplo:
 
 ```
-02:00 - Scheduler starts
-02:05 - Scrapers collect new jobs
-02:15 - Data normalization
-02:20 - Technology extraction
-02:30 - Database update
+02:00 - O agendador inicia
+02:05 - Os scrapers recolhem novos anúncios
+02:15 - Normalização de dados
+02:20 - Extração de tecnologias
+02:30 - Actualização da base de dados
 ```
 
-## Pipeline Flow
+## Fluxo da Pipeline
 
 ```mermaid
 flowchart TD
 
-    A[Start Daily Job]
+    A[Início da Tarefa Diária]
 
-    B[Collect Job Listings]
+    B[Recolher Anúncios]
 
-    C[Normalize Data]
+    C[Normalizar Dados]
 
-    D[Remove Duplicates]
+    D[Remover Duplicados]
 
-    E[Extract Technologies]
+    E[Extrair Tecnologias]
 
-    F[Store Jobs]
+    F[Guardar Anúncios]
 
-    G[Update Analytics]
+    G[Actualizar Análises]
 
-    H[Finish]
+    H[Fim]
 
     A --> B
     B --> C
@@ -114,16 +114,16 @@ flowchart TD
     G --> H
 ```
 
-# Database Model
+# Modelo da Base de Dados
 
 ```mermaid
 erDiagram
 
-    COMPANIES ||--o{ JOBS : publishes
+    COMPANIES ||--o{ JOBS : publica
 
-    JOBS ||--o{ JOB_TECHNOLOGIES : contains
+    JOBS ||--o{ JOB_TECHNOLOGIES : contém
 
-    TECHNOLOGIES ||--o{ JOB_TECHNOLOGIES : appears_in
+    TECHNOLOGIES ||--o{ JOB_TECHNOLOGIES : aparece_em
 
 
     COMPANIES {
@@ -145,7 +145,7 @@ erDiagram
         text description
         string source
         string external_id
-        datetime date_posted
+        date date_posted
         datetime created_at
     }
 
@@ -167,15 +167,15 @@ erDiagram
 
 ---
 
-# PostgreSQL Setup
+# Configuração do PostgreSQL
 
-Create a `.env` file in the project root. You can copy from `.env.example`:
+Cria um ficheiro `.env` na raiz do projecto. Podes copiar a partir de `.env.example`:
 
 ```bash
 copy .env.example .env
 ```
 
-The Python scrapers read the following variables from `.env`:
+Os scrapers em Python lêem as seguintes variáveis do `.env`:
 
 - `DATABASE_URL`
 - `PGHOST`
@@ -184,9 +184,9 @@ The Python scrapers read the following variables from `.env`:
 - `PGUSER`
 - `PGPASSWORD`
 
-On first run, the scrapers create the base schema from `data-pipeline/database/migrations/001_initial.sql`.
+Na primeira execução, os scrapers criam o schema base a partir de `data-pipeline/database/migrations/001_initial.sql`.
 
-Run the scrapers from the repository root:
+Executa os scrapers a partir da raiz do repositório:
 
 ```bash
 python data-pipeline/scrapers/indeed.py
@@ -195,92 +195,92 @@ python data-pipeline/scrapers/linkedin.py
 
 ---
 
-# Database Rules
+# Regras da Base de Dados
 
-## Job Deduplication
+## Deduplicação de Anúncios
 
-To keep the database clean, each job posting should be stored only once.
+Para manter a base de dados limpa, cada anúncio deve ser guardado apenas uma vez.
 
-The system first tries to identify a job using the unique identifier provided by the source itself. When the source exposes a stable external job ID, that value is used as the primary deduplication key because it is the most reliable way to recognise the same posting again in a later crawl.
+O sistema primeiro tenta identificar um anúncio usando o identificador único fornecido pela própria fonte. Quando a fonte expõe um ID externo estável, esse valor é usado como chave principal de deduplicação, porque é a forma mais fiável de reconhecer o mesmo anúncio numa recolha futura.
 
-If the source does not provide a usable external ID, the system falls back to a generated fingerprint built from the most relevant job fields, such as title, company, location, and posting date. This gives the pipeline a consistent way to detect repeated records even when the source data is incomplete.
+Se a fonte não fornecer um ID externo utilizável, o sistema recorre a uma assinatura gerada a partir dos campos mais relevantes do anúncio, como título, empresa, localização e data da publicação. Isto dá à pipeline uma forma consistente de detectar registos repetidos mesmo quando os dados da fonte são incompletos.
 
-In practice, the deduplication flow works like this:
+Na prática, o fluxo de deduplicação funciona assim:
 
-1. Check whether the job has an external ID from the source.
-2. If it does, use that ID to decide whether the job already exists.
-3. If it does not, generate a deterministic hash from the job details.
-4. Use that hash as the fallback identifier for deduplication.
+1. Verifica se o anúncio tem um ID externo da fonte.
+2. Se tiver, usa esse ID para decidir se o anúncio já existe.
+3. Se não tiver, gera um hash determinístico a partir dos detalhes do anúncio.
+4. Usa esse hash como identificador de recurso para deduplicação.
 
-This approach reduces duplicates while still allowing the scraper to work with sources that expose different levels of metadata.
-
----
-
-## Technology Detection
-
-After jobs are stored, the pipeline analyses the job description and the surrounding text to identify technologies mentioned in the listing.
-
-The goal is to understand which tools, languages, and frameworks are associated with a given job. For example, a backend developer role might mention Java, Spring Boot, Docker, and PostgreSQL. The processor reads those mentions and turns them into structured data that can later be queried for analytics.
-
-This extraction step is important because it allows the platform to answer questions such as:
-
-* Which technologies are most in demand?
-* Which technologies appear together most often?
-* How does demand change over time?
-* Which skills are commonly requested for a specific role or market segment?
-
-The resulting structured representation links each job to one or more technologies, making it possible to build comparisons, trend charts, and market insights on top of the raw job data.
+Esta abordagem reduz duplicados e continua a permitir que o scraper trabalhe com fontes que expõem níveis diferentes de metadados.
 
 ---
 
-# Main Features
+## Detecção de Tecnologias
 
-## Technology Analysis
+Depois de os anúncios serem guardados, a pipeline analisa a descrição do anúncio e o texto envolvente para identificar tecnologias mencionadas na oferta.
 
-Search for technologies:
+O objectivo é perceber que ferramentas, linguagens e frameworks estão associadas a cada anúncio. Por exemplo, uma vaga de backend pode referir Java, Spring Boot, Docker e PostgreSQL. O processador lê essas menções e transforma-as em dados estruturados que depois podem ser consultados para análises.
 
-Examples:
+Esta etapa é importante porque permite à plataforma responder a perguntas como:
+
+* Quais são as tecnologias mais procuradas?
+* Que tecnologias aparecem mais vezes em conjunto?
+* Como evolui a procura ao longo do tempo?
+* Que competências são mais pedidas para um cargo ou segmento de mercado específico?
+
+A representação estruturada resultante liga cada anúncio a uma ou mais tecnologias, o que permite construir comparações, gráficos de tendência e insights de mercado em cima dos dados brutos.
+
+---
+
+# Funcionalidades Principais
+
+## Análise de Tecnologias
+
+Pesquisa por tecnologias:
+
+Exemplos:
 * Java
 * React
 * Node.js
 * Docker
 * Kubernetes
 
-Returns:
-* Number of available jobs
-* Market share
-* Growth over time
-* Related technologies
+Devolve:
+* Número de anúncios disponíveis
+* Quota de mercado
+* Crescimento ao longo do tempo
+* Tecnologias relacionadas
 
 ---
 
-## Technology Comparison
+## Comparação de Tecnologias
 
-Example:
+Exemplo:
 
 ```
 Spring Boot vs Node.js
 ```
 
-Comparison:
+Comparação:
 
-| Metric         | Spring Boot | Node.js |
+| Métrica        | Spring Boot | Node.js |
 | -------------- | ----------- | ------- |
-| Job Count      |             |         |
-| Growth         |             |         |
-| Salary Average |             |         |
-| Related Skills |             |         |
+| Número de anúncios |         |         |
+| Crescimento    |             |         |
+| Salário médio  |             |         |
+| Competências relacionadas |   |         |
 
 ---
 
-## Market Trends
+## Tendências de Mercado
 
-Identifies technologies with increasing demand.
+Identifica tecnologias com procura crescente.
 
-Example:
+Exemplo:
 
 ```
-Technology     Growth
+Tecnologia     Crescimento
 
 Kubernetes     +35%
 Docker         +28%
@@ -289,7 +289,7 @@ React          +15%
 
 ---
 
-# Project Structure
+# Estrutura do Projecto
 
 ```
 TechScope/
@@ -314,13 +314,13 @@ TechScope/
 
 ---
 
-# Future Improvements
+# Melhorias Futuras
 
-* Real-time dashboards
-* Machine learning based technology extraction
-* Salary prediction
-* Regional market analysis
-* Job recommendation engine
-* Historical market forecasting
+* Dashboards em tempo real
+* Extração de tecnologias com machine learning
+* Previsão salarial
+* Análise regional do mercado
+* Motor de recomendação de empregos
+* Previsão histórica do mercado
 
 ---

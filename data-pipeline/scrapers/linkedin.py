@@ -16,7 +16,7 @@ from database import ensure_schema, get_connection, save_jobs
 # QUERY é o termo usado no site.
 # TECHNOLOGY_NAME é o nome canónico guardado na BD.
 # Se quiseres analisar .NET, por exemplo, usa QUERY=".net" e TECHNOLOGY_NAME=".NET".
-QUERY = "react"
+QUERY = "java"
 TECHNOLOGY_NAME = QUERY
 LOCATION = "Lisbon, Portugal"
 MAX_START = 2500
@@ -103,7 +103,7 @@ with get_connection() as conn:
                 "|",
                 job_data["date_posted"],
                 "|",
-                job_data["url"],
+                # job_data["url"],
             )
 
         total_jobs_ready += len(page_jobs)

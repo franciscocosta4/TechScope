@@ -132,7 +132,7 @@ with get_connection() as conn:
                         "|",
                         job_data["location"],
                         "|",
-                        job_data["url"],
+                        # job_data["url"], está comentado para nao poluir a terminal
                     )
 
                 if skipped_jobs:
