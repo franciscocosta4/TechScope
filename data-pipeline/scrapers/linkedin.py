@@ -12,15 +12,16 @@ if str(PIPELINE_ROOT) not in sys.path:
     sys.path.insert(0, str(PIPELINE_ROOT))
 
 from database import ensure_schema, get_connection, save_jobs
+from state import get_next_start, update_last_start
 
 # QUERY é o termo usado no site.
 # TECHNOLOGY_NAME é o nome canónico guardado na BD.
 # Se quiseres analisar .NET, por exemplo, usa QUERY=".net" e TECHNOLOGY_NAME=".NET".
-QUERY = "php"
+QUERY = "javascript"
 TECHNOLOGY_NAME = QUERY
 LOCATION = "Lisbon, Portugal"
 MAX_START = 2500
-PAGE_SIZE = 20
+PAGE_SIZE = 10
 SOURCE = "linkedin"
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
@@ -41,21 +42,30 @@ with get_connection() as conn:
     # start=50  -> resultados 51-75
     seen = set()
 
+    # Retoma a paginação a partir do último bloco guardado para esta query.
+    start_value = get_next_start(SOURCE, QUERY, PAGE_SIZE)
+
     # O LinkedIn devolve resultados por blocos fixos de 20 anúncios.
-    for start in range(0, MAX_START, PAGE_SIZE):
+    for start in range(start_value, MAX_START, PAGE_SIZE):
         total_pages += 1
-        print(f"A abrir LinkedIn com start={start}")
         params = urlencode({"keywords": QUERY, "location": LOCATION, "start": start})
         url = (
             "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
             f"?{params}"
         )
+        print(f"A abrir LinkedIn com start={start} url: {url}")
 
         # Faz o pedido à página de resultados.
         response = requests.get(url, headers=HEADERS, timeout=20)
-        soup = BeautifulSoup(response.text, "html.parser")
+        print(
+            f"HTTP -> status={response.status_code} | "
+            f"len_html={len(response.text)} | start={start}"
+        )
 
+        soup = BeautifulSoup(response.text, "html.parser")
+        # print(response.text)
         job_cards = soup.select("li.base-search-card, li > div.base-card")
+        print(f"Cartões encontrados nesta página: {len(job_cards)}")
         total_cards_found += len(job_cards)
 
         # Conta quantos anúncios novos foram encontrados nesta página.
@@ -137,6 +147,8 @@ with get_connection() as conn:
         # Se não apareceram anúncios novos, pára a paginação.
         if new_found == 0:
             break
+
+        update_last_start(SOURCE, QUERY, start)
 
     print("\nResumo total do run:")
     print(f"Páginas processadas: {total_pages}")

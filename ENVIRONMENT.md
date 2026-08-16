@@ -60,6 +60,16 @@ Se a relação vier apenas do contexto da pesquisa, o score fica em `0.7`.
 A tabela `technologies` usa um ID simples auto-incrementado porque facilita leitura e manutenção.
 A relação final é guardada em `job_technologies` com `confidence_score`.
 
+# Como funciona a paginação guardada
+
+Para não começar sempre no `0`, a pipeline guarda o último `start` usado num ficheiro CSV local: `data-pipeline/scrapers/scraper_state.csv`.
+Cada linha associa `source` + `query` ao último bloco percorrido.
+
+Na execução seguinte, o scraper lê esse ficheiro e retoma a partir de `last_start + PAGE_SIZE`.
+Se a `QUERY` mudar, a chave muda também e a paginação volta automaticamente a `0`.
+
+Isto mantém a lógica simples e evita repetir sempre as mesmas páginas quando o script é corrido várias vezes seguidas.
+
 # Links base para testar
 
 Indeed:

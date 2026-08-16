@@ -13,16 +13,17 @@ if str(PIPELINE_ROOT) not in sys.path:
     sys.path.insert(0, str(PIPELINE_ROOT))
 
 from database import ensure_schema, get_connection, save_jobs
+from state import get_next_start, update_last_start
 
 # QUERY é o termo usado no site.
 # TECHNOLOGY_NAME é o nome canónico guardado na BD.
 # Se quiseres analisar .NET, por exemplo, usa QUERY=".net" e TECHNOLOGY_NAME=".NET".
-QUERY = "java"
+QUERY = "php"
 TECHNOLOGY_NAME = QUERY
 LOCATION = "Portugal"
 RADIUS = 50
 PAGE_SIZE = 15
-MAX_START = 30
+MAX_START = 90
 SOURCE = "indeed"
 
 
@@ -38,8 +39,10 @@ with get_connection() as conn:
 
     # Inicia o Playwright.
     with sync_playwright() as p:
-        # Percorre os resultados em blocos de 15 anúncios, começando sempre no zero.
-        for start in range(0, MAX_START, PAGE_SIZE):
+        # Retoma a paginação a partir do último bloco guardado para esta query.
+        start_value = get_next_start(SOURCE, QUERY, PAGE_SIZE)
+        # Percorre os resultados em blocos de 15 anúncios.
+        for start in range(start_value, MAX_START, PAGE_SIZE):
             params = urlencode(
                 {
                     "q": QUERY,
@@ -164,6 +167,8 @@ with get_connection() as conn:
             finally:
                 # Fecha sempre o browser, mesmo que ocorra algum erro.
                 browser.close()
+
+            update_last_start(SOURCE, QUERY, start)
 
     print("\nResumo total do run:")
     print(f"Páginas processadas: {total_pages}")
