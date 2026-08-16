@@ -2,10 +2,10 @@
   
 # TechScope
 
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 
 O TechScope é uma aplicação web de análise do mercado tecnológico que avalia a procura por linguagens de programação, frameworks e ferramentas com base em dados reais de anúncios de emprego.
 
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 </div>
 
 O sistema recolhe ofertas de emprego de várias fontes, analisa as tecnologias mencionadas em cada anúncio e transforma essa informação em insights úteis sobre o panorama tecnológico actual. A plataforma fornece informação sobre procura de tecnologias, tendências de crescimento do mercado, comparações entre tecnologias, informação salarial quando disponível e relações entre tecnologias que costumam ser usadas em conjunto.
@@ -41,7 +41,7 @@ flowchart LR
 
     Sources[(Fontes de Emprego)]
 
-    subgraph Python Pipeline
+    subgraph PythonPipeline[Python Pipeline]
         Scheduler[Agendador Diário]
         Scrapers[Scrapers de Emprego]
         Processor[Processamento de Dados]
@@ -50,7 +50,7 @@ flowchart LR
 
     DB[(PostgreSQL)]
 
-    subgraph .NET Application
+    subgraph NETApp[.NET Application]
         API[ASP.NET Core API]
         Analytics[Motor de Análise]
     end
