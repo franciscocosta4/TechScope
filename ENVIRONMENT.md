@@ -1,8 +1,90 @@
-# Porque existe o `.env`
 
-O ficheiro `.env` fica fora do repositório porque este projeto é público e não deve expor credenciais.
-O `.env.example` serve como referência para os devs e mostra as variáveis necessárias sem valores reais.
+## Arquitectura do Sistema
 
+```mermaid
+flowchart TD
+
+    Sources[(Fontes de Emprego)]
+
+    subgraph PythonPipeline[Python Pipeline]
+        Scheduler[Agendador Diário]
+        Scrapers[Scrapers de Emprego]
+        Processor[Processamento de Dados]
+        NLP[Extração de Tecnologias]
+    end
+
+    DB[(PostgreSQL)]
+
+    subgraph NETApp[.NET Application]
+        API[ASP.NET Core API]
+        Analytics[Motor de Análise]
+    end
+
+    Frontend[Dashboard Web]
+
+    Sources --> Scheduler
+    Scheduler --> Scrapers
+    Scrapers --> Processor
+    Processor --> NLP
+    NLP --> DB
+
+    DB --> API
+    API --> Analytics
+    Analytics --> Frontend
+```
+
+## Modelo da Base de Dados
+
+```mermaid
+erDiagram
+
+    COMPANIES ||--o{ JOBS : publica
+
+    JOBS ||--o{ JOB_TECHNOLOGIES : contém
+
+    TECHNOLOGIES ||--o{ JOB_TECHNOLOGIES : aparece_em
+
+
+    COMPANIES {
+        uuid id PK
+        string name
+        string website
+        string location
+        datetime created_at
+    }
+
+
+    JOBS {
+        uuid id PK
+        uuid company_id FK
+        string title
+        string location
+        decimal salary_min
+        decimal salary_max
+        text description
+        string source
+        string external_id
+        date date_posted
+        datetime created_at
+    }
+
+
+    TECHNOLOGIES {
+        bigint id PK
+        string name
+        string category
+        datetime created_at
+    }
+
+
+    JOB_TECHNOLOGIES {
+        uuid job_id FK
+        bigint technology_id FK
+        decimal confidence_score
+    }
+```
+
+---
 # Ligação à base de dados
 
 A ligação à PostgreSQL foi centralizada em `data-pipeline/database/postgres.py` para evitar repetir configuração nos scrapers.

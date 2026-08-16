@@ -19,7 +19,7 @@ from state import get_next_start, update_last_start
 # QUERY é o termo usado no site.
 # TECHNOLOGY_NAME é o nome canónico guardado na BD.
 # Se quiseres analisar .NET, por exemplo, usa QUERY=".net" e TECHNOLOGY_NAME=".NET".
-QUERY = "java"
+QUERY = "docker"
 TECHNOLOGY_NAME = QUERY
 LOCATION = "Portugal"
 MAX_START = 200
