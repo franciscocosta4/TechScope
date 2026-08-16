@@ -159,14 +159,12 @@ def save_jobs(
 ) -> dict[str, int]:
     """Guarda uma lista de anúncios e relaciona-os com uma tecnologia.
 
-    O fluxo mantém-se simples:
+    O fluxo :
     1. garantir que a empresa existe;
     2. verificar se já existe um job igual para essa empresa;
     3. se não existir, criar o job;
     4. guardar a tecnologia e a relação na tabela pivot.
 
-    Também devolvemos estatísticas básicas para o scraper mostrar o que aconteceu
-    de forma real, sem inventar contagens.
     """
     stats = {
         "processed": 0,

@@ -66,52 +66,6 @@ flowchart LR
     DB --> API
     API --> Analytics
     Analytics --> Frontend
-````
-
----
-
-# Pipeline de Dados
-
-O processo de ingestão corre como uma tarefa agendada em background.
-
-Exemplo:
-
-```
-02:00 - O agendador inicia
-02:05 - Os scrapers recolhem novos anúncios
-02:15 - Normalização de dados
-02:20 - Extração de tecnologias
-02:30 - Actualização da base de dados
-```
-
-## Fluxo da Pipeline
-
-```mermaid
-flowchart TD
-
-    A[Início da Tarefa Diária]
-
-    B[Recolher Anúncios]
-
-    C[Normalizar Dados]
-
-    D[Remover Duplicados]
-
-    E[Extrair Tecnologias]
-
-    F[Guardar Anúncios]
-
-    G[Actualizar Análises]
-
-    H[Fim]
-
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-    E --> F
-    F --> G
-    G --> H
 ```
 
 # Modelo da Base de Dados
@@ -151,7 +105,7 @@ erDiagram
 
 
     TECHNOLOGIES {
-        uuid id PK
+        bigint id PK
         string name
         string category
         datetime created_at
@@ -160,7 +114,7 @@ erDiagram
 
     JOB_TECHNOLOGIES {
         uuid job_id FK
-        uuid technology_id FK
+        bigint technology_id FK
         decimal confidence_score
     }
 ```
@@ -199,37 +153,47 @@ python data-pipeline/scrapers/linkedin.py
 
 ## Deduplicação de Anúncios
 
-Para manter a base de dados limpa, cada anúncio deve ser guardado apenas uma vez.
+Para manter a base de dados limpa, cada anúncio deve ser guardado apenas uma vez para a mesma empresa, título e localização.
 
-O sistema primeiro tenta identificar um anúncio usando o identificador único fornecido pela própria fonte. Quando a fonte expõe um ID externo estável, esse valor é usado como chave principal de deduplicação, porque é a forma mais fiável de reconhecer o mesmo anúncio numa recolha futura.
+Na implementação actual, a deduplicação é feita na tabela `jobs` com base em:
 
-Se a fonte não fornecer um ID externo utilizável, o sistema recorre a uma assinatura gerada a partir dos campos mais relevantes do anúncio, como título, empresa, localização e data da publicação. Isto dá à pipeline uma forma consistente de detectar registos repetidos mesmo quando os dados da fonte são incompletos.
+- `company_id`
+- `title`
+- `location`
 
-Na prática, o fluxo de deduplicação funciona assim:
+Primeiro o scraper garante que a empresa existe em `companies`. Depois procura um job com a mesma combinação de empresa, título e localização. Se encontrar, não cria outro registo igual.
 
-1. Verifica se o anúncio tem um ID externo da fonte.
-2. Se tiver, usa esse ID para decidir se o anúncio já existe.
-3. Se não tiver, gera um hash determinístico a partir dos detalhes do anúncio.
-4. Usa esse hash como identificador de recurso para deduplicação.
+O `external_id` continua a ser guardado para preservar a origem do anúncio, mas já não é a chave principal de deduplicação. Isto evita depender de URLs ou IDs de fonte que podem mudar entre execuções.
 
-Esta abordagem reduz duplicados e continua a permitir que o scraper trabalhe com fontes que expõem níveis diferentes de metadados.
+Na prática, o fluxo funciona assim:
+
+1. Garante que a empresa existe em `companies`.
+2. Procura um job com o mesmo `company_id`, `title` e `location`.
+3. Se já existir, ignora a inserção do job.
+4. Se não existir, cria o job novo e liga-o à empresa.
+
+Esta abordagem é simples e robusta para os dados que estamos a recolher.
 
 ---
 
 ## Detecção de Tecnologias
 
-Depois de os anúncios serem guardados, a pipeline analisa a descrição do anúncio e o texto envolvente para identificar tecnologias mencionadas na oferta.
+Depois de um anúncio ser guardado, a pipeline liga-o a uma tecnologia na tabela `technologies` e regista a relação em `job_technologies`.
 
-O objectivo é perceber que ferramentas, linguagens e frameworks estão associadas a cada anúncio. Por exemplo, uma vaga de backend pode referir Java, Spring Boot, Docker e PostgreSQL. O processador lê essas menções e transforma-as em dados estruturados que depois podem ser consultados para análises.
+Cada scraper trabalha com duas variáveis:
 
-Esta etapa é importante porque permite à plataforma responder a perguntas como:
+- `QUERY`: o termo usado na pesquisa do site
+- `TECHNOLOGY_NAME`: o nome canónico guardado na base de dados
 
-* Quais são as tecnologias mais procuradas?
-* Que tecnologias aparecem mais vezes em conjunto?
-* Como evolui a procura ao longo do tempo?
-* Que competências são mais pedidas para um cargo ou segmento de mercado específico?
+A tecnologia é guardada numa tabela própria para evitar duplicação de nomes e a relação final fica na tabela pivot `job_technologies` com `confidence_score`.
 
-A representação estruturada resultante liga cada anúncio a uma ou mais tecnologias, o que permite construir comparações, gráficos de tendência e insights de mercado em cima dos dados brutos.
+O score serve para indicar o quão forte é a ligação entre o anúncio e a tecnologia:
+
+- `1.0` quando a tecnologia aparece explicitamente no título ou descrição
+- `0.9` quando a query é exactamente a tecnologia pesquisada
+- `0.7` quando a relação vem apenas do contexto da pesquisa
+
+Isto permite perceber que tecnologias estão associadas a cada anúncio e também quanta confiança temos nessa associação.
 
 ---
 
@@ -250,26 +214,19 @@ Devolve:
 * Número de anúncios disponíveis
 * Quota de mercado
 * Crescimento ao longo do tempo
-* Tecnologias relacionadas
 
 ---
 
 ## Comparação de Tecnologias
 
-Exemplo:
+Exemplo de Comparação:
 
-```
-Spring Boot vs Node.js
-```
-
-Comparação:
-
-| Métrica        | Spring Boot | Node.js |
-| -------------- | ----------- | ------- |
-| Número de anúncios |         |         |
-| Crescimento    |             |         |
-| Salário médio  |             |         |
-| Competências relacionadas |   |         |
+| Métrica | Spring Boot | Node.js |
+| --- | --- | --- |
+| Número de anúncios | 1000 | 250 |
+| Crescimento | +10% | -2% |
+| Salário médio |  |  |
+| Competências relacionadas |  |  |
 
 ---
 
@@ -287,32 +244,7 @@ Docker         +28%
 React          +15%
 ```
 
----
 
-# Estrutura do Projecto
-
-```
-TechScope/
-
-├── backend/
-│   └── TechScope.Mvc/
-│
-├── data-pipeline/
-│   ├── scrapers/
-│   │   ├── indeed.py
-│   │   └── linkedin.py
-│   ├── processors/
-│   ├── analyzers/
-│   └── database/
-│       └── migrations/
-│
-├── .env
-├── .env.example
-├── .gitignore
-└── README.md
-```
-
----
 
 # Melhorias Futuras
 
@@ -322,5 +254,3 @@ TechScope/
 * Análise regional do mercado
 * Motor de recomendação de empregos
 * Previsão histórica do mercado
-
----
