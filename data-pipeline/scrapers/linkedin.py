@@ -1,6 +1,8 @@
 """Scraper do LinkedIn com gravação dos anúncios no PostgreSQL."""
 
+import random
 import sys
+import time
 from pathlib import Path
 from urllib.parse import urlencode
 
@@ -19,11 +21,20 @@ from state import get_next_start, update_last_start
 # Se quiseres analisar .NET, por exemplo, usa QUERY=".net" e TECHNOLOGY_NAME=".NET".
 QUERY = "javascript"
 TECHNOLOGY_NAME = QUERY
-LOCATION = "Lisbon, Portugal"
-MAX_START = 2500
+LOCATION = "Portugal"
+MAX_START = 200
 PAGE_SIZE = 10
 SOURCE = "linkedin"
-HEADERS = {"User-Agent": "Mozilla/5.0"}
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/138.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "pt-PT,pt;q=0.9,en;q=0.8",
+    "Referer": "https://www.linkedin.com/jobs/",
+}
 
 
 # Liga à base de dados e garante que o esquema existe.
@@ -54,6 +65,9 @@ with get_connection() as conn:
             f"?{params}"
         )
         print(f"A abrir LinkedIn com start={start} url: {url}")
+
+        # Pequena pausa aleatória para reduzir a probabilidade de bloqueio.
+        time.sleep(random.uniform(2, 5))
 
         # Faz o pedido à página de resultados.
         response = requests.get(url, headers=HEADERS, timeout=20)

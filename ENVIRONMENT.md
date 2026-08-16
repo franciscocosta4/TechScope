@@ -70,13 +70,46 @@ Se a `QUERY` mudar, a chave muda também e a paginação volta automaticamente a
 
 Isto mantém a lógica simples e evita repetir sempre as mesmas páginas quando o script é corrido várias vezes seguidas.
 
+# Como reduzimos rate limiting e verificações
+
+   ## LinkedIn
+
+   No LinkedIn tentamos reduzir bloqueios sem forçar demasiado o site:
+
+   - usamos `headers` mais completos, em vez de um pedido mínimo
+   - incluímos `User-Agent`, `Accept`, `Accept-Language` e `Referer`
+   - fazemos uma pausa aleatória antes de cada pedido
+   - evitamos correr muitas páginas seguidas sem necessidade
+
+   ## Indeed
+
+   No Indeed o problema é mais agressivo, porque pode surgir verificação logo no início.
+
+   Para reduzir isso:
+
+   - abrimos o browser de forma visível (`headless=False`)
+   - usamos um perfil persistente para reutilizar cookies e sessão
+   - ligamos ao Chrome real via `remote debugging`
+   - mantemos pausas aleatórias entre acções
+   - não insistimos quando aparece verificação; o scraper deve parar e deixar o utilizador intervir
+
+   O uso do perfil persistente e do Chrome real ajuda porque o site vê um ambiente mais estável, com histórico e sessão reutilizável, em vez de uma instância nova a cada execução.
+
+# Chrome real para o Indeed
+
+O scraper do Indeed pode ligar-se a um Chrome real via `remote debugging` para reutilizar cookies e sessão do teu PC.
+Para isso existe o ficheiro `start_chrome_debug.bat`, que abre o Chrome com a porta `9222` activa.
+
+O perfil usado por esse browser fica em `data-pipeline/scrapers/chrome-profile/` e é criado automaticamente quando corres o Chrome desse modo ou quando o scraper o usa pela primeira vez.
+
+
 # Links base para testar
 
 Indeed:
 `https://pt.indeed.com/jobs?q=python&l=Porto&radius=50&start=0`
 
 LinkedIn:
-`https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=web%20dev&start=0`
+`https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=javascript&location=Portugal&start=120`
 
 ## Filtros úteis
 

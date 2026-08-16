@@ -12,13 +12,15 @@ PIPELINE_ROOT = Path(__file__).resolve().parents[1]
 if str(PIPELINE_ROOT) not in sys.path:
     sys.path.insert(0, str(PIPELINE_ROOT))
 
+CHROME_CDP_URL = "http://localhost:9222"
+
 from database import ensure_schema, get_connection, save_jobs
 from state import get_next_start, update_last_start
 
 # QUERY é o termo usado no site.
 # TECHNOLOGY_NAME é o nome canónico guardado na BD.
 # Se quiseres analisar .NET, por exemplo, usa QUERY=".net" e TECHNOLOGY_NAME=".NET".
-QUERY = "php"
+QUERY = "java"
 TECHNOLOGY_NAME = QUERY
 LOCATION = "Portugal"
 RADIUS = 50
@@ -52,25 +54,18 @@ with get_connection() as conn:
                 }
             )
             url = f"https://pt.indeed.com/jobs?{params}"
-            print(f"\nPágina start={start}")
+            print(f"\nPágina start={start} url: {url}")
 
-            # Abre um novo browser para cada página.
-            browser = p.chromium.launch(headless=False)
+            # Liga ao Chrome real já aberto com remote debugging.
+            browser = p.chromium.connect_over_cdp(CHROME_CDP_URL)
+            context = browser.contexts[0] if browser.contexts else browser.new_context()
             total_pages += 1
 
             try:
-                # Cria um contexto com aspeto mais próximo de um browser real.
-                context = browser.new_context(
-                    user_agent=(
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                        "AppleWebKit/537.36 (KHTML, like Gecko) "
-                        "Chrome/138.0.0.0 Safari/537.36"
-                    ),
-                    locale="en-US",
-                )
-
-                # Abre uma nova página e navega para o URL da pesquisa.
+                # Abre uma nova página.
                 page = context.new_page()
+
+                # Navega para o URL da pesquisa.
                 page.goto(url, wait_until="domcontentloaded")
 
                 # Pequena pausa aleatória para reduzir a probabilidade de bloqueio.
@@ -78,6 +73,22 @@ with get_connection() as conn:
 
                 # Obtém o HTML já renderizado pela página.
                 html = page.content()
+                html_lower = html.casefold()
+
+                # Se aparecer verificação/Cloudflare, paramos para intervenção manual.
+                # if (
+                #     "cloudflare" in html_lower
+                #     or "verify you are human" in html_lower
+                #     or "Additional Verification Required" in html_lower
+                #     or "challenge" in html_lower
+                #     or "attention required" in html_lower
+                # ):
+                #     print(
+                #         "Verificação do Cloudflare detectada. "
+                #         "Resolve manualmente no browser e volta a correr o scraper."
+                #     )
+                #     break
+
                 soup = BeautifulSoup(html, "html.parser")
 
                 # Selecciona os anúncios directamente pela estrutura real do Indeed.
@@ -165,8 +176,9 @@ with get_connection() as conn:
                     )
 
             finally:
-                # Fecha sempre o browser, mesmo que ocorra algum erro.
-                browser.close()
+                # Fechar o contexto CDP pode encerrar o browser real, por isso
+                # só libertamos a página criada pelo scraper.
+                page.close()
 
             update_last_start(SOURCE, QUERY, start)
 
