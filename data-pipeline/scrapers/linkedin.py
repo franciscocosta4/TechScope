@@ -16,7 +16,7 @@ from database import ensure_schema, get_connection, save_jobs
 # QUERY é o termo usado no site.
 # TECHNOLOGY_NAME é o nome canónico guardado na BD.
 # Se quiseres analisar .NET, por exemplo, usa QUERY=".net" e TECHNOLOGY_NAME=".NET".
-QUERY = "java"
+QUERY = "php"
 TECHNOLOGY_NAME = QUERY
 LOCATION = "Lisbon, Portugal"
 MAX_START = 2500
@@ -41,8 +41,10 @@ with get_connection() as conn:
     # start=50  -> resultados 51-75
     seen = set()
 
+    # O LinkedIn devolve resultados por blocos fixos de 20 anúncios.
     for start in range(0, MAX_START, PAGE_SIZE):
         total_pages += 1
+        print(f"A abrir LinkedIn com start={start}")
         params = urlencode({"keywords": QUERY, "location": LOCATION, "start": start})
         url = (
             "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
@@ -141,4 +143,4 @@ with get_connection() as conn:
     print(f"Cartões encontrados no total: {total_cards_found}")
     print(f"Anúncios válidos preparados: {total_jobs_ready}")
     print(f"Anúncios ignorados: {total_jobs_skipped}")
-    print(f"Anúncios guardados na base de dados: {total_jobs_saved}")
+    print(f"Anúncios inseridos na base de dados: {total_jobs_saved}")

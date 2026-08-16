@@ -272,6 +272,8 @@ def save_jobs(
                     ),
                 )
                 job_id = cur.fetchone()[0]
+                # Só contamos como inserido quando o job novo foi mesmo criado.
+                stats["inserted"] += 1
 
             # Guardamos a tecnologia separadamente para normalizar o modelo.
             # `ON CONFLICT` evita duplicar o mesmo nome na tabela `technologies`.
@@ -312,7 +314,6 @@ def save_jobs(
                 (job_id, technology_id, confidence_score),
             )
 
-            stats["inserted"] += 1
 
     # Gravamos tudo no fim para manter a operação consistente.
     conn.commit()

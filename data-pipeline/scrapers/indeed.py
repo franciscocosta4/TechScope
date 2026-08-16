@@ -38,7 +38,7 @@ with get_connection() as conn:
 
     # Inicia o Playwright.
     with sync_playwright() as p:
-        # Percorre os resultados em blocos de 15 anúncios.
+        # Percorre os resultados em blocos de 15 anúncios, começando sempre no zero.
         for start in range(0, MAX_START, PAGE_SIZE):
             params = urlencode(
                 {
@@ -160,6 +160,7 @@ with get_connection() as conn:
                         f"existentes: {stats['skipped_existing']}, "
                         f"inválidos: {stats['skipped_invalid']}"
                     )
+
             finally:
                 # Fecha sempre o browser, mesmo que ocorra algum erro.
                 browser.close()
@@ -169,4 +170,4 @@ with get_connection() as conn:
     print(f"Cartões encontrados no total: {total_cards_found}")
     print(f"Anúncios válidos preparados: {total_jobs_ready}")
     print(f"Anúncios ignorados: {total_jobs_skipped}")
-    print(f"Anúncios guardados na base de dados: {total_jobs_saved}")
+    print(f"Anúncios inseridos na base de dados: {total_jobs_saved}")
