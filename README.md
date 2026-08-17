@@ -19,26 +19,85 @@ O objectivo da TechScope é ajudar devs a melhor compreenderem os requisitos do 
 
 O sistema está dividido em três componentes principais:
 
-- **Pipeline de Dados em Python**
-  - Recolha de anúncios de emprego
-  - Processamento de dados
-  - Extração de tecnologias
-  - Normalização de dados
+```mermaid
+flowchart TD
 
-- **Base de Dados PostgreSQL**
-  - Guarda anúncios de emprego
-  - Guarda empresas
-  - Guarda tecnologias
-  - Guarda relações entre anúncios e tecnologias
+    Sources[(Fontes de Emprego)]
 
-- **WEB APP .NET**
-  - Mostra os dados e análises
-  - Gere a experiência de utilização
-  - Consome a API para obter insights
+    subgraph PythonPipeline[Python Pipeline]
+        Scheduler[Agendador Diário]
+        Scrapers[Scrapers de Emprego]
+        Processor[Processamento de Dados]
+    end
+
+    DB[(PostgreSQL)]
+
+    subgraph NETApp[.NET Application]
+        API[ASP.NET Core API]
+        Analytics[Motor de Análise]
+    end
+
+    Frontend[Dashboard Web]
+
+    Sources --> Scheduler
+    Scheduler --> Scrapers
+    Scrapers --> Processor
+    Processor --> DB
+
+
+    DB --> API
+    API --> Analytics
+    Analytics --> Frontend
+```
+
+## Funcionalidades Principais
+
+### Análise de Tecnologias
+
+Pesquisa por tecnologias:
+
+Exemplos:
+* Java
+* React
+* Node.js
+* Docker
+* Kubernetes
+
+Devolve:
+* Número de anúncios disponíveis
+* Quota de mercado
+* Crescimento ao longo do tempo
 
 
 
-## Começando com o projecto
+### Comparação de Tecnologias
+
+Exemplo de Comparação:
+
+| Métrica | Spring Boot | Node.js |
+| --- | --- | --- |
+| Número de anúncios | 1000 | 250 |
+| Crescimento | +10% | -2% |
+| Competências relacionadas |  |  |
+
+
+### Tendências de Mercado
+
+Identifica tecnologias com procura crescente.
+
+Exemplo:
+
+```
+Tecnologia     Crescimento
+
+Kubernetes     +35%
+Docker         +28%
+React          +15%
+```
+
+
+
+## Começando com o projeto
 
 ### 1. Pré-requisitos
 
@@ -97,52 +156,6 @@ Executa os scrapers a partir da raiz do repositório:
 ```bash
 python data-pipeline/scrapers/indeed.py
 python data-pipeline/scrapers/linkedin.py
-```
-
-
-## Funcionalidades Principais
-
-### Análise de Tecnologias
-
-Pesquisa por tecnologias:
-
-Exemplos:
-* Java
-* React
-* Node.js
-* Docker
-* Kubernetes
-
-Devolve:
-* Número de anúncios disponíveis
-* Quota de mercado
-* Crescimento ao longo do tempo
-
-
-
-### Comparação de Tecnologias
-
-Exemplo de Comparação:
-
-| Métrica | Spring Boot | Node.js |
-| --- | --- | --- |
-| Número de anúncios | 1000 | 250 |
-| Crescimento | +10% | -2% |
-| Competências relacionadas |  |  |
-
-
-### Tendências de Mercado
-
-Identifica tecnologias com procura crescente.
-
-Exemplo:
-
-```
-Tecnologia     Crescimento
-
-Kubernetes     +35%
-Docker         +28%
-React          +15%
 ```
 
 
