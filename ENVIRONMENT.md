@@ -203,3 +203,18 @@ LinkedIn:
 | Remote           | `f_WT=2`               | `remotejob=1`     |
 | Júnior / Entry   | `f_E=2`                | `explvl=entry_level` |
 
+
+# Por que mudámos para PascalCase
+
+O schema original usava `snake_case` (`id`, `created_at`, `company_id`). Mudámos tudo para **PascalCase** (`"Id"`, `"CreatedAt"`, `"CompanyId"`) por três razões:
+
+1. **Alinhamento com o .NET** – as propriedades das entidades no C# seguem PascalCase (`Id`, `CreatedAt`, `CompanyId`). Manter os mesmos nomes no PostgreSQL evita mapeamentos manuais ou atributos `[Column("created_at")]` em todo o lado.
+2. **Consistência interna** – ao usar aspas duplas nas definições SQL (`"Id"`, `"CreatedAt"`), o PostgreSQL preserva a capitalização exacta, tornando o schema auto-documentado e igual ao modelo de domínio.
+3. **Menos atrito em ferramentas** – ORMs (EF Core, Dapper com mapeamento automático) funcionam *out-of-the-box* quando os nomes coincidem.
+
+
+### Migrações .NET vs Migrações Python
+
+- As migrações do pipeline Python (`data-pipeline/database/migrations/`) são responsáveis por criar e manter o schema base (`Companies`, `Jobs`, `Technologies`, `JobTechnologies`). Este schema é partilhado entre a pipeline Python e a aplicação .NET.
+- As migrações da aplicação .NET (caso utilizem EF Core ou similar) ficam em pasta própria (ex.: `backend/migrations/` ou definida no projeto .NET) e são responsáveis apenas por alterações no modelo da aplicação, não tocando nas tabelas base criadas pela pipeline Python.
+

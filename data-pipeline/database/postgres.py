@@ -113,7 +113,7 @@ def _technology_is_explicitly_mentioned(text: str, technology_name: str) -> bool
     Usamos uma verificação simples por substring porque é fácil de manter.
     Para `.NET`, também aceitamos `dotnet` como forma comum de escrita.
     """
-    text_lower = text.casefold()     # `casefold()` é melhor do que `lower()` para comparações de texto.
+    text_lower = text.casefold()  # `casefold()` é melhor do que `lower()` para comparações de texto.
     tech_lower = technology_name.casefold()
 
     if tech_lower in text_lower:
@@ -159,12 +159,11 @@ def save_jobs(
 ) -> dict[str, int]:
     """Guarda uma lista de anúncios e relaciona-os com uma tecnologia.
 
-    O fluxo :
+    O fluxo:
     1. garantir que a empresa existe;
     2. verificar se já existe um job igual para essa empresa;
     3. se não existir, criar o job;
     4. guardar a tecnologia e a relação na tabela pivot.
-
     """
     stats = {
         "processed": 0,
@@ -186,7 +185,7 @@ def save_jobs(
             location = _normalise_text(job.get("location"))
             description = _normalise_text(job.get("description"))
 
-            # `date_posted` é guardada como data pura, porque no LinkedIn e no
+            # `DatePosted` é guardada como data pura, porque no LinkedIn e no
             # Indeed normalmente não existe hora exata do anúncio.
             date_posted = job.get("date_posted")
             if hasattr(date_posted, "date") and not isinstance(date_posted, str):
@@ -202,14 +201,14 @@ def save_jobs(
                 continue
 
             # Primeiro garantimos que a empresa existe.
-            # O `UNIQUE(name)` impede duplicados e permite reaproveitar o mesmo id.
+            # O `UNIQUE(Name)` impede duplicados e permite reaproveitar o mesmo id.
             cur.execute(
                 """
-                INSERT INTO companies (id, name, location)
+                INSERT INTO "Companies" ("Id", "Name", "Location")
                 VALUES (%s, %s, %s)
-                ON CONFLICT (name) DO UPDATE
-                SET location = COALESCE(companies.location, EXCLUDED.location)
-                RETURNING id
+                ON CONFLICT ("Name") DO UPDATE
+                SET "Location" = COALESCE("Companies"."Location", EXCLUDED."Location")
+                RETURNING "Id"
                 """,
                 (uuid.uuid4(), company_name, location),
             )
@@ -219,11 +218,11 @@ def save_jobs(
             # Isto evita guardar a mesma vaga duas vezes, mesmo que a URL mude.
             cur.execute(
                 """
-                SELECT id
-                FROM jobs
-                WHERE company_id = %s
-                  AND title = %s
-                  AND COALESCE(location, '') = COALESCE(%s, '')
+                SELECT "Id"
+                FROM "Jobs"
+                WHERE "CompanyId" = %s
+                  AND "Title" = %s
+                  AND COALESCE("Location", '') = COALESCE(%s, '')
                 LIMIT 1
                 """,
                 (company_id, title, location),
@@ -235,26 +234,26 @@ def save_jobs(
                 # Se já existir, não criamos outro registo igual.
                 stats["skipped_existing"] += 1
             else:
-                # O `external_id` continua a ser guardado para manter a origem do anúncio,
+                # O `ExternalId` continua a ser guardado para manter a origem do anúncio,
                 # mas já não é ele que define se o job é novo ou não.
                 external_id = _build_external_id(job)
 
                 cur.execute(
                     """
-                    INSERT INTO jobs (
-                        id,
-                        company_id,
-                        title,
-                        location,
-                        salary_min,
-                        salary_max,
-                        description,
-                        source,
-                        external_id,
-                        date_posted
+                    INSERT INTO "Jobs" (
+                        "Id",
+                        "CompanyId",
+                        "Title",
+                        "Location",
+                        "SalaryMin",
+                        "SalaryMax",
+                        "Description",
+                        "Source",
+                        "ExternalId",
+                        "DatePosted"
                     )
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    RETURNING id
+                    RETURNING "Id"
                     """,
                     (
                         uuid.uuid4(),
@@ -266,7 +265,7 @@ def save_jobs(
                         description,
                         source,
                         external_id,
-                        job.get("date_posted"),
+                        date_posted,
                     ),
                 )
                 job_id = cur.fetchone()[0]
@@ -274,14 +273,14 @@ def save_jobs(
                 stats["inserted"] += 1
 
             # Guardamos a tecnologia separadamente para normalizar o modelo.
-            # `ON CONFLICT` evita duplicar o mesmo nome na tabela `technologies`.
+            # `ON CONFLICT` evita duplicar o mesmo nome na tabela `Technologies`.
             cur.execute(
                 """
-                INSERT INTO technologies (name)
+                INSERT INTO "Technologies" ("Name")
                 VALUES (%s)
-                ON CONFLICT (name) DO UPDATE
-                SET name = EXCLUDED.name
-                RETURNING id
+                ON CONFLICT ("Name") DO UPDATE
+                SET "Name" = EXCLUDED."Name"
+                RETURNING "Id"
                 """,
                 (technology_name,),
             )
@@ -301,17 +300,16 @@ def save_jobs(
             # vínculo for encontrado de novo.
             cur.execute(
                 """
-                INSERT INTO job_technologies (job_id, technology_id, confidence_score)
+                INSERT INTO "JobTechnologies" ("JobId", "TechnologyId", "ConfidenceScore")
                 VALUES (%s, %s, %s)
-                ON CONFLICT (job_id, technology_id) DO UPDATE
-                SET confidence_score = GREATEST(
-                    job_technologies.confidence_score,
-                    EXCLUDED.confidence_score
+                ON CONFLICT ("JobId", "TechnologyId") DO UPDATE
+                SET "ConfidenceScore" = GREATEST(
+                    "JobTechnologies"."ConfidenceScore",
+                    EXCLUDED."ConfidenceScore"
                 )
                 """,
                 (job_id, technology_id, confidence_score),
             )
-
 
     # Gravamos tudo no fim para manter a operação consistente.
     conn.commit()
