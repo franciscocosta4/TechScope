@@ -7,6 +7,11 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
 .idea/
 .vscode/
+
 data-pipeline/scrapers/chrome-profile/
+
+web-app/[Bb]in/
+web-app/[Oo]bj/
