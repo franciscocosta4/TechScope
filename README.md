@@ -163,11 +163,27 @@ python data-pipeline/scrapers/linkedin.py
 
 - [x] Scrapers para linkedin e indeed
 - [x] Estrutura inicial da base de dados
-- [ ] Web App .NET
-- [ ] Frontend web
-- [ ] Dashboards em tempo real
-- [ ] Extração de tecnologias com machine learning
-- [ ] Previsão salarial
-- [ ] Análise regional do mercado
-- [ ] Motor de recomendação de empregos
-- [ ] Previsão histórica do mercado
+- [x] Persistência em PostgreSQL
+
+### Análise do Mercado
+
+* [ ] Pesquisa e análise individual de tecnologias
+* [ ] Contagem de anúncios por tecnologia
+* [ ] Cálculo da quota de mercado de cada tecnologia
+* [ ] Análise do crescimento da procura ao longo do tempo
+* [ ] Identificação automática de tendências de mercado
+* [ ] Comparação entre tecnologias
+* [ ] Identificação de relações entre tecnologias frequentemente utilizadas em conjunto
+* [ ] Recolha e apresentação de informação salarial quando disponível
+
+### Aplicação Web
+
+* [ ] Frontend web
+* [ ] Dashboard de análise do mercado
+* [ ] Pesquisa e filtragem de tecnologias
+
+### Análise Regional
+
+* [ ] Análise regional do mercado tecnológico
+* [ ] Comparação da procura por tecnologia entre regiões
+

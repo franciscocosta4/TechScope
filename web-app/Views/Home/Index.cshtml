@@ -4,5 +4,29 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <!-- UTILIZADOR AUTENTICADO -->
+        <a asp-controller="Dashboard" asp-action="Index" class="btn-outline btn-sm">
+            Dashboard
+        </a>
+
+        <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-sm">
+                Logout
+            </button>
+        </form>
+    }
+    else
+    {
+        <!-- UTILIZADOR NÃO AUTENTICADO -->
+        <a asp-controller="Account" asp-action="Login" class="btn-outline btn-sm">
+            Sign in
+        </a>
+        <br />
+        <a asp-controller="Account" asp-action="Register" class="btn btn-sm">
+            Get started
+        </a>
+    }
+
 </div>

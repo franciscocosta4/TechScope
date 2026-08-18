@@ -87,7 +87,7 @@ public class AccountController : Controller
             // Faz login automático do utilizador (não precisa de fazer login manualmente)
             await _signInManager.SignInAsync(user, isPersistent: false);
             // Redireciona para o controller DashboardController e para a action Index
-            return RedirectToAction();
+            return RedirectToAction("Index", "Dashboard");
         }
 
         // Se houve erros, adiciona-os ao ModelState para exibir no formulário
@@ -151,7 +151,7 @@ public class AccountController : Controller
         // Se o login foi bem-sucedido
         if (result.Succeeded)
             // Redireciona para a dashboard
-            return RedirectToAction("Home");
+            return RedirectToAction("Index","Dashboard");
 
         // Se as credenciais forem inválidas, exibe mensagem de erro
         ModelState.AddModelError("", "Credenciais inválidas");
