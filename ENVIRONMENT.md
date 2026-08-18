@@ -1,86 +1,81 @@
 
-## Arquitectura do Sistema
+## Arquitetura da web app 
 
-```mermaid
-flowchart TD
+### Dashboard
 
-    Sources[(Fontes de Emprego)]
+- total de anúncios
+- tecnologias mais procuradas
+- gráfico de tendências do mercado
+- distribuição regional
+- volume de anúncios recentes
+- pesquisa rápida de tecnologias que leva para a página de detalhe da tecnologia
 
-    subgraph PythonPipeline[Python Pipeline]
-        Scheduler[Agendador Diário]
-        Scrapers[Scrapers de Emprego]
-        Processor[Processamento de Dados]
-        NLP[Extração de Tecnologias]
-    end
+### Página de detalhe da tecnologia
 
-    DB[(PostgreSQL)]
+- nome da tecnologia
+- número de anúncios
+- tendência mensal
+- salários
+- tecnologias relacionadas
+- empresas que recrutam
+- anúncios recentes relacionados
 
-    subgraph NETApp[.NET Application]
-        API[ASP.NET Core API]
-        Analytics[Motor de Análise]
-    end
+### Página de anúncios
 
-    Frontend[Dashboard Web]
+- barra de pesquisa para anúncios
+- filtros
+- cartões de anúncio por ordem, do mais recente para o mais antigo
+- paginação
+- opção de abrir o link original do anúncio
 
-    Sources --> Scheduler
-    Scheduler --> Scrapers
-    Scrapers --> Processor
-    Processor --> NLP
-    NLP --> DB
-
-    DB --> API
-    API --> Analytics
-    Analytics --> Frontend
-```
-
-## Modelo da Base de Dados
+## Modelo da Base de Dados gerada na pipeline
 
 ```mermaid
 erDiagram
 
-    COMPANIES ||--o{ JOBS : publica
+    Companies ||--o{ Jobs : publica
 
-    JOBS ||--o{ JOB_TECHNOLOGIES : contém
+    Jobs ||--o{ JobTechnologies : contém
 
-    TECHNOLOGIES ||--o{ JOB_TECHNOLOGIES : aparece_em
+    Technologies ||--o{ JobTechnologies : aparece_em
 
 
-    COMPANIES {
-        uuid id PK
-        string name
-        string website
-        string location
-        datetime created_at
+    Companies {
+        uuid Id PK
+        string Name
+        string Website
+        string Location
+        datetime CreatedAt
     }
 
 
-    JOBS {
-        uuid id PK
-        uuid company_id FK
-        string title
-        string location
-        decimal salary_min
-        decimal salary_max
-        text description
-        string source
-        string external_id
-        date date_posted
-        datetime created_at
+    Jobs {
+        uuid Id PK
+        uuid CompanyId FK
+        string Title
+        string Location
+        decimal SalaryMin
+        decimal SalaryMax
+        text Description
+        string Source
+        string ExternalId
+        date DatePosted
+        datetime CreatedAt
     }
 
 
-    TECHNOLOGIES {
-        bigint id PK
-        string name
-        string category
-        datetime created_at
+    Technologies {
+        bigint Id PK
+        string Name
+        string Category
+        datetime CreatedAt
     }
 
 
-    JOB_TECHNOLOGIES {
-        uuid job_id FK
-        bigint technology_id FK
-        decimal confidence_score
+    JobTechnologies {
+        uuid JobId FK
+        bigint TechnologyId FK
+        decimal ConfidenceScore
     }
 ```
 
