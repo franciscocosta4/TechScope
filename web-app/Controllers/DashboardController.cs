@@ -14,7 +14,7 @@ public class DashboardController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string searchString)
     {
         var totalJobs = await _context.Jobs.CountAsync();
         var totalTechnologies = await _context.Technologies.CountAsync();
@@ -37,8 +37,23 @@ public class DashboardController : Controller
             TotalJobs = totalJobs,
             TotalTechnologies = totalTechnologies,
             TotalCompanies = totalCompanies,
-            TopTechnologies = topTechnologies
+            TopTechnologies = topTechnologies,
+            SearchString = searchString
         };
+
+        if (!string.IsNullOrWhiteSpace(searchString))
+        {
+            var term = searchString.Trim();
+            model.SearchResults = await _context.Technologies
+                .Where(t => t.Name != null && t.Name.ToUpper().Contains(term.ToUpper()))
+                .OrderBy(t => t.Name)
+                .Select(t => new TechnologySearchResult
+                {
+                    Id = t.Id,
+                    Name = t.Name!
+                })
+                .ToListAsync();
+        }
 
         return View(model);
     }

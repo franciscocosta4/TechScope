@@ -20,10 +20,48 @@
     </div>
 </div>
 
-@if (Model.TopTechnologies.Any())
-{
-    <div class="mt-5">
-        <h3>Top 10 Tecnologias Mais Procuradas</h3>
+<div class="mt-5">
+    <h3>Pesquisar Tecnologia</h3>
+
+    <form method="get" asp-action="Index" class="search-form">
+        <input class="search-input"
+               type="text"
+               name="SearchString"
+               value="@Model.SearchString"
+               placeholder="Ex: React, Java, Docker..." />
+        <button type="submit" class="btn btn-sm">
+            <i class="fa-solid fa-magnifying-glass"></i> Pesquisar
+        </button>
+    </form>
+
+    @if (!string.IsNullOrWhiteSpace(Model.SearchString))
+    {
+        @if (Model.SearchResults.Any())
+        {
+            <div class="search-results">
+                <h5 class="mt-4">Resultados para "@Model.SearchString"</h5>
+                <ul>
+                    @foreach (var item in Model.SearchResults)
+                    {
+                        <li>
+                            <strong>@item.Name</strong>
+                            <span class="text-muted">(Id: @item.Id)</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted mt-3">Nenhuma tecnologia encontrada para "@Model.SearchString".</p>
+        }
+    }
+</div>
+
+<div class="mt-5">
+    <h3>Top 10 Tecnologias Mais Procuradas</h3>
+    @if (Model.TopTechnologies.Any())
+    {
         <table class="table">
             <thead>
                 <tr>
@@ -47,5 +85,5 @@
                 }
             </tbody>
         </table>
-    </div>
-}
+    }
+</div>
