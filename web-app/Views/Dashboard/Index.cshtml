@@ -1,14 +1,51 @@
-@model TechScope.Models.DashboardViewModel
+@model TechScope.ViewModels.DashboardViewModel
+
 <div class="text-center">
     <h1 class="display-4">TechScope</h1>
-    <p>Dashboard.</p>
-    @if (User.Identity != null && User.Identity.IsAuthenticated)
-    {
-        <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
-            <button type="submit" class="btn btn-sm">
-                Logout
-            </button>
-        </form>
-    }
-
+    <p class="text-muted">Análise do mercado tecnológico</p>
 </div>
+
+<div class="stats-grid mt-4">
+    <div class="stat-card">
+        <div class="stat-number">@Model.TotalJobs.ToString("N0")</div>
+        <div class="stat-label">Total de Anúncios</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">@Model.TotalTechnologies.ToString("N0")</div>
+        <div class="stat-label">Tecnologias Identificadas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">@Model.TotalCompanies.ToString("N0")</div>
+        <div class="stat-label">Empresas</div>
+    </div>
+</div>
+
+@if (Model.TopTechnologies.Any())
+{
+    <div class="mt-5">
+        <h3>Top 10 Tecnologias Mais Procuradas</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tecnologia</th>
+                    <th>Anúncios</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int rank = 1;
+                }
+                @foreach (var item in Model.TopTechnologies)
+                {
+                    <tr>
+                        <td>@rank</td>
+                        <td>@item.Name</td>
+                        <td>@item.Count.ToString("N0")</td>
+                    </tr>
+                    rank++;
+                }
+            </tbody>
+        </table>
+    </div>
+}

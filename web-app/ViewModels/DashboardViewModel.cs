@@ -1,10 +1,15 @@
-namespace TechScope.Models
+namespace TechScope.ViewModels;
+
+public class DashboardViewModel
 {
-    public class DashboardViewModel
-    {
-        // passamos os dados que são necessários para a sidebar:
-        public required string FullName { get; set; }
-        public required string Email { get; set; }
-        public required string Initial { get; set; }
-    }
+    public int TotalJobs { get; set; }
+    public int TotalTechnologies { get; set; }
+    public int TotalCompanies { get; set; }
+    public List<TopTechnologyItem> TopTechnologies { get; set; } = new();
+}
+
+public class TopTechnologyItem
+{
+    public string Name { get; set; } = string.Empty;
+    public int Count { get; set; }
 }

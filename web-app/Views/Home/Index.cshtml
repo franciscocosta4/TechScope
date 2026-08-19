@@ -1,32 +1,12 @@
-﻿@{
+@{
     Layout = "_LayoutLanding";
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    @if (User.Identity != null && User.Identity.IsAuthenticated)
-    {
-        <!-- UTILIZADOR AUTENTICADO -->
-        <a asp-controller="Dashboard" asp-action="Index" class="btn-outline btn-sm">
-            Dashboard
-        </a>
-
-        <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
-            <button type="submit" class="btn btn-sm">
-                Logout
-            </button>
-        </form>
-    }
-    else
-    {
-        <!-- UTILIZADOR NÃO AUTENTICADO -->
-        <a asp-controller="Account" asp-action="Login" class="btn-outline btn-sm">
-            Sign in
-        </a>
-        <br />
-        <a asp-controller="Account" asp-action="Register" class="btn btn-sm">
-            Get started
-        </a>
-    }
-
-</div>
 }
+
+<div class="landing-content">
+    <h1 class="display-4">TechScope</h1>
+    <p class="lead">Análise do mercado tecnológico em tempo real.</p>
+    <p>Explora a procura por linguagens, frameworks e ferramentas com base em dados reais de anúncios de emprego.</p>
+    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary btn-lg mt-3">
+        <i class="fas fa-chart-bar"></i> Ver Dashboard
+    </a>
+</div>

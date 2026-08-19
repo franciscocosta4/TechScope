@@ -1,4 +1,17 @@
 
+# Por que não temos autenticação
+
+A aplicação **não tem login, registo nem qualquer sistema de autenticação**. Esta decisão foi tomada porque:
+
+1. **Não há personalização por utilizador** — a app mostra dados agregados do mercado (total de anúncios, tecnologias mais procuradas, tendências). Não há filtros guardados, preferências ou dados privados.
+2. **É uma aplicação pública de leitura** — todas as rotas são `GET`. Os scrapers é que escrevem na base de dados; a web app só lê.
+3. **Sem complicações de manutenção** — não há Identity, JWT, cookies, sessões, passwords nem multi-tenancy.
+4. **Demo pública simples** — qualquer pessoa pode entrar na app e ver o dashboard. Sem barreiras.
+
+Isto também simplifica o deployment: não precisamos de HTTPS obrigatório por causa de cookies, nem de gestão de segredos de auth.
+
+---
+
 ## Arquitetura da web app 
 
 ### Dashboard
@@ -82,7 +95,7 @@ erDiagram
 ---
 # Ligação à base de dados
 
-A ligação à PostgreSQL foi centralizada em `data-pipeline/database/postgres.py` para evitar repetir configuração nos scrapers.
+A ligação ao PostgreSQL foi centralizada em `data-pipeline/database/postgres.py` para evitar repetir configuração nos scrapers.
 Assim, a configuração fica num único sítio e é mais fácil de manter.
 
 # Como evitamos empresas duplicadas

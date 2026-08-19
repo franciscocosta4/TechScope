@@ -3,7 +3,7 @@
 # TechScope
 
 
-O TechScope é uma aplicação web de análise do mercado tecnológico que avalia a procura por linguagens de programação, frameworks e ferramentas com base em dados reais de anúncios de emprego.
+A TechScope é uma ferramenta de análise do mercado tecnológico que avalia a procura por linguagens de programação, frameworks e ferramentas com base em dados reais de anúncios de emprego.
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white) 
 </div>
@@ -11,9 +11,18 @@ O TechScope é uma aplicação web de análise do mercado tecnológico que avali
 
 ## Sobre o projeto
 
-O sistema recolhe ofertas de emprego do Linkedin e do Indeed, analisa cada anúncio e transforma essa informação em insights úteis sobre o mercado tech atual. 
-A app fornece informação sobre procura de tecnologias, tendências de crescimento do mercado, comparações entre tecnologias, informação salarial quando disponível e relações entre tecnologias que costumam ser usadas em conjunto.
-O objectivo da TechScope é ajudar devs a melhor compreenderem os requisitos do mercado e identificarem oportunidades de crescimento profissional.
+A TechScope recolhe anúncios de emprego do **LinkedIn** e **Indeed**, analisa cada oferta e transforma-a em indicadores úteis sobre o mercado tech atual.
+
+A aplicação mostra:
+
+- **Procura por tecnologia** — quantos anúncios mencionam cada linguagem, framework ou ferramenta
+- **Tendências de crescimento** — quais tecnologias estão a subir ou a cair ao longo do tempo
+- **Comparações** — compara quotas de mercado, crescimento e adoção entre tecnologias
+- **Relações entre tecnologias** — identifica stacks e combinações que costumam aparecer juntas
+- **Informação salarial** — quando disponível nos anúncios
+- **Empresas que recrutam** — quais empresas estão a procurar perfis de determinada tecnologia
+
+O objetivo é ajudar devs e pessoas que pretendem mudar de carreira a tomar decisões mais informadas sobre o que aprender e onde investir o seu tempo.
 
 # Arquitetura
 

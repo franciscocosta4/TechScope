@@ -1,48 +1,45 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using TechScope.Models;
+using Microsoft.EntityFrameworkCore;
 using TechScope.Data;
+using TechScope.ViewModels;
 
 namespace web_app.Controllers;
 
-
-[Authorize]
 public class DashboardController : Controller
 {
-    private readonly string _connectionString;
-
     private readonly ApplicationDbContext _context;
-    private readonly UserManager<ApplicationUser> _userManager;
-    public DashboardController(IConfiguration configuration, ApplicationDbContext context, UserManager<ApplicationUser> userManager)
-    {
-        _connectionString = configuration.GetConnectionString("DefaultConnection")!;
-        _context = context;
-        _userManager = userManager;
-    }
 
+    public DashboardController(ApplicationDbContext context)
+    {
+        _context = context;
+    }
 
     public async Task<IActionResult> Index()
     {
-        var user = await _userManager.GetUserAsync(User);
-        // não precisa de ser assincrona pois nao vai a bd, apenas pega no id do User
-        var userid = _userManager.GetUserId(User);
+        var totalJobs = await _context.Jobs.CountAsync();
+        var totalTechnologies = await _context.Technologies.CountAsync();
+        var totalCompanies = await _context.Companies.CountAsync();
+
+        var topTechnologies = await _context.JobTechnologies
+            .Include(jt => jt.Technology)
+            .GroupBy(jt => jt.TechnologyId)
+            .OrderByDescending(g => g.Count())
+            .Take(10)
+            .Select(g => new TopTechnologyItem
+            {
+                Name = g.First().Technology!.Name,
+                Count = g.Count()
+            })
+            .ToListAsync();
 
         var model = new DashboardViewModel
         {
-            FullName = user.FullName,
-            Email = user.Email,
-            Initial = user.FullName?[0].ToString().ToUpper(),
+            TotalJobs = totalJobs,
+            TotalTechnologies = totalTechnologies,
+            TotalCompanies = totalCompanies,
+            TopTechnologies = topTechnologies
         };
 
         return View(model);
     }
-
-
-    // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    // public IActionResult Error()
-    // {
-    //     return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    // }
 }
