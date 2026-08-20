@@ -43,10 +43,15 @@
                 <ul>
                     @foreach (var item in Model.SearchResults)
                     {
-                        <li>
+                        @* <li>
                             <strong>@item.Name</strong>
                             <span class="text-muted">(Id: @item.Id)</span>
-                        </li>
+                        </li> *@
+                        <div>
+                            <a asp-controller="TechPage" asp-action="Index" asp-route-id="@item.Id">
+                                @item.Name
+                            </a>
+                        </div>
                     }
                 </ul>
             </div>
@@ -57,7 +62,7 @@
         }
     }
 </div>
-
+<br/>
 <div class="mt-5">
     <h3>Top 10 Tecnologias Mais Procuradas</h3>
     @if (Model.TopTechnologies.Any())
