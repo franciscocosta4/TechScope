@@ -20,12 +20,12 @@ from state import get_next_start, update_last_start
 # QUERY é o termo usado no site.
 # TECHNOLOGY_NAME é o nome canónico guardado na BD.
 # Se quiseres analisar .NET, por exemplo, usa QUERY=".net" e TECHNOLOGY_NAME=".NET".
-QUERY = "php"
+QUERY = "Java"
 TECHNOLOGY_NAME = QUERY
 LOCATION = "Portugal"
 RADIUS = 50
 PAGE_SIZE = 15
-MAX_START = 90
+MAX_START = 1000
 SOURCE = "indeed"
 
 
@@ -43,14 +43,15 @@ with get_connection() as conn:
     with sync_playwright() as p:
         # Retoma a paginação a partir do último bloco guardado para esta query.
         start_value = get_next_start(SOURCE, QUERY, PAGE_SIZE)
-        # Percorre os resultados em blocos de 15 anúncios.
-        for start in range(start_value, MAX_START, PAGE_SIZE):
+        # O nosso range cresce a partir do ponto onde ficamos na ultima execução. ou seja se ficamos no start=20 o range maximo fica 1000+20
+        for start in range(start_value, MAX_START + start_value, PAGE_SIZE):
             params = urlencode(
                 {
                     "q": QUERY,
                     "l": LOCATION,
                     "radius": RADIUS,
                     "start": start,
+                    # "sort": "date",  # ordenar por data (mais recente primeiro)
                 }
             )
             url = f"https://pt.indeed.com/jobs?{params}"

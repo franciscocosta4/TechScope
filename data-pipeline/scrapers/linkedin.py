@@ -19,10 +19,10 @@ from state import get_next_start, update_last_start
 # QUERY é o termo usado no site.
 # TECHNOLOGY_NAME é o nome canónico guardado na BD.
 # Se quiseres analisar .NET, por exemplo, usa QUERY=".net" e TECHNOLOGY_NAME=".NET".
-QUERY = ".NET"
+QUERY = "ASP.NET"
 TECHNOLOGY_NAME = QUERY
 LOCATION = "Portugal"
-MAX_START = 200
+MAX_START = 1000
 PAGE_SIZE = 10
 SOURCE = "linkedin"
 HEADERS = {
@@ -56,10 +56,10 @@ with get_connection() as conn:
     # Retoma a paginação a partir do último bloco guardado para esta query.
     start_value = get_next_start(SOURCE, QUERY, PAGE_SIZE)
 
-    # O LinkedIn devolve resultados por blocos fixos de 20 anúncios.
-    for start in range(start_value, MAX_START, PAGE_SIZE):
+    # O nosso range cresce a partir do ponto onde ficamos na ultima execução. ou seja se ficamos no start=20 o range maximo fica 1000+20
+    for start in range(start_value, MAX_START + start_value , PAGE_SIZE):
         total_pages += 1
-        params = urlencode({"keywords": QUERY, "location": LOCATION, "start": start})
+        params = urlencode({"keywords": QUERY, "location": LOCATION, "start": start, "sortBy": "DD"  }) # ordenar por data (mais recente primeiro
         url = (
             "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
             f"?{params}"
