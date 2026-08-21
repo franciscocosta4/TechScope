@@ -17,11 +17,10 @@ CHROME_CDP_URL = "http://localhost:9222"
 from database import ensure_schema, get_connection, save_jobs
 from state import get_next_start, update_last_start
 
-# QUERY é o termo usado no site.
-# TECHNOLOGY_NAME é o nome canónico guardado na BD.
-# Se quiseres analisar .NET, por exemplo, usa QUERY=".net" e TECHNOLOGY_NAME=".NET".
-QUERY = "Java"
-TECHNOLOGY_NAME = QUERY
+# QUERY é o termo usado no site (role, não tecnologia).
+# A tecnologia é extraída depois pelo scraper de keywords a partir da descrição.
+QUERY = "web developer"
+TECHNOLOGY_NAME = None
 LOCATION = "Portugal"
 RADIUS = 50
 PAGE_SIZE = 15
@@ -164,7 +163,6 @@ with get_connection() as conn:
                         conn,
                         page_jobs,
                         SOURCE,
-                        TECHNOLOGY_NAME,
                         QUERY,
                     )
                     total_jobs_saved += stats["inserted"]

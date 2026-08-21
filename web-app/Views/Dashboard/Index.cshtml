@@ -26,7 +26,7 @@
     <form method="get" asp-action="Index" class="search-form">
         <input class="search-input"
                type="text"
-               name="SearchString"
+               name="searchString"
                value="@Model.SearchString"
                placeholder="Ex: React, Java, Docker..." />
         <button type="submit" class="btn btn-sm">
@@ -43,15 +43,11 @@
                 <ul>
                     @foreach (var item in Model.SearchResults)
                     {
-                        @* <li>
-                            <strong>@item.Name</strong>
-                            <span class="text-muted">(Id: @item.Id)</span>
-                        </li> *@
-                        <div>
-                            <a asp-controller="TechPage" asp-action="Index" asp-route-id="@item.Id">
+                        <li>
+                            <a asp-controller="Technology" asp-action="Detail" asp-route-keyword="@item.Name">
                                 @item.Name
                             </a>
-                        </div>
+                        </li>
                     }
                 </ul>
             </div>

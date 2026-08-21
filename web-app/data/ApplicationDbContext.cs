@@ -12,8 +12,7 @@ namespace TechScope.Data
 
         public DbSet<Company> Companies => Set<Company>();
         public DbSet<Job> Jobs => Set<Job>();
-        public DbSet<Technology> Technologies => Set<Technology>();
-        public DbSet<JobTechnology> JobTechnologies => Set<JobTechnology>();
+        public DbSet<JobKeyword> JobKeywords => Set<JobKeyword>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -32,30 +31,14 @@ namespace TechScope.Data
                 .HasForeignKey(job => job.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Technology>()
-                .ToTable("Technologies", table => table.ExcludeFromMigrations());
-            builder.Entity<Technology>()
-                .HasKey(technology => technology.Id);
-
-            builder.Entity<JobTechnology>()
-                .ToTable("JobTechnologies", table => table.ExcludeFromMigrations());
-            builder.Entity<JobTechnology>()
-                .HasKey(jobTechnology => new
-                {
-                    jobTechnology.JobId,
-                    jobTechnology.TechnologyId
-                });
-
-            builder.Entity<JobTechnology>()
-                .HasOne(jobTechnology => jobTechnology.Job)
-                .WithMany(job => job.JobTechnologies)
-                .HasForeignKey(jobTechnology => jobTechnology.JobId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<JobTechnology>()
-                .HasOne(jobTechnology => jobTechnology.Technology)
-                .WithMany(technology => technology.JobTechnologies)
-                .HasForeignKey(jobTechnology => jobTechnology.TechnologyId)
+            builder.Entity<JobKeyword>()
+                .ToTable("JobKeywords", table => table.ExcludeFromMigrations());
+            builder.Entity<JobKeyword>()
+                .HasKey(jk => new { jk.JobId, jk.Keyword, jk.Category });
+            builder.Entity<JobKeyword>()
+                .HasOne(jk => jk.Job)
+                .WithMany()
+                .HasForeignKey(jk => jk.JobId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

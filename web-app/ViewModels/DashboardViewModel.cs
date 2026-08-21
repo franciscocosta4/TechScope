@@ -18,6 +18,5 @@ public class TopTechnologyItem
 
 public class TechnologySearchResult
 {
-    public long Id { get; set; }
     public string Name { get; set; } = string.Empty;
 }

@@ -149,16 +149,18 @@ def save_jobs(
     conn: psycopg.Connection,
     jobs: list[dict[str, Any]],
     source: str,
-    technology_name: str,
     query: str,
 ) -> dict[str, int]:
-    """Guarda uma lista de anúncios e relaciona-os com uma tecnologia.
+    """Guarda uma lista de anúncios na base de dados.
 
     O fluxo:
     1. garantir que a empresa existe;
     2. verificar se já existe um job igual para essa empresa;
-    3. se não existir, criar o job;
-    4. guardar a tecnologia e a relação na tabela pivot.
+    3. se não existir, criar o job.
+
+    Nota: a associação de tecnologias deixou de ser feita aqui.
+    As tecnologias são extraídas posteriormente pelos scrapers de keywords
+    e guardadas na tabela JobKeywords.
     """
     stats = {
         "processed": 0,
@@ -167,11 +169,7 @@ def save_jobs(
         "skipped_invalid": 0,
     }
 
-    technology_name = _normalise_text(technology_name)
     query = _normalise_text(query) or ""
-
-    if not technology_name:
-        raise ValueError("technology_name é obrigatório para guardar jobs.")
 
     with conn.cursor() as cur:
         for job in jobs:
@@ -252,45 +250,6 @@ def save_jobs(
                 job_id = cur.fetchone()[0]
                 # Só contamos como inserido quando o job novo foi mesmo criado.
                 stats["inserted"] += 1
-
-            # Guardamos a tecnologia separadamente para normalizar o modelo.
-            # `ON CONFLICT` evita duplicar o mesmo nome na tabela `Technologies`.
-            cur.execute(
-                """
-                INSERT INTO "Technologies" ("Name")
-                VALUES (%s)
-                ON CONFLICT ("Name") DO UPDATE
-                SET "Name" = EXCLUDED."Name"
-                RETURNING "Id"
-                """,
-                (technology_name,),
-            )
-            technology_id = cur.fetchone()[0]
-
-            # O score é simples e ajuda-nos a perceber quanta confiança existe
-            # nesta relação job-tecnologia.
-            confidence_score = _confidence_score(
-                query=query,
-                technology_name=technology_name,
-                title=title,
-                description=description,
-            )
-
-            # A relação final fica na tabela pivot.
-            # O UPSERT impede duplicados e mantém o score mais alto se o mesmo
-            # vínculo for encontrado de novo.
-            cur.execute(
-                """
-                INSERT INTO "JobTechnologies" ("JobId", "TechnologyId", "ConfidenceScore")
-                VALUES (%s, %s, %s)
-                ON CONFLICT ("JobId", "TechnologyId") DO UPDATE
-                SET "ConfidenceScore" = GREATEST(
-                    "JobTechnologies"."ConfidenceScore",
-                    EXCLUDED."ConfidenceScore"
-                )
-                """,
-                (job_id, technology_id, confidence_score),
-            )
 
     # Gravamos tudo no fim para manter a operação consistente.
     conn.commit()

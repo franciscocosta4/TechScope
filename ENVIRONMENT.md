@@ -48,9 +48,7 @@ Assim, a configuração fica num único sítio e é mais fácil de manter.
 erDiagram
 
     Companies ||--o{ Jobs : publica
-    Jobs ||--o{ JobTechnologies : contém
     Jobs ||--o{ JobKeywords : tem
-    Technologies ||--o{ JobTechnologies : aparece_em
 
     Companies {
         uuid Id PK
@@ -65,34 +63,17 @@ erDiagram
         uuid CompanyId FK
         string Title
         string Location
-        decimal SalaryMin
-        decimal SalaryMax
-        text Description
         string Source
         string ExternalId
         date DatePosted
         datetime CreatedAt
     }
 
-    Technologies {
-        bigint Id PK
-        string Name
-        string Category
-        datetime CreatedAt
-    }
-
-    JobTechnologies {
-        uuid JobId PK, FK
-        bigint TechnologyId PK, FK
-        decimal ConfidenceScore
-    }
-
     JobKeywords {
         uuid JobId PK, FK
-        string Keyword PK
-        string Category PK
+        string Keyword
+        string Category
     }
-
 ```
 
 ---
@@ -113,37 +94,32 @@ Se não encontrar, cria o job novo ligado à empresa certa.
 
 Isto evita duplicados simples e mantém a relação entre empresas e anúncios limpa.
 
-## Porque a tabela `jobs` não tem descrição nem salário
 
-A tabela `Jobs` guarda apenas o essencial para identificação e análise:
-- `Title`, `Location`, `Source`, `ExternalId`, `DatePosted`, `CreatedAt`
+## Como extraímos tecnologias das descrições
 
-As colunas `SalaryMin`, `SalaryMax` e `Description` foram removidas porque:
-1. **Descrição** — não a usamos diretamente na app; as keywords extraídas vivem na tabela `JobKeywords`
-2. **Salário** — a extração é inconsistente entre fontes (LinkedIn vs Indeed) e não é o foco do projeto
-3. **Simplicidade** — menos colunas = menos código, menos manutenção, menos coisas que podem quebrar quando os scrapers mudam
+Em vez de pesquisar diretamente por tecnologias, os scrapers de listings procuram **roles** (ex: "web developer", "backend developer").
+A associação de tecnologias é feita posteriormente pelos **scrapers de keywords**, que abrem cada descrição e extraem:
 
-A tabela `companies` existe para normalizar empresas e evitar duplicados.
-A tabela `jobs` guarda o anúncio principal para depois servir análises na app .NET.
+- **Tecnologias** mencionadas no texto (via regex + matching contra tecnologias conhecidas)
+- **Seniority** (junior, pleno, senior, lead)
+- **Experiência** (anos de experiência requeridos)
+- **Modelo de trabalho** (remote, híbrido, presencial)
 
-`date_posted` fica como `DATE` e não `TIMESTAMPTZ`, porque nos scrapers o que normalmente vem do LinkedIn/Indeed é só a data do anúncio e não uma hora exata.
-O `created_at` continua como `TIMESTAMPTZ` porque aí sim interessa saber o momento exacto em que o registo entrou na base de dados.
+Tudo é guardado na tabela `JobKeywords` com a categoria correspondente.
 
+Isto é mais fiável porque:
+1. As descrições são a fonte mais rica de informação sobre tecnologias
+2. Não dependemos da query de pesquisa para inferir tecnologias
+3. Conseguimos capturar tecnologias complementares que não aparecem no título
 
-## Como ligamos jobs a tecnologias
+As categorias guardadas em `JobKeywords`:
 
-Cada scraper tem duas variáveis importantes: `QUERY` e `TECHNOLOGY_NAME`.
-`QUERY` é o termo usado no site para fazer a pesquisa.
-`TECHNOLOGY_NAME` é o nome que guardamos na tabela `technologies`.
-
-Por exemplo, se quisermos analisar `.NET`, podemos usar `QUERY=".net"` e `TECHNOLOGY_NAME=".NET"`.
-Se o título ou a descrição mencionar claramente a tecnologia, o score vai para `1.0`.
-Se a relação vier apenas do contexto da pesquisa, o score fica em `0.5`.
-
-Isto permite filtrar depois: `confidence_score = 1.0` mostra apenas tecnologias confirmadas no anúncio; `confidence_score = 0.5` inclui também relações contextuais.
-
-A tabela `technologies` usa um ID simples auto-incrementado porque facilita leitura e manutenção.
-A relação final é guardada em `job_technologies` com `confidence_score`.
+| Categoria | Exemplos |
+|---|---|
+| `technology` | react, docker, postgresql, typescript |
+| `seniority` | junior, pleno, senior, lead |
+| `experience` | 1+ anos, 2-3 anos, 5+ anos |
+| `work_model` | remote, híbrido, presencial |
 
 ## Como funciona a paginação guardada
 
@@ -248,6 +224,18 @@ Usamos **regex simples** em vez de NLP ou machine learning porque:
 
 Procuramos por tecnologias na descrição para que possamos ter a capacidade de encontrar padrões e tecnologias relacionadas.
 
+## Normalização de tecnologias
+
+Para evitar duplicação de variantes da mesma tecnologia (ex: `.net`, `.net framework`, `asp.net`, `c#`), aplicamos uma normalização antes de guardar as keywords.
+
+O mapa `TECH_ALIASES` no `keyword_extractor.py` agrupa variantes sob um termo comum para cada tecnologia.
+Após a extração por regex, cada keyword de tecnologia é normalizada:
+
+```python
+tech = _normalize_tech_keyword(tech)  # .net framework → .net
+```
+
+Isto garante que na base de dados temos termos canónicos, facilitando queries agregadas.
 
 ## Scrapers de keywords
 
@@ -271,19 +259,4 @@ O LinkedIn carrega a descrição do anúncio via **JavaScript**. Quando acedemos
 
 Para contornar isto, o `linkedin_keywords.py` usa **Playwright via CDP** (igual ao scraper do Indeed).
 Isto significa que o Chrome debug (`start_chrome_debug.bat`) tem de estar aberto quando correres os scrapers de keywords do LinkedIn. O Indeed não tem este problema porque o scraper original já usava Playwright. Mantivemos a consistência.
-
-## Execução
-
-```bash
-# 1. Aplica a migration (uma única vez)
-psql -U postgres -d techscope -f data-pipeline/database/migrations/001_initial.sql
-
-# 2. Corre os scrapers de keywords (batch de 50 por execução)
-python data-pipeline/scrapers/indeed_keywords.py
-python data-pipeline/scrapers/linkedin_keywords.py
-
-# 3. Quando não houver mais jobs, a query retorna vazio
-```
-
-Cada execução processa até 50 jobs por source. Corre os scripts várias vezes até esgotarem os jobs sem keywords.
 

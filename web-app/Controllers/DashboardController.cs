@@ -14,20 +14,25 @@ public class DashboardController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index(string searchString)
+    public async Task<IActionResult> Index(string? searchString)
     {
         var totalJobs = await _context.Jobs.CountAsync();
-        var totalTechnologies = await _context.Technologies.CountAsync();
         var totalCompanies = await _context.Companies.CountAsync();
 
-        var topTechnologies = await _context.JobTechnologies
-            .Include(jt => jt.Technology)
-            .GroupBy(jt => jt.TechnologyId)
+        var totalTechnologies = await _context.JobKeywords
+            .Where(jk => jk.Category == "technology")
+            .Select(jk => jk.Keyword)
+            .Distinct()
+            .CountAsync();
+
+        var topTechnologies = await _context.JobKeywords
+            .Where(jk => jk.Category == "technology")
+            .GroupBy(jk => jk.Keyword)
             .OrderByDescending(g => g.Count())
             .Take(10)
             .Select(g => new TopTechnologyItem
             {
-                Name = g.First().Technology!.Name,
+                Name = g.Key,
                 Count = g.Count()
             })
             .ToListAsync();
@@ -44,13 +49,14 @@ public class DashboardController : Controller
         if (!string.IsNullOrWhiteSpace(searchString))
         {
             var term = searchString.Trim();
-            model.SearchResults = await _context.Technologies
-                .Where(t => t.Name != null && t.Name.ToUpper().Contains(term.ToUpper()))
-                .OrderBy(t => t.Name)
-                .Select(t => new TechnologySearchResult
+            model.SearchResults = await _context.JobKeywords
+                .Where(jk => jk.Category == "technology" && jk.Keyword != null && jk.Keyword.ToUpper().Contains(term.ToUpper()))
+                .Select(jk => jk.Keyword)
+                .Distinct()
+                .OrderBy(k => k)
+                .Select(k => new TechnologySearchResult
                 {
-                    Id = t.Id,
-                    Name = t.Name!
+                    Name = k!
                 })
                 .ToListAsync();
         }

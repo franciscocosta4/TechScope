@@ -25,7 +25,7 @@ public class Job
     public DateTime CreatedAt { get; set; }
 
     public Company Company { get; set; } = null!;
-    public ICollection<JobTechnology> JobTechnologies { get; set; } = new List<JobTechnology>();
+    // public ICollection<JobTechnology> JobTechnologies { get; set; } = new List<JobTechnology>();
     
 }
 }

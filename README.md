@@ -21,6 +21,7 @@ A aplicação mostra:
 - **Relações entre tecnologias** — identifica stacks e combinações que costumam aparecer juntas
 - **Informação salarial** — quando disponível nos anúncios
 - **Empresas que recrutam** — quais empresas estão a procurar perfis de determinada tecnologia
+- **Normalização de tecnologias** — variantes como `.net`, `.net framework`, `asp.net` e `c#` são agrupadas sob `.net`; `node.js` → `nodejs`, `js` → `javascript`, etc.
 
 O objetivo é ajudar devs e pessoas que pretendem mudar de carreira a tomar decisões mais informadas sobre o que aprender e onde investir o seu tempo.
 
@@ -58,52 +59,6 @@ flowchart TD
     API --> Analytics
     Analytics --> Frontend
 ```
-
-## Funcionalidades Principais
-
-### Análise de Tecnologias
-
-Pesquisa por tecnologias:
-
-Exemplos:
-* Java
-* React
-* Node.js
-* Docker
-* Kubernetes
-
-Devolve:
-* Número de anúncios disponíveis
-* Quota de mercado
-* Crescimento ao longo do tempo
-
-
-
-### Comparação de Tecnologias
-
-Exemplo de Comparação:
-
-| Métrica | Spring Boot | Node.js |
-| --- | --- | --- |
-| Número de anúncios | 1000 | 250 |
-| Crescimento | +10% | -2% |
-| Competências relacionadas |  |  |
-
-
-### Tendências de Mercado
-
-Identifica tecnologias com procura crescente.
-
-Exemplo:
-
-```
-Tecnologia     Crescimento
-
-Kubernetes     +35%
-Docker         +28%
-React          +15%
-```
-
 
 
 ## Começando com o projeto
