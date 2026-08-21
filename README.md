@@ -109,27 +109,12 @@ React          +15%
 ## Começando com o projeto
 
 ### 1. Pré-requisitos
-
+- .NET 8.0
 - Python 3.11+
 - PostgreSQL
 - Google Chrome instalado (para o scraper do Indeed)
 
-### 2. Criar e activar o ambiente virtual
-
-Na raiz do projecto:
-
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-```
-
-### 3. Instalar dependências
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Configurar variáveis de ambiente
+### 2. Configurar variáveis de ambiente
 
 Cria um ficheiro `.env` na raiz do projecto. Podes copiar a partir de `.env.example`:
 
@@ -146,6 +131,26 @@ Os scrapers em Python lêem as seguintes variáveis do `.env`:
 - `PGUSER`
 - `PGPASSWORD`
 
+### 3. Arrancar a aplicação web
+
+A aplicação .NET **não requer autenticação**. Basta arrancar e a dashboard abre diretamente:
+
+```bash
+cd web-app
+dotnet run
+```
+
+A app fica disponível em `https://localhost:5001` (ou a porta configurada).
+
+### 4. Preparar a base de dados
+
+Na primeira execução, os scrapers criam o schema a partir de `data-pipeline/database/migrations/001_initial.sql`.
+
+```bash
+# Aplica a migration (apenas uma vez)
+psql -U postgres -d techscope -f data-pipeline/database/migrations/001_initial.sql
+```
+
 ### 5. Arrancar o Chrome para o Indeed
 
 Para o scraper do Indeed, corre o ficheiro:
@@ -158,21 +163,29 @@ Isto abre o Chrome com o perfil do projecto e a porta de debug activa.
 
 ### 6. Correr os scrapers
 
-Na primeira execução, os scrapers criam o schema base a partir de `data-pipeline/database/migrations/001_initial.sql`.
-
 Executa os scrapers a partir da raiz do repositório:
 
 ```bash
+# Scrapers de anúncios (listings)
 python data-pipeline/scrapers/indeed.py
 python data-pipeline/scrapers/linkedin.py
+
+# Scrapers de keywords (extraem descrições e analisam conteúdo)
+python data-pipeline/scrapers/indeed_keywords.py
+python data-pipeline/scrapers/linkedin_keywords.py
 ```
 
+Cada scraper processa um batch de até 50 jobs por execução. Corre-os várias vezes até não haver mais jobs para processar.
+
+> **Nota:** Os scrapers de keywords do LinkedIn precisam do Chrome debug aberto porque o LinkedIn carrega as descrições via JavaScript.
 
 ## Roadmap
 
-- [x] Scrapers para linkedin e indeed
+- [x] Scrapers para LinkedIn e Indeed
 - [x] Estrutura inicial da base de dados
 - [x] Persistência em PostgreSQL
+- [x] Dashboard web com pesquisa de tecnologias
+- [x] Extração de keywords de descrições (seniority, experiência, modelo de trabalho, tecnologias)
 
 ### Análise do Mercado
 
@@ -187,9 +200,13 @@ python data-pipeline/scrapers/linkedin.py
 
 ### Aplicação Web
 
-* [ ] Frontend web
-* [ ] Dashboard de análise do mercado
-* [ ] Pesquisa e filtragem de tecnologias
+* [x] Frontend web
+* [x] Dashboard de análise do mercado
+* [x] Pesquisa e filtragem de tecnologias
+* [ ] Página de detalhe de tecnologia
+* [ ] Página de anúncios com filtros
+* [ ] Comparação entre tecnologias
+* [ ] Tendências de mercado
 
 ### Análise Regional
 

@@ -135,19 +135,14 @@ def _confidence_score(
 
     Regras simples:
     - 1.0: a tecnologia aparece explicitamente no título ou descrição
-    - 0.9: a query é exactamente a tecnologia pesquisada
-    - 0.7: a relação vem apenas do contexto da pesquisa
+    - 0.5: a relação vem apenas do contexto da pesquisa
     """
     text = " ".join(filter(None, [title, description]))
     if text and _technology_is_explicitly_mentioned(text, technology_name):
         return 1.0
 
-    if query.casefold().strip() == technology_name.casefold().strip():
-        # Quando a query já é a tecnologia, a confiança é alta mas não total, daí o 0.9.
-        return 0.9
-
-    # Caso contrário, a relação vem só do contexto da pesquisa.
-    return 0.7
+    # A relação vem só do contexto da pesquisa.
+    return 0.5
 
 
 def save_jobs(
@@ -240,19 +235,8 @@ def save_jobs(
 
                 cur.execute(
                     """
-                    INSERT INTO "Jobs" (
-                        "Id",
-                        "CompanyId",
-                        "Title",
-                        "Location",
-                        "SalaryMin",
-                        "SalaryMax",
-                        "Description",
-                        "Source",
-                        "ExternalId",
-                        "DatePosted"
-                    )
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO "Jobs" ("Id", "CompanyId", "Title", "Location", "Source", "ExternalId", "DatePosted")
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
                     RETURNING "Id"
                     """,
                     (
@@ -260,9 +244,6 @@ def save_jobs(
                         company_id,
                         title,
                         location,
-                        job.get("salary_min"),
-                        job.get("salary_max"),
-                        description,
                         source,
                         external_id,
                         date_posted,
