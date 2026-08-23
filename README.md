@@ -130,7 +130,7 @@ python data-pipeline/scrapers/indeed_keywords.py
 python data-pipeline/scrapers/linkedin_keywords.py
 ```
 
-Cada scraper processa um batch de até 50 jobs por execução. Corre-os várias vezes até não haver mais jobs para processar.
+Cada scraper processa um batch de até 150 jobs por execução. Corre-os várias vezes até não haver mais jobs para processar.
 
 > **Nota:** Os scrapers de keywords do LinkedIn precisam do Chrome debug aberto porque o LinkedIn carrega as descrições via JavaScript.
 

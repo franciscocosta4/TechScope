@@ -19,7 +19,7 @@ if str(PIPELINE_ROOT) not in sys.path:
 
 CHROME_CDP_URL = "http://localhost:9222"
 SOURCE = "linkedin"
-BATCH_SIZE = 50
+BATCH_SIZE = 150
 
 from database import get_connection
 from keyword_extractor import extract_keywords
@@ -66,7 +66,23 @@ def scrape_linkedin_description(url: str) -> str | None:
 
         try:
             page.goto(url, wait_until="domcontentloaded")
-            time.sleep(random.uniform(3, 6))
+            # Aguarda a página ficar estável (network idle) antes de tentar extrair
+            try:
+                page.wait_for_load_state("networkidle", timeout=10000)
+            except Exception:
+                # Se demorar muito, continua mesmo assim
+                pass
+
+            # Tenta aguardar o elemento de descrição principal aparecer
+            try:
+                page.wait_for_selector(
+                    "[data-testid='expandable-text-box']",
+                    timeout=15000,
+                    state="attached"
+                )
+            except Exception:
+                # Se não encontrar, tenta os fallbacks abaixo
+                pass
 
             html = page.content()
             soup = BeautifulSoup(html, "html.parser")

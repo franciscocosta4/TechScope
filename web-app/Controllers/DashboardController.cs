@@ -29,7 +29,7 @@ public class DashboardController : Controller
             .Where(jk => jk.Category == "technology")
             .GroupBy(jk => jk.Keyword)
             .OrderByDescending(g => g.Count())
-            .Take(10)
+            .Take(20)
             .Select(g => new TopTechnologyItem
             {
                 Name = g.Key,

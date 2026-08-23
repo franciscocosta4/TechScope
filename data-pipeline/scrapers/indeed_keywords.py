@@ -19,7 +19,7 @@ if str(PIPELINE_ROOT) not in sys.path:
 
 CHROME_CDP_URL = "http://localhost:9222"
 SOURCE = "indeed"
-BATCH_SIZE = 50
+BATCH_SIZE = 150
 
 from database import get_connection
 from keyword_extractor import extract_keywords
