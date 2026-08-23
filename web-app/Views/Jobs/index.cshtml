@@ -1,0 +1,56 @@
+@model TechScope.ViewModels.JobsViewModel
+
+<div class="text-center">
+    <h1 class="display-4">Anúncios</h1>
+    <p class="text-muted">Análise do mercado tecnológico</p>
+</div>
+
+<div class="stats-grid mt-4">
+    <div class="stat-card">
+        <div class="stat-number">@Model.TotalJobs.ToString("N0")</div>
+        <div class="stat-label">Total de Anúncios</div>
+    </div>
+</div>
+
+<div class="mt-5">
+    <h3>Pesquisar por um anuncio de uma vaga:</h3>
+
+    <form method="get" asp-action="Index" class="search-form">
+        <input class="search-input" type="text" name="searchString" value="@Model.SearchString"
+               placeholder="Ex: Web developer..." />
+        <button type="submit" class="btn btn-sm">
+            <i class="fa-solid fa-magnifying-glass"></i> Pesquisar
+        </button>
+    </form>
+
+    @if (!string.IsNullOrWhiteSpace(Model.SearchString))
+    {
+        @if (Model.SearchResults.Any())
+        {
+            <div class="search-results">
+                <h5 class="mt-4">Resultados para "@Model.SearchString"</h5>
+                <h5 class="mt-4">anuncios encontrados "@Model.ResultsCounter"</h5>
+                <ul>
+                    @foreach (var item in Model.SearchResults)
+                    {
+                        <div>
+                            <a href="@item.ExternalId">
+                                @item.Title
+                            </a>
+                            <p>
+                                @item.CompanyName
+                            </p>
+                            <date>
+                                @item.DatePosted
+                            </date>
+                        </div>
+                    }
+                </ul>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted mt-3">Nenhuma tecnologia encontrada para "@Model.SearchString".</p>
+        }
+    }
+</div>

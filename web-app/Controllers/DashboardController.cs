@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TechScope.Data;
 using TechScope.ViewModels;
 
-namespace web_app.Controllers;
+namespace TechScope.Controllers;
 
 public class DashboardController : Controller
 {

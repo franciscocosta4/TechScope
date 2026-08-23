@@ -31,7 +31,7 @@ public class TechnologyController : Controller
             .CountAsync();
 
         // Tendência mensal (últimos 12 meses)
-        var twelveMonthsAgo = DateTime.UtcNow.AddMonths(-12);
+        var twelveMonthsAgo = DateOnly.FromDateTime(DateTime.UtcNow).AddMonths(-12);
         
         var monthlyTrendData = await _context.JobKeywords
             .Where(jk => jk.Category == "technology" 

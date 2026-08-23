@@ -38,5 +38,5 @@ public class RecentJobInfo
     public string? CompanyName { get; set; }
     public string? Source { get; set; }
     public string? ExternalId { get; set; }
-    public DateTime? DatePosted { get; set; }
+    public DateOnly? DatePosted { get; set; }
 }

@@ -8,19 +8,11 @@ public class Job
 
     public string Title { get; set; } = null!;
 
-    public string? Location { get; set; }
-
-    public decimal? SalaryMin { get; set; }
-
-    public decimal? SalaryMax { get; set; }
-
-    public string? Description { get; set; }
-
     public string Source { get; set; } = null!;
 
     public string ExternalId { get; set; } = null!;
 
-    public DateTime? DatePosted { get; set; }
+    public DateOnly? DatePosted { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
