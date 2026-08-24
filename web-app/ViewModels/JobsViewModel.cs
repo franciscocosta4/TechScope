@@ -6,6 +6,10 @@ public class JobsViewModel
     public int ResultsCounter { get; set; }
     public List<JobsSearchResult> SearchResults { get; set; } = new();
     public string? SearchString { get; set; }
+    public int PageNumber { get; set; }
+    public int PageSize { get; set; }
+    
+    public int TotalPages => (int)Math.Ceiling((double)TotalJobs / PageSize);
 
 
 }
@@ -16,4 +20,6 @@ public class JobsSearchResult
     public string ExternalId { get; set; } = string.Empty;
     public DateOnly? DatePosted { get; set; } 
     public string CompanyName { get; set; } = string.Empty;
+    public List<string> Keywords { get; set; } = new();
+
 }

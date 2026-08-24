@@ -17,7 +17,8 @@ public class Job
     public DateTime CreatedAt { get; set; }
 
     public Company Company { get; set; } = null!;
-    // public ICollection<JobTechnology> JobTechnologies { get; set; } = new List<JobTechnology>();
     
+    public ICollection<JobKeyword> Keywords { get; set; } = new List<JobKeyword>(); // adicionamos isto para podermos ter a relação Job → JobKeyword(s)
+
 }
 }

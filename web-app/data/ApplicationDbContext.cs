@@ -34,10 +34,10 @@ namespace TechScope.Data
             builder.Entity<JobKeyword>()
                 .ToTable("JobKeywords", table => table.ExcludeFromMigrations());
             builder.Entity<JobKeyword>()
-                .HasKey(jk => new { jk.JobId, jk.Keyword, jk.Category });
+                .HasKey(jk => new { jk.JobId, jk.Keyword, jk.Category }); //chave primaria composta
             builder.Entity<JobKeyword>()
-                .HasOne(jk => jk.Job)
-                .WithMany()
+                .HasOne(jk => jk.Job)  // cada JobKeyword tem um Job associado
+                .WithMany(j => j.Keywords) //Um Job pode ter muitos JobKeyword
                 .HasForeignKey(jk => jk.JobId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
