@@ -18,12 +18,8 @@
     <form method="get" asp-action="Index" class="search-form">
         <input class="search-input" type="text" name="searchString" value="@Model.SearchString"
                placeholder="Ex: Web developer..." />
-        <input type="hidden"
-           name="pageNumber"
-           value="1" />
-    <input type="hidden"
-           name="pageSize"
-           value="@Model.PageSize" />
+        <input type="hidden" name="pageNumber" value="1" />
+        <input type="hidden" name="pageSize" value="@Model.PageSize" />
         <button type="submit" class="btn btn-sm">
             <i class="fa-solid fa-magnifying-glass"></i> Pesquisar
         </button>
@@ -64,36 +60,44 @@
         }
 
         <nav>
-    <ul class="pagination">
+            <ul class="pagination">
 
-        @if (Model.PageNumber > 1)
-        {
-            <li class="page-item">
-                <a class="page-link"
-                   asp-action="Index"
-                asp-route-searchString="@Model.SearchString"
-                   asp-route-pageNumber="@(Model.PageNumber - 1)"
-                   asp-route-pageSize="@Model.PageSize">
-                    Anterior
-                </a>
-            </li>
-        }
+                @if (Model.PageNumber > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-searchString="@Model.SearchString"
+                           asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize">
+                            Anterior
+                        </a>
+                    </li>
+                }
 
 
-        @if (Model.PageNumber < Model.TotalPages)
-        {
-            <li class="page-item">
-                <a class="page-link"
-                   asp-action="Index"
-                      asp-route-searchString="@Model.SearchString"
-                   asp-route-pageNumber="@(Model.PageNumber + 1)"
-                   asp-route-pageSize="@Model.PageSize">
-                    Seguinte
-                </a>
-            </li>
-        }
+                @if (Model.PageNumber < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-searchString="@Model.SearchString"
+                           asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize">
+                            Seguinte
+                        </a>
+                    </li>
+                }
 
-    </ul>
-</nav>
+            </ul>
+        </nav>
     }
 </div>
+<br />
+<div class="text-center">
+    <h2 class="display-4">Vagas mais recentes</h2>
+</div>
+<ul>
+    @foreach (var item in Model.RecentJobs)
+    {
+        <div>
+            <a href="@item.ExternalId">
+                @item.Title
+            </a>
+        </div>
+    }
+</ul>

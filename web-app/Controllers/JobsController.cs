@@ -21,9 +21,21 @@ public class JobsController : Controller
     {
         var totalJobs = await _context.Jobs.CountAsync();
 
+        var RecentJobs = await _context.Jobs
+            .OrderByDescending(x => x.DatePosted)
+            .Take(20)
+            .Select(j => new RecentJobsItem
+            {
+                Title = j.Title,
+                ExternalId = j.ExternalId,
+            })
+            .ToListAsync();
+        
+
         var model = new JobsViewModel
         {
             TotalJobs = totalJobs,
+            RecentJobs = RecentJobs,
             SearchString = searchString,
             PageNumber = pageNumber,
             PageSize = pageSize

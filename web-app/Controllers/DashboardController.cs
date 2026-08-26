@@ -37,13 +37,75 @@ public class DashboardController : Controller
             })
             .ToListAsync();
 
+        var jobLocations =  _context.Jobs //pie de locations
+            .Where(j => j.Location != null)
+            .GroupBy(jk => jk.Location)
+            .OrderByDescending(g => g.Count())
+            .Take(20) 
+            .Select(g => new LocationChartData
+            {
+                Location = g.Key,
+                Count = g.Count()
+            })
+            .ToList();
+
+        var tecnologiasSelecionadas = new[]
+{
+    ".net",
+    "react native",
+    "sql",
+    "c#",
+    "java",
+    "javascript",
+    "typescript",
+    "angular",
+    "react",
+    "nodejs",
+    "python",
+    "laravel",
+    "php",
+};
+        var quantityTech = _context.JobKeywords // serve para o grafico de tecnologias
+            .Where(jk =>
+                jk.Category == "technology" &&
+                jk.Job.DatePosted.HasValue &&
+                tecnologiasSelecionadas.Contains(jk.Keyword.ToLower()))
+            .GroupBy(jk => new
+            {
+                Mes = jk.Job.DatePosted.Value.Month,
+                Tecnologia = jk.Keyword
+            })
+            .Select(g => new TechnologyChartData
+            {
+                Mes = g.Key.Mes,
+                Tecnologia = g.Key.Tecnologia,
+                Total = g.Count()
+            })
+            .OrderBy(x => x.Mes)
+            .ThenBy(x => x.Tecnologia)
+            .ToList();
+
+        var jobsByMonth = _context.Jobs  // grafico de vagas por mes do ano
+            .Where(j => j.DatePosted.HasValue)
+            .GroupBy(j => j.DatePosted.Value.Month)
+            .Select(g => new jobsByMonthChartData
+            {
+                Mes = g.Key,
+                Total = g.Count()
+            })
+            .OrderBy(x => x.Mes)
+            .ToList();
+
         var model = new DashboardViewModel
         {
             TotalJobs = totalJobs,
             TotalTechnologies = totalTechnologies,
             TotalCompanies = totalCompanies,
             TopTechnologies = topTechnologies,
-            SearchString = searchString
+            SearchString = searchString,
+            JobsByMonth = jobsByMonth,
+            QuantityTech = quantityTech,
+            JobLocations = jobLocations,
         };
 
         if (!string.IsNullOrWhiteSpace(searchString))

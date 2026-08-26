@@ -1,4 +1,14 @@
 @model TechScope.ViewModels.DashboardViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Estatísticas";
+
+    var jobsByMonthJson = JsonSerializer.Serialize(Model.JobsByMonth);
+    var tecnologiasJson = JsonSerializer.Serialize(Model.QuantityTech);
+    var locationsJson = JsonSerializer.Serialize(Model.JobLocations);
+}
+
 
 <div class="text-center">
     <h1 class="display-4">TechScope</h1>
@@ -24,10 +34,7 @@
     <h3>Pesquisar Tecnologia</h3>
 
     <form method="get" asp-action="Index" class="search-form">
-        <input class="search-input"
-               type="text"
-               name="searchString"
-               value="@Model.SearchString"
+        <input class="search-input" type="text" name="searchString" value="@Model.SearchString"
                placeholder="Ex: React, Java, Docker..." />
         <button type="submit" class="btn btn-sm">
             <i class="fa-solid fa-magnifying-glass"></i> Pesquisar
@@ -58,7 +65,7 @@
         }
     }
 </div>
-<br/>
+<br />
 <div class="mt-5">
     <h3>Top 20 Tecnologias Mais Procuradas</h3>
     @if (Model.TopTechnologies.Any())
@@ -88,3 +95,262 @@
         </table>
     }
 </div>
+<div style="max-width: 800px;">
+    <canvas id="grafico1"></canvas>
+</div>
+<div style="max-width: 800px;">
+    <canvas id="grafico2"></canvas>
+</div>
+<div style="max-width: 800px;">
+    <canvas id="grafico3"></canvas>
+</div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const todosOsMeses = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro"
+        ];
+
+        // getMonth() devolve 0 para Janeiro, 1 para Fevereiro, etc.
+        // Por isso, o slice precisa de receber getMonth() + 1.
+        const meses = todosOsMeses.slice(0, new Date().getMonth() + 1);
+        const jobsByMonth = @Html.Raw(jobsByMonthJson);
+
+        const valores = meses.map((_, index) => {
+        const mes = index + 1;
+
+        const resultado = jobsByMonth.find(x => x.Mes === mes);
+
+        return resultado?.Total ?? 0;
+        });
+
+        const contexto = document
+        .getElementById("grafico1")
+        .getContext("2d");
+
+        new Chart(contexto, {
+        type: "line",
+
+        data: {
+        labels: meses,
+
+        datasets: [{
+        label: "Anúncios em 2026",
+        data: valores,
+
+        tension: 0.5,
+
+        // Cor dos pontos
+        pointBackgroundColor: "white",
+        pointBorderColor: "black",
+        pointRadius: 4,
+
+        // Cor da linha dependendo da evolução
+        segment: {
+        borderColor: ctx => {
+        const valorInicial = ctx.p0.parsed.y;
+        const valorFinal = ctx.p1.parsed.y;
+
+        if (valorFinal > valorInicial) {
+        return "green"; // Subiu
+        }
+
+        if (valorFinal < valorInicial) {
+        return "red"; // Desceu
+        }
+
+        return "gray"; // Ficou igual
+        },
+
+        borderWidth: 3
+        }
+        }]
+        },
+
+        options: {
+        responsive: true,
+
+        plugins: {
+        legend: {
+        display: true
+        }
+        },
+
+        scales: {
+        y: {
+        beginAtZero: true
+        }
+        }
+        }
+        });
+    </script>
+    <script>
+        const mesesGrafico2 = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro"
+        ];
+
+        // Obtém os dados das tecnologias enviados pelo Controller.
+        const dadosTecnologias = @Html.Raw(tecnologiasJson);
+
+        // Mostra os dados recebidos no Console.
+        console.log("Meses:", mesesGrafico2);
+        console.log("Tecnologias:", dadosTecnologias);
+
+        // Obtém o canvas onde o gráfico será desenhado.
+        const canvasTecnologias = document.getElementById("grafico2");
+
+        // Obtém o contexto 2D necessário para o Chart.js.
+        const contextoTecnologias = canvasTecnologias.getContext("2d");
+
+        // Obtém todas as tecnologias sem duplicados.
+        const nomesTecnologias = [
+        ...new Set(
+        dadosTecnologias.map(x => x.Tecnologia)
+        )
+        ];
+
+        // Mostra as tecnologias encontradas.
+        console.log("Nomes das tecnologias:", nomesTecnologias);
+
+        // Cria uma linha para cada tecnologia.
+        const datasetsTecnologias = nomesTecnologias.map(tecnologia => {
+
+        const valores = mesesGrafico2.map((mes, index) => {
+
+        // Janeiro = 1, Fevereiro = 2, etc.
+        const mesNumero = index + 1;
+
+        const resultado = dadosTecnologias.find(x =>
+        x.Tecnologia === tecnologia &&
+        x.Mes === mesNumero
+        );
+
+        return resultado ? resultado.Total : 0;
+        });
+
+        return {
+        label: tecnologia,
+        data: valores,
+        tension: 0.3,
+        pointRadius: 4,
+        borderWidth: 3
+        };
+        });
+
+        // Mostra os datasets criados.
+        console.log("Datasets:", datasetsTecnologias);
+
+        // Cria o gráfico Chart.js.
+        new Chart(contextoTecnologias, {
+        type: "line",
+
+        data: {
+        // Meses no eixo X.
+        labels: mesesGrafico2,
+
+        // Uma linha por tecnologia.
+        datasets: datasetsTecnologias
+        },
+
+        options: {
+        responsive: true,
+
+        plugins: {
+        legend: {
+        display: true
+        }
+        },
+
+        scales: {
+        y: {
+        beginAtZero: true
+        }
+        }
+        }
+        });
+    </script>
+<script>
+    // Recebe os dados enviados pelo Controller.
+    const dadosLocais = @Html.Raw(locationsJson);
+
+    // Verifica no browser o conteúdo recebido.
+    console.log("Dados locais:", dadosLocais);
+
+    // Obtém o canvas do terceiro gráfico.
+    const canvasLocais = document.getElementById("grafico3");
+
+    // Obtém o contexto 2D do canvas.
+    const contextoLocais = canvasLocais.getContext("2d");
+
+    // Extrai os nomes das localizações.
+    const labelsLocais = dadosLocais.map(x => x.Location);
+
+    // Extrai o número de anúncios de cada localização.
+    const valoresLocais = dadosLocais.map(x => x.Count);
+
+    // Verifica os dados no console.
+    console.log("Labels:", labelsLocais);
+    console.log("Valores:", valoresLocais);
+
+    // Cria o gráfico.
+    new Chart(contextoLocais, {
+        // Define o gráfico como doughnut.
+        type: "doughnut",
+
+        // Define os dados do gráfico.
+        data: {
+            // Os nomes aparecem na legenda.
+            labels: labelsLocais,
+
+            // Os valores determinam o tamanho de cada segmento.
+            datasets: [{
+                // Nome do conjunto de dados.
+                label: "Anúncios por localização",
+
+                // Valores dos segmentos.
+                data: valoresLocais,
+
+                // Espessura da borda.
+                borderWidth: 1
+            }]
+        },
+
+        // Configurações do gráfico.
+        options: {
+            // Permite que o gráfico seja responsivo.
+            responsive: true,
+
+            // Configura os plugins.
+            plugins: {
+                // Mostra a legenda.
+                legend: {
+                    display: true
+                }
+            }
+        }
+    });
+</script>
+}

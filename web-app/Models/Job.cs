@@ -7,6 +7,7 @@ public class Job
     public Guid CompanyId { get; set; }
 
     public string Title { get; set; } = null!;
+    public string Location { get; set; } = null!;
 
     public string Source { get; set; } = null!;
 
