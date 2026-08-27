@@ -3,48 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel · TechScope</title>
+    <title>TechScope · Painel</title>
 
+    <!-- Font Inter (Meridian usa DM Sans, mas Inter é muito próximo) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" onload="this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap">
-    </noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    </noscript>
+    <!-- Font Awesome (ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <link rel="preload" as="style" href="~/css/style.css" onload="this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="~/css/style.css">
-    </noscript>
+    <!-- CSS principal (substituído pelo novo estilo) -->
+    <link rel="stylesheet" href="~/css/style.css">
 </head>
-
 <body>
     <div class="app-grid">
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div style="font-weight: 600; font-size: 1.6rem; letter-spacing: -0.03em; margin-bottom: 2.5rem; padding-left: 8px;">
-                TechScope
-            </div>
+            <div class="logo">TechScope</div>
 
             <nav>
                 <a asp-controller="Dashboard" asp-action="Index" class="nav-item active">
-                    <i class="fas fa-home"></i> Painel
+                    <i class="fas fa-chart-pie"></i> Painel
                 </a>
                 <a asp-controller="Jobs" asp-action="Index" class="nav-item">
                     <i class="fas fa-inbox"></i> Anúncios
                 </a>
-                <a href="#" class="nav-item" onclick="return false;">
-                    <i class="fas fa-chart-line"></i> Tendências
-                </a>
+                @* <a href="#" class="nav-item" onclick="return false;">
+                    <i class="fas fa-trend-up"></i> Tendências
+                </a> *@
             </nav>
         </div>
 
-        <!-- MAIN CONTENT -->
+        <!-- MAIN -->
         <main class="main-content">
             @RenderBody()
         </main>

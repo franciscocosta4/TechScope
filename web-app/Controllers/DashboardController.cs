@@ -29,7 +29,7 @@ public class DashboardController : Controller
             .Where(jk => jk.Category == "technology")
             .GroupBy(jk => jk.Keyword)
             .OrderByDescending(g => g.Count())
-            .Take(20)
+            .Take(10)
             .Select(g => new TopTechnologyItem
             {
                 Name = g.Key,
@@ -41,7 +41,7 @@ public class DashboardController : Controller
             .Where(j => j.Location != null)
             .GroupBy(jk => jk.Location)
             .OrderByDescending(g => g.Count())
-            .Take(20) 
+            .Take(10) 
             .Select(g => new LocationChartData
             {
                 Location = g.Key,
@@ -85,17 +85,6 @@ public class DashboardController : Controller
             .ThenBy(x => x.Tecnologia)
             .ToList();
 
-        var jobsByMonth = _context.Jobs  // grafico de vagas por mes do ano
-            .Where(j => j.DatePosted.HasValue)
-            .GroupBy(j => j.DatePosted.Value.Month)
-            .Select(g => new jobsByMonthChartData
-            {
-                Mes = g.Key,
-                Total = g.Count()
-            })
-            .OrderBy(x => x.Mes)
-            .ToList();
-
         var model = new DashboardViewModel
         {
             TotalJobs = totalJobs,
@@ -103,7 +92,7 @@ public class DashboardController : Controller
             TotalCompanies = totalCompanies,
             TopTechnologies = topTechnologies,
             SearchString = searchString,
-            JobsByMonth = jobsByMonth,
+            // JobsByMonth = jobsByMonth,
             QuantityTech = quantityTech,
             JobLocations = jobLocations,
         };

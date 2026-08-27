@@ -5,6 +5,8 @@ public class JobsViewModel
     public int TotalJobs { get; set; }
     public int ResultsCounter { get; set; }
     public List<JobsSearchResult> SearchResults { get; set; } = new();
+    public List<jobsByMonthChartData> JobsByMonth { get; set; }
+
     public List<RecentJobsItem> RecentJobs { get; set; } = new();
     public string? SearchString { get; set; }
     public int PageNumber { get; set; }
@@ -15,9 +17,16 @@ public class JobsViewModel
 
 }
 
+public class jobsByMonthChartData
+{
+    public int Mes { get; set; }
+    public int Total { get; set; }
+}
+
 public class RecentJobsItem
 {
     public string Title { get; set; } = string.Empty;
+    public DateOnly? DatePosted { get; set; }
     public string ExternalId { get; set; } = string.Empty;
 
 }

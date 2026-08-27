@@ -21,6 +21,18 @@ public class JobsController : Controller
     {
         var totalJobs = await _context.Jobs.CountAsync();
 
+        var jobsByMonth = _context.Jobs  // grafico de vagas por mes do ano
+            .Where(j => j.DatePosted.HasValue)
+            .GroupBy(j => j.DatePosted.Value.Month)
+            .Select(g => new jobsByMonthChartData
+            {
+                Mes = g.Key,
+                Total = g.Count()
+            })
+            .OrderBy(x => x.Mes)
+            .ToList();
+
+
         var RecentJobs = await _context.Jobs
             .OrderByDescending(x => x.DatePosted)
             .Take(20)
@@ -28,8 +40,10 @@ public class JobsController : Controller
             {
                 Title = j.Title,
                 ExternalId = j.ExternalId,
+                DatePosted = j.DatePosted,
             })
             .ToListAsync();
+        
         
 
         var model = new JobsViewModel
@@ -37,6 +51,7 @@ public class JobsController : Controller
             TotalJobs = totalJobs,
             RecentJobs = RecentJobs,
             SearchString = searchString,
+            JobsByMonth = jobsByMonth,
             PageNumber = pageNumber,
             PageSize = pageSize
         };

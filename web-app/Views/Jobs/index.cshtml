@@ -1,103 +1,152 @@
 @model TechScope.ViewModels.JobsViewModel
 
-<div class="text-center">
-    <h1 class="display-4">Anúncios</h1>
-    <p class="text-muted">Análise do mercado tecnológico</p>
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Estatísticas";
+
+    var jobsByMonthJson = JsonSerializer.Serialize(Model.JobsByMonth);
+}
+
+
+<div class="dashboard-header">
+    <h1>Anúncios</h1>
+    <p class="text-muted">@Model.TotalJobs.ToString("N0") anúncios registados</p>
 </div>
 
-<div class="stats-grid mt-4">
-    <div class="stat-card">
-        <div class="stat-number">@Model.TotalJobs.ToString("N0")</div>
-        <div class="stat-label">Total de Anúncios</div>
-    </div>
-</div>
-
-<div class="mt-5">
-    <h3>Pesquisar por um anuncio de uma vaga:</h3>
-
+<div class="card" style="padding: 1.5rem 2rem;">
     <form method="get" asp-action="Index" class="search-form">
         <input class="search-input" type="text" name="searchString" value="@Model.SearchString"
-               placeholder="Ex: Web developer..." />
+               placeholder="Pesquisar vaga (ex: Web developer...)" />
         <input type="hidden" name="pageNumber" value="1" />
         <input type="hidden" name="pageSize" value="@Model.PageSize" />
         <button type="submit" class="btn btn-sm">
             <i class="fa-solid fa-magnifying-glass"></i> Pesquisar
         </button>
     </form>
-
     @if (!string.IsNullOrWhiteSpace(Model.SearchString))
     {
-        @if (Model.SearchResults.Any())
+        if (Model.SearchResults.Any())
         {
-            <div class="search-results">
-                <h5 class="mt-4">Resultados para "@Model.SearchString"</h5>
-                <h5 class="mt-4">anuncios encontrados "@Model.ResultsCounter"</h5>
-                <ul>
-                    @foreach (var item in Model.SearchResults)
-                    {
-                        <div>
-                            <a href="@item.ExternalId">
-                                @item.Title
-                            </a>
-                            <p>
-                                @item.CompanyName
-                            </p>
+            <h4 style="margin: 1.5rem 0 0.5rem;">Resultados para “@Model.SearchString”</h4>
+            <p class="text-muted">@Model.ResultsCounter anúncios encontrados</p>
+            <div style="margin-top: 1rem;">
+                @foreach (var item in Model.SearchResults)
+                {
+                    <div style="padding: 0.8rem 0; border-bottom: 1px solid #1e1e20;">
+                        <a href="@item.ExternalId" style="color: #ffffff; font-weight: 500;">
+                            @item.Title
+                        </a>
+                        <p style="margin: 4px 0 0; color: #7a7a7e; font-size: 0.9rem;">
+                            @item.CompanyName
+                        </p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
                             @foreach (var keyword in item.Keywords)
                             {
-                                <span>@keyword</span>
+                                <span class="badge">@keyword</span>
                             }
-                            <date>
-                                @item.DatePosted
-                            </date>
                         </div>
+                        <span class="text-small">@item.DatePosted?.ToString("dd/MM/yyyy")</span>
+                    </div>
+                }
+            </div>
+            <!-- Paginação -->
+            <nav>
+                <ul class="pagination">
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li><a class="page-link" asp-action="Index" asp-route-searchString="@Model.SearchString"
+                                   asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize">Anterior</a>
+                        </li>
+                    }
+                    @if (Model.PageNumber < Model.TotalPages)
+                    {
+                        <li><a class="page-link" asp-action="Index" asp-route-searchString="@Model.SearchString"
+                                   asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize">Seguinte</a>
+                        </li>
                     }
                 </ul>
-            </div>
+            </nav>
         }
         else
         {
-            <p class="text-muted mt-3">Nenhuma tecnologia encontrada para "@Model.SearchString".</p>
+            <p class="text-muted" style="margin-top: 1.5rem;">Nenhum anúncio encontrado para “@Model.SearchString”.</p>
         }
-
-        <nav>
-            <ul class="pagination">
-
-                @if (Model.PageNumber > 1)
-                {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-searchString="@Model.SearchString"
-                           asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize">
-                            Anterior
-                        </a>
-                    </li>
-                }
-
-
-                @if (Model.PageNumber < Model.TotalPages)
-                {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-searchString="@Model.SearchString"
-                           asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize">
-                            Seguinte
-                        </a>
-                    </li>
-                }
-
-            </ul>
-        </nav>
     }
 </div>
-<br />
-<div class="text-center">
-    <h2 class="display-4">Vagas mais recentes</h2>
-</div>
-<ul>
-    @foreach (var item in Model.RecentJobs)
-    {
-        <div>
-            <a href="@item.ExternalId">
-                @item.Title
-            </a>
+
+<!-- GRÁFICOS DE LINHA (agora no topo, acima da pesquisa) -->
+<div class="grid-1" style="margin-bottom: 2rem;">
+    <div class="card">
+        <div class="card-header">Evolução mensal (2026)</div>
+        <div class="chart-container">
+            <canvas id="grafico1"></canvas>
         </div>
-    }
-</ul>
+    </div>
+</div>
+
+<!-- Últimos anúncios -->
+<div class="card">
+    <div class="card-header">Últimos anúncios</div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+        @foreach (var item in Model.RecentJobs)
+        {
+            <div>
+                <a href="@item.ExternalId" style="color: #f0f0f0;">
+                    @item.Title
+                </a>
+                <span class="text-small" style="margin-left: 12px;">@item.DatePosted?.ToString("dd/MM/yyyy")</span>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // ------------------------------------------------------------
+        // GRÁFICO 1 — Evolução mensal (linha)
+        // ------------------------------------------------------------
+        const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        const mesesAtuais = meses.slice(0, new Date().getMonth() + 1);
+        const dadosJobs = @Html.Raw(jobsByMonthJson);
+        const valoresJobs = mesesAtuais.map((_, i) => {
+        const mes = i + 1;
+        const found = dadosJobs.find(x => x.Mes === mes);
+        return found ? found.Total : 0;
+        });
+
+        new Chart(document.getElementById('grafico1').getContext('2d'), {
+        type: 'line',
+        data: {
+        labels: mesesAtuais,
+        datasets: [{
+        label: 'Anúncios',
+        data: valoresJobs,
+        tension: 0.3,
+        borderColor: '#ffffff',
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        fill: true,
+        pointBackgroundColor: '#ffffff',
+        pointBorderColor: '#0b0b0d',
+        pointRadius: 3,
+        borderWidth: 2
+        }]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+        legend: { display: false }
+        },
+        scales: {
+        y: { beginAtZero: true, grid: { color: '#1e1e20' }, ticks: { color: '#7a7a7e' } },
+        x: { grid: { display: false }, ticks: { color: '#7a7a7e', maxRotation: 30 } }
+        }
+        }
+        });
+    </script>
+}
