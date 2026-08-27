@@ -78,12 +78,12 @@
         </div>
     </div>
 </div>
-<!-- TOP 20 + DISTRIBUIÇÃO GEOGRÁFICA (lado a lado) -->
+<!-- TOP  + DISTRIBUIÇÃO GEOGRÁFICA (lado a lado) -->
 <div class="grid-2" style="margin-bottom: 2rem;">
-    <!-- Tabela Top 20 -->
+    <!-- Tabela Top Tecnologias -->
     <div class="card">
         <div class="card-header">
-            <span>Top 10 tecnologias mais procuradas</span>
+            <span>Tecnologias mais procuradas</span>
             <span class="text-small">@Model.TopTechnologies.Count() registos</span>
         </div>
         <div class="table-wrapper">
@@ -95,8 +95,10 @@
                         <th style="text-align: right;">Anúncios</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @{ int rank = 1; }
+                <tbody id="lista-resultados">
+                    @{
+                        int rank = ((Model.PageNumber - 1) * Model.PageSize) + 1;  // calcula onde vai começar o rank com base na pagina. (pagina 1-> 1, pagina 2-> 11 etc...)
+                    }
                     @foreach (var item in Model.TopTechnologies)
                     {
                         <tr>
@@ -109,6 +111,23 @@
                 </tbody>
             </table>
         </div>
+        <!-- Paginação -->
+        <nav>
+            <ul class="pagination">
+                @if (Model.PageNumber > 1)
+                {
+                    <li><a class="page-link" asp-action="Index" asp-route-searchString="@Model.SearchString"
+                               asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize">Anterior</a>
+                    </li>
+                }
+                @if (Model.PageNumber < Model.TotalPages)
+                {
+                    <li><a class="page-link" asp-action="Index" asp-route-searchString="@Model.SearchString"
+                               asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize">Seguinte</a>
+                    </li>
+                }
+            </ul>
+        </nav>
     </div>
 
     <!-- Gráfico de rosca (doughnut) com legenda em baixo -->
@@ -122,10 +141,28 @@
 </div>
 
 @section Scripts {
+    @*  Script que faz o autoscroll para a tabela de top tech *@
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const params = new URLSearchParams(window.location.search);
+            const page = params.get("pageNumber");
+
+            if (page) {
+                const lista = document.getElementById("lista-resultados");
+
+                if (lista) {
+                    lista.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+                }
+            }
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        
+
         // ------------------------------------------------------------
         // GRÁFICO 2 — Tecnologias em alta (linha)
         // ------------------------------------------------------------
@@ -135,39 +172,39 @@
         const techNames = [...new Set(dadosTech.map(x => x.Tecnologia))];
         const cores = ['#ffffff', '#7a7a7e', '#4a4a4e', '#b0b0b4', '#d0d0d4'];
         const datasetsTech = techNames.map((nome, idx) => {
-            const valores = mesesAtuais.map((_, i) => {
-                const mes = i + 1;
-                const found = dadosTech.find(x => x.Tecnologia === nome && x.Mes === mes);
-                return found ? found.Total : 0;
-            });
-            return {
-                label: nome,
-                data: valores,
-                tension: 0.2,
-                borderColor: cores[idx % cores.length],
-                backgroundColor: 'transparent',
-                pointRadius: 2,
-                borderWidth: 1.5
-            };
+        const valores = mesesAtuais.map((_, i) => {
+        const mes = i + 1;
+        const found = dadosTech.find(x => x.Tecnologia === nome && x.Mes === mes);
+        return found ? found.Total : 0;
+        });
+        return {
+        label: nome,
+        data: valores,
+        tension: 0.2,
+        borderColor: cores[idx % cores.length],
+        backgroundColor: 'transparent',
+        pointRadius: 2,
+        borderWidth: 1.5
+        };
         });
 
         new Chart(document.getElementById('grafico2').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: mesesAtuais,
-                datasets: datasetsTech
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: { labels: { color: '#f0f0f0', boxWidth: 12, padding: 12 } }
-                },
-                scales: {
-                    y: { beginAtZero: true, grid: { color: '#1e1e20' }, ticks: { color: '#7a7a7e' } },
-                    x: { grid: { display: false }, ticks: { color: '#7a7a7e', maxRotation: 30 } }
-                }
-            }
+        type: 'line',
+        data: {
+        labels: mesesAtuais,
+        datasets: datasetsTech
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+        legend: { labels: { color: '#f0f0f0', boxWidth: 12, padding: 12 } }
+        },
+        scales: {
+        y: { beginAtZero: true, grid: { color: '#1e1e20' }, ticks: { color: '#7a7a7e' } },
+        x: { grid: { display: false }, ticks: { color: '#7a7a7e', maxRotation: 30 } }
+        }
+        }
         });
 
         // ------------------------------------------------------------
@@ -178,32 +215,32 @@
         const valoresLoc = dadosLoc.map(x => x.Count);
 
         new Chart(document.getElementById('grafico3').getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: labelsLoc,
-                datasets: [{
-                    data: valoresLoc,
-                    backgroundColor: ['#ffffff', '#7a7a7e', '#4a4a4e', '#b0b0b4', '#d0d0d4', '#2a2a2e'],
-                    borderColor: '#0b0b0d',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',   // <-- legenda em baixo
-                        labels: {
-                            color: '#f0f0f0',
-                            boxWidth: 12,
-                            padding: 8,
-                            font: { size: 11 }
-                        }
-                    }
-                },
-                cutout: '60%'
-            }
+        type: 'doughnut',
+        data: {
+        labels: labelsLoc,
+        datasets: [{
+        data: valoresLoc,
+        backgroundColor: ['#ffffff', '#7a7a7e', '#4a4a4e', '#b0b0b4', '#d0d0d4', '#2a2a2e'],
+        borderColor: '#0b0b0d',
+        borderWidth: 2
+        }]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+        legend: {
+        position: 'bottom',   // <-- legenda em baixo
+        labels: {
+        color: '#f0f0f0',
+        boxWidth: 12,
+        padding: 8,
+        font: { size: 11 }
+        }
+        }
+        },
+        cutout: '60%'
+        }
         });
     </script>
 }

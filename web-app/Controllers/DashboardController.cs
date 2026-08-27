@@ -14,7 +14,7 @@ public class DashboardController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index(string? searchString)
+    public async Task<IActionResult> Index(string? searchString, int pageNumber = 1, int pageSize = 10)
     {
         var totalJobs = await _context.Jobs.CountAsync();
         var totalCompanies = await _context.Companies.CountAsync();
@@ -29,7 +29,8 @@ public class DashboardController : Controller
             .Where(jk => jk.Category == "technology")
             .GroupBy(jk => jk.Keyword)
             .OrderByDescending(g => g.Count())
-            .Take(10)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .Select(g => new TopTechnologyItem
             {
                 Name = g.Key,
@@ -92,9 +93,10 @@ public class DashboardController : Controller
             TotalCompanies = totalCompanies,
             TopTechnologies = topTechnologies,
             SearchString = searchString,
-            // JobsByMonth = jobsByMonth,
             QuantityTech = quantityTech,
             JobLocations = jobLocations,
+            PageNumber = pageNumber,
+            PageSize = pageSize
         };
 
         if (!string.IsNullOrWhiteSpace(searchString))
