@@ -68,11 +68,28 @@ public class TechnologyController : Controller
             .Select(g => new TechnologyInfo
             {
                 Keyword = g.Key,
-                JobCount = g.Count()
+                JobCount = g.Count()    
             })
             .OrderByDescending(t => t.JobCount)
             .Take(10)
             .ToListAsync();
+        
+        var relatedTechChart =  _context.JobKeywords //pie de related tech
+            .Where(jk => jk.Category == "technology" && jk.Keyword.ToLower() == keywordLower)
+            .SelectMany(jk => _context.JobKeywords
+                .Where(related => related.JobId == jk.JobId 
+                               && related.Category == "technology" 
+                               && related.Keyword.ToLower() != keywordLower)
+                .Select(related => related.Keyword))
+            .GroupBy(k => k)
+            .OrderByDescending(g => g.Count())
+            .Take(10) 
+            .Select(g => new RelatedTechChartData
+            {
+                Keyword = g.Key,
+                JobCount = g.Count()
+            })
+            .ToList();
 
         // Empresas que recrutam
         var topCompanies = await _context.JobKeywords
@@ -111,6 +128,7 @@ public class TechnologyController : Controller
             TotalJobs = totalJobs,
             MonthlyTrend = monthlyTrend,
             RelatedTechnologies = relatedTechnologies,
+            RelatedTechChart = relatedTechChart,
             TopCompanies = topCompanies,
             RecentJobs = recentJobs
         };

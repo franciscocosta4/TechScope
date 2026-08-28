@@ -8,6 +8,7 @@ public class TechnologyDetailViewModel
     public int TotalJobs { get; set; }
     public List<MonthlyTrend> MonthlyTrend { get; set; } = new();
     public List<TechnologyInfo> RelatedTechnologies { get; set; } = new();
+    public List<RelatedTechChartData> RelatedTechChart { get; set; } = new();
     public List<CompanyInfo> TopCompanies { get; set; } = new();
     public List<RecentJobInfo> RecentJobs { get; set; } = new();
 }
@@ -19,6 +20,12 @@ public class MonthlyTrend
 }
 
 public class TechnologyInfo
+{
+    public string Keyword { get; set; } = string.Empty;
+    public int JobCount { get; set; }
+}
+
+public class RelatedTechChartData
 {
     public string Keyword { get; set; } = string.Empty;
     public int JobCount { get; set; }

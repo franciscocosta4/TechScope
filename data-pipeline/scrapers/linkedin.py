@@ -18,7 +18,7 @@ from state import get_next_start, update_last_start
 
 # QUERY é o termo usado no site (role, não tecnologia).
 # A tecnologia é extraída depois pelo scraper de keywords a partir da descrição.
-QUERY = "Backend developer"
+QUERY = "Developer"
 TECHNOLOGY_NAME = None
 LOCATION = "Portugal"
 MAX_START = 1000
