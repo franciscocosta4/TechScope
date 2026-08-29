@@ -334,7 +334,6 @@ td {
   min-height: 200px; /* apenas para garantir visibilidade, mas cresce com o conteúdo */
 }
 
-/* a legenda será gerida pelo Chart.js com position: bottom */
 
 /* ============================================
    UTILITY GRID

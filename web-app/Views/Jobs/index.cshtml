@@ -15,14 +15,30 @@
 </div>
 
 <div class="card" style="padding: 1.5rem 2rem;">
-    <form method="get" asp-action="Index" class="search-form">
-        <input class="search-input" type="text" name="searchString" value="@Model.SearchString"
-               placeholder="Pesquisar vaga (ex: Web developer...)" />
+    <form method="get" asp-action="Index" class="search-form" style="display: flex; flex-direction: column; align-items: flex-start; gap: 1.5rem;">
+        <div style="display: flex; gap: 0.5rem; align-items: center; width: 100%;">
+            <input class="search-input" type="text" name="searchString" value="@Model.SearchString"
+                   placeholder="Pesquisar vaga (ex: Web developer...)" />
+            <button type="submit" class="btn btn-sm">
+                <i class="fa-solid fa-magnifying-glass"></i> Pesquisar
+            </button>
+        </div>
+        <select name="Seniority" class="form-select" style="
+            background-color: #141416;
+            color: #f0f0f0;
+            border: 1px solid #1e1e20;
+            border-radius: 0;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        ">
+            <option value="">Todos os níveis</option>
+            <option value="senior">senior</option>
+            <option value="mid">mid</option>
+            <option value="junior">junior</option>
+        </select>
         <input type="hidden" name="pageNumber" value="1" />
         <input type="hidden" name="pageSize" value="@Model.PageSize" />
-        <button type="submit" class="btn btn-sm">
-            <i class="fa-solid fa-magnifying-glass"></i> Pesquisar
-        </button>
     </form>
     @if (!string.IsNullOrWhiteSpace(Model.SearchString))
     {
