@@ -115,7 +115,7 @@ h3 { font-size: 1.25rem; font-weight: 500; }
    CARDS — planos, sem sombras, com bordas finas
    ============================================ */
 .card {
-  background: #141416;
+  background: #101012;
   border: 1px solid #1e1e20;
   border-radius: 0;
   padding: 1.6rem 2rem;
@@ -144,13 +144,15 @@ h3 { font-size: 1.25rem; font-weight: 500; }
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1px;
-  background: #1e1e20;
+  /* gap: 1px; */
+  /* background: #1e1e20; */
   margin-bottom: 2.5rem;
+  border:solid,  0.1rem, #1e1e20 ; 
 }
 
 .stat-card {
-  background: #141416;
+  /* background: #141416; */
+  border:solid,  0.1rem, #1e1e20 ; 
   padding: 1.8rem 1.5rem;
   text-align: left;
 }

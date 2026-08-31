@@ -13,9 +13,10 @@
     <h1>Anúncios</h1>
     <p class="text-muted">@Model.TotalJobs.ToString("N0") anúncios registados</p>
 </div>
-
+<br />
 <div class="card" style="padding: 1.5rem 2rem;">
-    <form method="get" asp-action="Index" class="search-form" style="display: flex; flex-direction: column; align-items: flex-start; gap: 1.5rem;">
+    <form method="get" asp-action="Index" class="search-form"
+          style="display: flex; flex-direction: column; align-items: flex-start; gap: 1.5rem;">
         <div style="display: flex; gap: 0.5rem; align-items: center; width: 100%;">
             <input class="search-input" type="text" name="searchString" value="@Model.SearchString"
                    placeholder="Pesquisar vaga (ex: Web developer...)" />
@@ -31,12 +32,25 @@
             padding: 8px 12px;
             font-size: 0.9rem;
             cursor: pointer;
-        ">
+            ">
             <option value="">Todos os níveis</option>
-            <option value="senior">senior</option>
-            <option value="mid">mid</option>
-            <option value="junior">junior</option>
+
+            <option value="senior" selected="@(Model.Seniority == "senior")">
+                senior
+            </option>
+
+            <option value="mid" selected="@(Model.Seniority == "mid")">
+                mid
+            </option>
+
+            <option value="junior" selected="@(Model.Seniority == "junior")">
+                junior
+            </option>
         </select>
+        <div style="margin-top: 0.2rem; font-size: 0.85rem; color: #a0a0a4;">
+            <strong>Nota:</strong> A filtragem é baseada em <em>matching</em> automático no texto das descrições dos
+            anúncios. Podem não corresponder realmente ao que é pedido na vaga ou não capturar todos os casos.
+        </div>
         <input type="hidden" name="pageNumber" value="1" />
         <input type="hidden" name="pageSize" value="@Model.PageSize" />
     </form>
@@ -91,41 +105,65 @@
     }
 </div>
 
-<!-- GRÁFICOS DE LINHA (agora no topo, acima da pesquisa) -->
-<div class="grid-1" style="margin-bottom: 2rem;">
-    <div class="card">
-        <div class="card-header">Evolução mensal (2026)</div>
-        <div class="chart-container">
-            <canvas id="grafico1"></canvas>
+    @if (string.IsNullOrWhiteSpace(Model.SearchString)) // se houverem resultados para a pesquisa escondemos isto
+    {
+    <!-- GRÁFICOS DE LINHA (agora no topo, acima da pesquisa) -->
+    <div class="grid-1" style="margin-bottom: 2rem;">
+        <div class="card">
+            <div class="card-header">Evolução mensal (2026)</div>
+            <div class="chart-container">
+                <canvas id="grafico1"></canvas>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Últimos anúncios -->
-<div class="card">
-    <div class="card-header">Últimos anúncios</div>
-    <div style="display: flex; flex-direction: column; gap: 8px;">
-        @foreach (var item in Model.RecentJobs)
-        {
-            <div>
-                <a href="@item.ExternalId" style="color: #f0f0f0;">
-                    @item.Title
-                </a>
-                <span class="text-small" style="margin-left: 12px;">@item.DatePosted?.ToString("dd/MM/yyyy")</span>
-            </div>
-        }
+    <!-- Últimos anúncios -->
+    <div class="card">
+        <div class="card-header">Últimos anúncios</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            @foreach (var item in Model.RecentJobs)
+            {
+                <div>
+                    <a href="@item.ExternalId" style="color: #f0f0f0;">
+                        @item.Title
+                    </a>
+                    <span class="text-small" style="margin-left: 12px;">@item.DatePosted?.ToString("dd/MM/yyyy")</span>
+                </div>
+            }
+        </div>
     </div>
-</div>
 
-
+}
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // função dedicada a carregar o charts.js, assim podemos fazer lazy loading dos charts
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        async function initCharts() {
+            // Carregar Chart.js apenas se existirem gráficos na página
+            if (document.getElementById('grafico1')) {
+                await loadScript('https://cdn.jsdelivr.net/npm/chart.js');
+                initChart1();
+            }
+        }
+
+        window.addEventListener('load', initCharts);
+    </script>
 
     <script>
         // ------------------------------------------------------------
         // GRÁFICO 1 — Evolução mensal (linha)
         // ------------------------------------------------------------
+        function initChart1() {
         const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         const mesesAtuais = meses.slice(0, new Date().getMonth() + 1);
         const dadosJobs = @Html.Raw(jobsByMonthJson);
@@ -164,5 +202,6 @@
         }
         }
         });
+        }
     </script>
 }

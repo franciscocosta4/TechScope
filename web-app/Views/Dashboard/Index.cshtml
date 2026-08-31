@@ -10,7 +10,7 @@
 }
 
 <div class="dashboard-header">
-    <h1>Visão geral</h1>
+    <h1>Dashboard</h1>
     <p class="text-muted">Análise do mercado de tecnologia português</p>
     <br />
 </div>
@@ -19,7 +19,7 @@
 <div class="stats-grid">
     <div class="stat-card">
         <div class="stat-number">@Model.TotalJobs.ToString("N0")</div>
-        <div class="stat-label">Anúncios</div>
+        <div class="stat-label">Vagas</div>
     </div>
     <div class="stat-card">
         <div class="stat-number">@Model.TotalTechnologies.ToString("N0")</div>
@@ -159,13 +159,36 @@
             }
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+        // função dedicada a carregar o charts.js, assim podemos fazer lazy loading dos charts
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
 
+        async function initCharts() {
+            // Carregar Chart.js apenas se existirem gráficos na página
+            if (document.getElementById('grafico2') || document.getElementById('grafico3')) {
+                await loadScript('https://cdn.jsdelivr.net/npm/chart.js');
+                initChart2();
+                initChart3();
+            }
+        }
+
+        window.addEventListener('load', initCharts);
+    </script>
+
+    <script>
         // ------------------------------------------------------------
         // GRÁFICO 2 — Tecnologias em alta (linha)
         // ------------------------------------------------------------
+        function initChart2() {
         const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         const mesesAtuais = meses.slice(0, new Date().getMonth() + 1);
         const dadosTech = @Html.Raw(tecnologiasJson);
@@ -198,7 +221,7 @@
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
-        legend: { labels: { color: '#f0f0f0', boxWidth: 12, padding: 12 } }
+        legend: { labels: { color: '#f0f0f0', boxWidth: 12, padding: 12} }
         },
         scales: {
         y: { beginAtZero: true, grid: { color: '#1e1e20' }, ticks: { color: '#7a7a7e' } },
@@ -206,10 +229,12 @@
         }
         }
         });
+        }
 
         // ------------------------------------------------------------
         // GRÁFICO 3 — Distribuição geográfica (doughnut / rosca)
         // ------------------------------------------------------------
+        function initChart3() {
         const dadosLoc = @Html.Raw(locationsJson);
         const labelsLoc = dadosLoc.map(x => x.Location);
         const valoresLoc = dadosLoc.map(x => x.Count);
@@ -230,7 +255,7 @@
         maintainAspectRatio: true,
         plugins: {
         legend: {
-        position: 'bottom',   // <-- legenda em baixo
+        position: 'bottom',
         labels: {
         color: '#f0f0f0',
         boxWidth: 12,
@@ -242,5 +267,6 @@
         cutout: '60%'
         }
         });
+        }
     </script>
 }

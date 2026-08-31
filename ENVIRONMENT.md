@@ -131,6 +131,35 @@ Se a `QUERY` mudar, a chave muda também e a paginação volta automaticamente a
 
 Isto mantém a lógica simples e evita repetir sempre as mesmas páginas quando o script é corrido várias vezes seguidas.
 
+# Performance Optimizations
+
+## Lazy Loading de Gráficos
+
+Gráficos Chart.js são carregados apenas quando necessário:
+- Dashboard: lazy load com Intersection Observer
+- Jobs: lazy load com Intersection Observer
+- Technology Detail: lazy load com Intersection Observer
+Isso reduz render-blocking requests e melhora LCP.
+
+## Defer de Scripts não críticos
+
+- `site.js` carregado com `defer` para não bloquear render
+- `aspnetcore-browser-refresh.js` removido em produção
+
+## Otimização de Fonts
+
+- Google Fonts: `&display=swap` adicionado para evitarFOIT (Flash of Invisible Text)
+- Font Awesome: `font-display: swap` configurado
+- Preconnect hints para CDNs: `fonts.googleapis.com`, `fonts.gstatic.com`, `cdnjs.cloudflare.com`
+
+## Defer de CSS não crítico
+
+- `style.css` carregado assincronicamente com `media="print"` technique
+- CSS crítico inline no `<head>` para primeiramente renderizar
+- localStorage cache para evitar reloads
+
+---
+
 # Como reduzimos rate limiting e verificações
 
    ## LinkedIn

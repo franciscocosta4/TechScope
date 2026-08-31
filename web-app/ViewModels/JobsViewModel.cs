@@ -9,6 +9,7 @@ public class JobsViewModel
 
     public List<RecentJobsItem> RecentJobs { get; set; } = new();
     public string? SearchString { get; set; }
+    public string? Seniority { get; set; }
     public int PageNumber { get; set; }
     public int PageSize { get; set; }
     

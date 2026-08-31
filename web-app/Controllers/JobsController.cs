@@ -51,6 +51,7 @@ public class JobsController : Controller
             TotalJobs = totalJobs,
             RecentJobs = RecentJobs,
             SearchString = searchString,
+            Seniority = Seniority,
             JobsByMonth = jobsByMonth,
             PageNumber = pageNumber,
             PageSize = pageSize
