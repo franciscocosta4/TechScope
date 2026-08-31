@@ -17,7 +17,7 @@ public class JobsController : Controller
     }
 
 
-    public async Task<IActionResult> Index(string? searchString, string? Seniority, int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> Index(string? searchString, string? Seniority,string? WorkModel, int pageNumber = 1, int pageSize = 10)
     {
         var totalJobs = await _context.Jobs.CountAsync();
 
@@ -71,6 +71,14 @@ public class JobsController : Controller
 
                 query = query.Where(j =>
                     j.Keywords.Any(k =>k.Keyword != null && k.Keyword.ToUpper().Contains(SeniorityTerm.ToUpper())));
+            } 
+
+            if (!string.IsNullOrWhiteSpace(WorkModel))
+            {
+                var WorkModelTerm = WorkModel.Trim();
+
+                query = query.Where(j =>
+                    j.Keywords.Any(k =>k.Keyword != null && k.Keyword.ToUpper().Contains(WorkModelTerm.ToUpper())));
             } 
 
             // só conta depois de passar pelos filtros

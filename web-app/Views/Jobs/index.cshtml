@@ -24,29 +24,54 @@
                 <i class="fa-solid fa-magnifying-glass"></i> Pesquisar
             </button>
         </div>
-        <select name="Seniority" class="form-select" style="
-            background-color: #141416;
-            color: #f0f0f0;
-            border: 1px solid #1e1e20;
-            border-radius: 0;
-            padding: 8px 12px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            ">
-            <option value="">Todos os níveis</option>
+        <div style="display: flex; flex-direction: line; align-items: flex-start; gap: 1.5rem;">
+            <select name="Seniority" class="form-select" style="
+                background-color: #141416;
+                color: #f0f0f0;
+                border: 1px solid #1e1e20;
+                border-radius: 0;
+                padding: 8px 12px;
+                font-size: 0.9rem;
+                cursor: pointer;
+                ">
+                <option value="">Todos os níveis de Experiencia</option>
 
-            <option value="senior" selected="@(Model.Seniority == "senior")">
-                senior
-            </option>
+                <option value="senior" selected="@(Model.Seniority == "senior")">
+                    senior
+                </option>
 
-            <option value="mid" selected="@(Model.Seniority == "mid")">
-                mid
-            </option>
+                <option value="mid" selected="@(Model.Seniority == "mid")">
+                    mid
+                </option>
 
-            <option value="junior" selected="@(Model.Seniority == "junior")">
-                junior
-            </option>
-        </select>
+                <option value="junior" selected="@(Model.Seniority == "junior")">
+                    junior
+                </option>
+            </select>
+            <select name="WorkModel" class="form-select" style="
+                background-color: #141416;
+                color: #f0f0f0;
+                border: 1px solid #1e1e20;
+                border-radius: 0;
+                padding: 8px 12px;
+                font-size: 0.9rem;
+                cursor: pointer;
+                ">
+                <option value="">Todos os modelos de trabalho</option>
+
+                <option value="onsite" selected="@(Model.WorkModel == "onsite")">
+                    Presencial
+                </option>
+
+                <option value="remote" selected="@(Model.WorkModel == "remote")">
+                    Remoto
+                </option>
+
+                <option value="hybrid" selected="@(Model.WorkModel == "hybrid")">
+                    Híbrido 
+                </option>
+            </select>
+        </div>
         <div style="margin-top: 0.2rem; font-size: 0.85rem; color: #a0a0a4;">
             <strong>Nota:</strong> A filtragem é baseada em <em>matching</em> automático no texto das descrições dos
             anúncios. Podem não corresponder realmente ao que é pedido na vaga ou não capturar todos os casos.

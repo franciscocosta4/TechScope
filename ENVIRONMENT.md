@@ -1,44 +1,37 @@
+# Arquitetura do projeto
 
-# Por que não temos autenticação
+O sistema está dividido em três componentes principais:
 
-A aplicação **não tem login, registo nem qualquer sistema de autenticação**. Esta decisão foi tomada porque:
+```mermaid
+flowchart TD
 
-1. **Não há personalização por utilizador** — a app mostra dados agregados do mercado (total de anúncios, tecnologias mais procuradas, tendências). Não há filtros guardados, preferências ou dados privados.
-2. **É uma aplicação pública de leitura** — todas as rotas são `GET`. Os scrapers é que escrevem na base de dados; a web app só lê.
-4. **Demo pública simples** — qualquer pessoa pode entrar na app e ver o dashboard. Sem barreiras.
+    Sources[(Fontes de Emprego)]
 
-Isto também simplifica o deployment: não precisamos de HTTPS obrigatório por causa de cookies, nem de gestão de segredos de auth.
+    subgraph PythonPipeline[Python Pipeline]
+        Scheduler[Agendador Diário]
+        Scrapers[Scrapers de Emprego]
+        Processor[Processamento de Dados]
+    end
 
----
+    DB[(PostgreSQL)]
 
-## Arquitetura da web app 
+    subgraph NETApp[.NET Application]
+        API[ASP.NET Core API]
+        Analytics[Motor de Análise]
+    end
 
-### Dashboard
+    Frontend[Dashboard Web]
 
-- total de anúncios
-- tecnologias mais procuradas
-- gráfico de tendências do mercado
-- distribuição regional
-- volume de anúncios recentes
-- pesquisa rápida de tecnologias que leva para a página de detalhe da tecnologia
+    Sources --> Scheduler
+    Scheduler --> Scrapers
+    Scrapers --> Processor
+    Processor --> DB
 
-### Página de detalhe da tecnologia
 
-- nome da tecnologia
-- número de anúncios
-- tendência mensal
-- salários
-- tecnologias relacionadas
-- empresas que recrutam
-- anúncios recentes relacionados
-
-### Página de anúncios
-
-- barra de pesquisa para anúncios
-- filtros
-- cartões de anúncio por ordem, do mais recente para o mais antigo
-- paginação
-- opção de abrir o link original do anúncio
+    DB --> API
+    API --> Analytics
+    Analytics --> Frontend
+```
 
 ## Modelo da Base de Dados gerada na pipeline
 A ligação ao PostgreSQL foi centralizada em `data-pipeline/database/postgres.py` para evitar repetir configuração nos scrapers.
@@ -75,6 +68,18 @@ erDiagram
         string Category
     }
 ```
+
+---
+
+# Por que não temos autenticação
+
+A aplicação **não tem login, registo nem qualquer sistema de autenticação**. Esta decisão foi tomada porque:
+
+1. **Não há personalização por utilizador** — a app mostra dados agregados do mercado (total de anúncios, tecnologias mais procuradas, tendências). Não há filtros guardados, preferências ou dados privados.
+2. **É uma aplicação pública de leitura** — todas as rotas são `GET`. Os scrapers é que escrevem na base de dados; a web app só lê.
+4. **Demo pública simples** — qualquer pessoa pode entrar na app e ver o dashboard. Sem barreiras.
+
+Isto também simplifica o deployment: não precisamos de HTTPS obrigatório por causa de cookies, nem de gestão de segredos de auth.
 
 ---
 

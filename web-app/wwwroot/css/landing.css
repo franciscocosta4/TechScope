@@ -1,0 +1,525 @@
+/* ============================================
+   TECHSCOPE LANDING PAGE
+   Clean, Professional Design (BankLink-inspired)
+   ============================================ */
+
+:root {
+  /* Core Colors — alinhados com style.css */
+  --bg-primary: #0b0b0d;
+  --bg-secondary: #141416;
+  --bg-tertiary: #1e1e20;
+
+  --text-primary: #ffffff;
+  --text-secondary: #f0f0f0;
+  --text-tertiary: #7a7a7e;
+  --text-muted: #5a5a5e;
+
+  --border-color: #1e1e20;
+  --border-hover: #2a2a2e;
+  --accent-white: #ffffff;
+
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --spacing-2xl: 4rem;
+
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  --font-size-4xl: 2.5rem;
+  --font-size-5xl: 3.5rem;
+
+  /* No rounded corners — matches style.css */
+  --radius: 0;
+
+  /* Transitions */
+  --transition-fast: 0.1s ease;
+  --transition-normal: 0.15s ease;
+  --transition-slow: 0.3s ease;
+}
+
+/* ============================================
+   RESET & BASE
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: var(--font-size-base);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ============================================
+   LANDING PAGE CONTAINER
+   ============================================ */
+
+.landing-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   NAVBAR / HEADER
+   ============================================ */
+
+.landing-navbar {
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  background: rgba(11, 11, 13, 0.95);
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.4rem var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xl);
+}
+
+.navbar-brand {
+  flex-shrink: 0;
+}
+
+.brand-logo {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-transform: lowercase;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: var(--spacing-xl);
+  flex: 1;
+  align-items: center;
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+}
+
+.nav-cta {
+  background: var(--accent-white);
+  color: var(--bg-primary);
+  padding: 10px 24px;
+  border-radius: 0;
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.nav-cta:hover {
+  background: #e8e8e8;
+  color: var(--bg-primary);
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+
+.hero-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  background: var(--bg-primary);
+}
+
+.hero-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 30fr 1fr;
+  gap: var(--spacing-2xl);
+  align-items: center;
+}
+
+/* Hero Content - Left Column */
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* Badge */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  width: fit-content;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.badge-icon {
+  font-size: var(--font-size-lg);
+}
+
+/* Main Title */
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, var(--font-size-5xl));
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.hero-subtitle-accent {
+  color: var(--text-primary);
+}
+
+/* Tagline (smaller subtitle) */
+.hero-tagline {
+  font-size: var(--font-size-xl);
+  font-weight: 500;
+  color: var(--text-secondary);
+  max-width: 500px;
+}
+
+/* Description */
+.hero-description {
+  font-size: var(--font-size-base);
+  color: var(--text-tertiary);
+  max-width: 550px;
+  line-height: 1.7;
+}
+
+.hero-description strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* CTA Buttons */
+.hero-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 14px 28px;
+  border: none;
+  border-radius: 0;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--accent-white);
+  color: var(--bg-primary);
+}
+
+.btn-primary:hover {
+  background: #e8e8e8;
+  color: var(--bg-primary);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--text-secondary);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-secondary);
+  border-color: var(--text-primary);
+}
+
+.btn i {
+  font-size: var(--font-size-base);
+}
+
+/* Stats Row */
+.hero-stats {
+  display: flex;
+  gap: var(--spacing-2xl);
+  margin-top: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-value {
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+/* Trust Line */
+.hero-trust {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  margin-top: var(--spacing-md);
+}
+
+/* Hero Visual - Right Column */
+.hero-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.product-showcase {
+  width: 100%;
+  max-width: 1260px;
+  position: relative;
+}
+
+.product-image {
+  width: 100%;
+  height: auto;
+  border-radius: 0;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.product-showcase {
+  width: 100%;
+  position: relative;
+}
+
+/* ============================================
+   BRANDS / TRUST SECTION
+   ============================================ */
+
+.brands-section {
+  border-top: 1px solid var(--border-color);
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  background: var(--bg-secondary);
+}
+
+.brands-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.brands-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  /* text-transform: uppercase; */
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.brands-grid {
+  display: flex;
+  gap: var(--spacing-xl);
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.brand-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  font-size: 1.8rem;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.brand-item:hover {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+
+  .hero-visual {
+    order: -1; /* Move visual above content on smaller screens */
+  }
+
+  .product-image {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+
+  .navbar-menu {
+    display: none; /* Hide on mobile */
+  }
+
+  .hero-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .hero-title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .hero-tagline {
+    font-size: var(--font-size-lg);
+  }
+
+  .hero-stats {
+    gap: var(--spacing-lg);
+  }
+
+  .stat-value {
+    font-size: var(--font-size-2xl);
+  }
+
+  .brands-grid {
+    gap: var(--spacing-md);
+  }
+
+  .brand-item {
+    width: 50px;
+    height: 50px;
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-container {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .nav-cta {
+    width: 100%;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .hero-tagline {
+    font-size: var(--font-size-base);
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-stats {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .brands-grid {
+    gap: var(--spacing-sm);
+  }
+
+  .brand-item {
+    width: 45px;
+    height: 45px;
+    font-size: 1.2rem;
+  }
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+
+/* Smooth scroll behavior */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus states for accessibility */
+.btn:focus,
+.nav-link:focus,
+.nav-cta:focus {
+  outline: 1px solid var(--text-primary);
+  outline-offset: 2px;
+}

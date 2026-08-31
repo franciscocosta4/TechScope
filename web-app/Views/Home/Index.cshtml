@@ -2,17 +2,137 @@
     Layout = "_LayoutLanding";
 }
 
-<div class="landing-content">
-    <h1>TechScope</h1>
-    <p class="lead" style="font-size: 1.6rem; font-weight: 300; color: #cfcfcf;">
-        Descobre o que o mercado de trabalho em tecnologia realmente procura.
-    </p>
-    <p style="color: #7a7a7e; max-width: 500px; margin: 1rem auto;">
-       Explora dados reais de vagas e percebe quais são as linguagens de programação, frameworks e ferramentas mais procuradas pelas empresas.
-Analisa a procura por tecnologia, identifica tendências e compara diferentes competências para perceber onde estão as melhores oportunidades no mercado.
-Transforma dados do mercado em decisões mais informadas sobre aquilo que deves aprender e onde investir o teu tempo.
-    </p>
-    <a asp-controller="Dashboard" asp-action="Index" class="btn" style="margin-top: 2rem; padding: 14px 40px; font-size: 1.1rem;">
-        <i class="fas fa-chart-bar"></i> Ver Dashboard
-    </a>
+<div class="landing-page">
+    <!-- Navbar -->
+    <nav class="landing-navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <span class="brand-logo">techscope</span>
+            </div>
+            <div class="navbar-menu">
+                @* <a href="#features" class="nav-link">Recursos</a>
+                <a href="#stats" class="nav-link">Sobre</a> *@
+                <a href="https://github.com/franciscocosta4/TechScope/blob/main/ENVIRONMENT.md"
+                   class="nav-link">Documentação</a>
+                <a href="https://github.com/franciscocosta4/techscope" class="nav-link">GitHub</a>
+            </div>
+            <a asp-controller="Dashboard" asp-action="Index" class="nav-cta">
+                Ver Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-container">
+
+            <!-- Left Column: Content -->
+            <div class="hero-content">
+
+                <!-- Badge -->
+                <div class="hero-badge">
+                    De um dev, para todos os devs.
+                </div>
+
+                <!-- Main Headline -->
+                <h1 class="hero-title">
+                    Descobre todas as tendências do
+                    <span class="hero-subtitle-accent">mercado</span>
+                </h1>
+
+                <!-- Tagline -->
+                <p class="hero-tagline">
+                    Começa já a recolher dados reais do mercado. Toma decisões informadas.
+                </p>
+
+                <!-- Description -->
+                <p class="hero-description">
+                    TechScope é uma ferramenta altamente configurável que permite recolher dados em tempo real do <strong>LinkedIn</strong>
+                    e <strong>Indeed</strong>
+                    para identificar as linguagens, frameworks e ferramentas que as empresas realmente procuram.
+                    Acompanha tendências e descobre oportunidades que mais ninguém descobriu.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="hero-actions">
+                    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary">
+                        Ver Dashboard
+                    </a>
+                    <a href="" class="btn btn-secondary" target="_blank" rel="noopener">
+                        Aprende como recolher os dados
+                    </a>
+                </div>
+
+                <!-- Trust / Stats Row -->
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-value">1.2k</span>
+                        <span class="stat-label">Estrelas</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">340</span>
+                        <span class="stat-label">Forks</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">560+</span>
+                        <span class="stat-label">Instalações</span>
+                    </div>
+                </div>
+            </div>
+
+            @* <p class="hero-trust">
+                    Usado por developers e tech leads em startups e grandes empresas
+                </p> *@
+        </div>
+
+        <!-- Right Column: Visual -->
+        <div class="hero-visual">
+            <div class="product-showcase">
+                <img src="~/assets/img/dashboard.jpg" alt="TechScope Dashboard" class="product-image" loading="lazy">
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- Featured Companies / Brands -->
+<div class="brands-section">
+    <div class="brands-container">
+        <p class="brands-label">Tecnologias suportadas por padrão:</p>
+        <div class="brands-grid">
+            <div class="brand-item">
+                <i class="fab fa-laravel"></i>
+            </div>
+            <div class="brand-item">
+                <i class="fab fa-php"></i>
+            </div>
+            <div class="brand-item">
+                <i class="fab fa-js"></i>
+            </div>
+            <div class="brand-item">
+                <i class="fab fa-rust"></i>
+            </div>
+            <div class="brand-item">
+                <i class="fab fa-react"></i>
+            </div>
+            <div class="brand-item">
+                <i class="fab fa-angular"></i>
+            </div>
+            <div class="brand-item">
+                <i class="fab fa-python"></i>
+            </div>
+            <div class="brand-item">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <div class="brand-item">
+                <i class="fa-brands fa-java"></i>
+            </div>
+            <div class="brand-item">
+                <i class="fab fa-node-js"></i>
+            </div>
+        </div>
+        <br />
+        <p class="brands-label">e muitas mais...</p>
+    </div>
+</div>
+
 </div>
