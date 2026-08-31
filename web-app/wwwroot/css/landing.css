@@ -348,6 +348,142 @@ img {
 }
 
 /* ============================================
+   DOCS SECTION
+   ============================================ */
+
+.docs-section {
+  border-top: 1px solid var(--border-color);
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  background: var(--bg-primary);
+}
+
+.docs-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.docs-header {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.docs-title {
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.docs-subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--text-tertiary);
+}
+
+.docs-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.docs-step {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: flex-start;
+}
+
+.docs-step-number {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.docs-step-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.docs-step-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.docs-text {
+  font-size: var(--font-size-base);
+  color: var(--text-tertiary);
+  line-height: 1.7;
+  margin-bottom: var(--spacing-sm);
+}
+
+.docs-text code {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 2px 6px;
+  font-size: 0.85em;
+  color: var(--text-secondary);
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+.docs-code {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-md);
+  margin: var(--spacing-sm) 0;
+  overflow-x: auto;
+}
+
+.docs-code code {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  white-space: pre;
+}
+
+.docs-note {
+  border-left: 2px solid var(--border-color);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-top: var(--spacing-md);
+  background: var(--bg-secondary);
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+.docs-note strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .docs-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .docs-step {
+    gap: var(--spacing-md);
+  }
+
+  .docs-step-number {
+    width: 32px;
+    height: 32px;
+    font-size: var(--font-size-sm);
+  }
+
+  .docs-code {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* ============================================
    BRANDS / TRUST SECTION
    ============================================ */
 

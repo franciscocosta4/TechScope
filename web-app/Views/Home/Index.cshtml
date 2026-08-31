@@ -58,26 +58,11 @@
                     <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary">
                         Ver Dashboard
                     </a>
-                    <a href="" class="btn btn-secondary" target="_blank" rel="noopener">
+                    <a href="#docs" class="btn btn-secondary">
                         Aprende como recolher os dados
                     </a>
                 </div>
 
-                <!-- Trust / Stats Row -->
-                <div class="hero-stats">
-                    <div class="stat">
-                        <span class="stat-value">1.2k</span>
-                        <span class="stat-label">Estrelas</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">340</span>
-                        <span class="stat-label">Forks</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">560+</span>
-                        <span class="stat-label">Instalações</span>
-                    </div>
-                </div>
             </div>
 
             @* <p class="hero-trust">
@@ -94,6 +79,64 @@
     </div>
 
 </div>
+<!-- Docs Section -->
+<div class="docs-section" id="docs">
+    <div class="docs-container">
+        <div class="docs-header">
+            <h2 class="docs-title">Como rodar os scrapers</h2>
+            <p class="docs-subtitle">Recolhe dados do LinkedIn e Indeed em quatro passos.</p>
+        </div>
+
+        <div class="docs-steps">
+            <div class="docs-step">
+                <div class="docs-step-number">1</div>
+                <div class="docs-step-content">
+                    <h3 class="docs-step-title">Instalar dependências</h3>
+                    <p class="docs-text">Antes de executar os scrapers, instala os requirements do projeto:</p>
+                    <pre class="docs-code"><code>pip install -r requirements.txt</code></pre>
+                </div>
+            </div>
+
+            <div class="docs-step">
+                <div class="docs-step-number">2</div>
+                <div class="docs-step-content">
+                    <h3 class="docs-step-title">Preparar a base de dados</h3>
+                    <p class="docs-text">Na primeira execução, os scrapers criam o schema a partir de <code>data-pipeline/database/migrations/001_initial.sql</code>.</p>
+                    <pre class="docs-code"><code>psql -U postgres -d techscope -f data-pipeline/database/migrations/001_initial.sql</code></pre>
+                </div>
+            </div>
+
+            <div class="docs-step">
+                <div class="docs-step-number">3</div>
+                <div class="docs-step-content">
+                    <h3 class="docs-step-title">Arrancar o Chrome para o Indeed</h3>
+                    <p class="docs-text">Para o scraper do Indeed, corre o ficheiro:</p>
+                    <pre class="docs-code"><code>start_chrome_debug.bat</code></pre>
+                    <p class="docs-text">Isto abre o Chrome com o perfil do projecto e a porta de debug activa.</p>
+                </div>
+            </div>
+
+            <div class="docs-step">
+                <div class="docs-step-number">4</div>
+                <div class="docs-step-content">
+                    <h3 class="docs-step-title">Correr os scrapers</h3>
+                    <p class="docs-text">Executa os scrapers a partir da raiz do repositório:</p>
+                    <pre class="docs-code"><code># Scrapers de anúncios (listings)
+python data-pipeline/scrapers/indeed.py
+python data-pipeline/scrapers/linkedin.py
+
+# Scrapers de keywords (extraem descrições e analisam conteúdo)
+python data-pipeline/scrapers/indeed_keywords.py
+python data-pipeline/scrapers/linkedin_keywords.py</code></pre>
+                    <blockquote class="docs-note">
+                        <strong>Nota:</strong> Os scrapers de keywords do LinkedIn precisam do Chrome debug aberto porque o LinkedIn carrega as descrições via JavaScript.
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Featured Companies / Brands -->
 <div class="brands-section">
     <div class="brands-container">
@@ -133,6 +176,4 @@
         <br />
         <p class="brands-label">e muitas mais...</p>
     </div>
-</div>
-
 </div>
