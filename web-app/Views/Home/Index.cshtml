@@ -7,7 +7,9 @@
     <nav class="landing-navbar">
         <div class="navbar-container">
             <div class="navbar-brand">
-                <span class="brand-logo">techscope</span>
+                <a href="#badge" class="nav-link">
+                    <span class="brand-logo">techscope</span>
+                </a>
             </div>
             <div class="navbar-menu">
                 @* <a href="#features" class="nav-link">Recursos</a>
@@ -31,7 +33,7 @@
             <div class="hero-content">
 
                 <!-- Badge -->
-                <div class="hero-badge">
+                <div class="hero-badge" id="badge">
                     De um dev, para todos os devs.
                 </div>
 
@@ -123,113 +125,125 @@
     <!-- Docs Section -->
     <div class="docs-section">
         <div class="docs-container">
-            <div class="docs-header">
-                <h2 class="docs-title">Como rodar os scrapers</h2>
-                <p class="docs-subtitle">Recolhe dados do LinkedIn e Indeed em quatro passos.</p>
-            </div>
 
-            <div class="docs-steps">
-                <div class="docs-step">
-                    <div class="docs-step-number">1</div>
-                    <div class="docs-step-content">
-                        <h3 class="docs-step-title">Instalar dependências</h3>
-                        <p class="docs-text">Antes de executar os scrapers, instala os requirements do projeto:</p>
-                        <pre class="docs-code"><code>pip install -r requirements.txt</code></pre>
-                    </div>
+            <h2 class="docs-title">Encontras-te algum bug? </h2>
+            <p class="docs-subtitle">Cria um issue em: <a href="https://github.com/franciscocosta4/TechScope/issues"
+                                                              style="color:white;">TechScope/issues</a></p>
+                <br />
+                <hr />
+                <br />
+                <div class="docs-header">
+                    <h2 class="docs-title">Como rodar os scrapers</h2>
+                    <p class="docs-subtitle">Recolhe dados do LinkedIn e Indeed em quatro passos.</p>
+                    <blockquote class="docs-note">
+                        <strong>Nota:</strong> Os scrapers <strong>NÃO são executados automaticamente</strong>. Sempre que quiseres atualizar a informação da Dashboard com novos anúncios, tens de voltar a executar os scrapers.
+                    </blockquote>
                 </div>
 
-                <div class="docs-step">
-                    <div class="docs-step-number">2</div>
-                    <div class="docs-step-content">
-                        <h3 class="docs-step-title">Preparar a base de dados</h3>
-                        <p class="docs-text">Na primeira execução, os scrapers criam o schema a partir de
-                            <code>data-pipeline/database/migrations/001_initial.sql</code>.
-                        </p>
-                        <pre
-                        class="docs-code"><code>psql -U postgres -d techscope -f data-pipeline/database/migrations/001_initial.sql</code></pre>
+                <div class="docs-steps">
+                    <div class="docs-step">
+                        <div class="docs-step-number">1</div>
+                        <div class="docs-step-content">
+                            <h3 class="docs-step-title">Instalar dependências</h3>
+                            <p class="docs-text">Antes de executar os scrapers, instala os requirements do projeto:</p>
+                            <pre class="docs-code"><code>pip install -r requirements.txt</code></pre>
+                        </div>
                     </div>
-                </div>
 
-                <div class="docs-step">
-                    <div class="docs-step-number">3</div>
-                    <div class="docs-step-content">
-                        <h3 class="docs-step-title">Arrancar o Chrome para o Indeed</h3>
-                        <p class="docs-text">Para o scraper do Indeed, corre o ficheiro:</p>
-                        <pre class="docs-code"><code>start_chrome_debug.bat</code></pre>
-                        <p class="docs-text">Isto abre o Chrome com o perfil do projecto e a porta de debug activa.</p>
+                    <div class="docs-step">
+                        <div class="docs-step-number">2</div>
+                        <div class="docs-step-content">
+                            <h3 class="docs-step-title">Preparar a base de dados</h3>
+                            <p class="docs-text">Na primeira execução, os scrapers criam o schema a partir de
+                                <code>data-pipeline/database/migrations/001_initial.sql</code>.
+                            </p>
+                            <pre
+                            class="docs-code"><code>psql -U postgres -d techscope -f data-pipeline/database/migrations/001_initial.sql</code></pre>
+                        </div>
                     </div>
-                </div>
 
-                <div class="docs-step">
-                    <div class="docs-step-number">4</div>
-                    <div class="docs-step-content">
-                        <h3 class="docs-step-title">Correr os scrapers</h3>
-                        <p class="docs-text">Executa os scrapers a partir da raiz do repositório:</p>
-                        <pre class="docs-code"><code># Scrapers de anúncios (listings)
+                    <div class="docs-step">
+                        <div class="docs-step-number">3</div>
+                        <div class="docs-step-content">
+                            <h3 class="docs-step-title">Arrancar o Chrome para o Indeed</h3>
+                            <p class="docs-text">Para o scraper do Indeed, corre o ficheiro:</p>
+                            <pre class="docs-code"><code>start_chrome_debug.bat</code></pre>
+                            <p class="docs-text">Isto abre o Chrome com o perfil do projecto e a porta de debug activa.</p>
+                        </div>
+                    </div>
+
+                    <div class="docs-step">
+                        <div class="docs-step-number">4</div>
+                        <div class="docs-step-content">
+                            <h3 class="docs-step-title">Correr os scrapers</h3>
+                            <p class="docs-text">Executa os scrapers a partir da raiz do repositório:</p>
+                            <pre class="docs-code"><code># Scrapers de anúncios (listings)
 python data-pipeline/scrapers/indeed.py
 python data-pipeline/scrapers/linkedin.py
 
 # Scrapers de keywords (extraem descrições e analisam conteúdo)
 python data-pipeline/scrapers/indeed_keywords.py
 python data-pipeline/scrapers/linkedin_keywords.py</code></pre>
-                        <blockquote class="docs-note">
-                            <strong>Nota:</strong> Os scrapers de keywords do LinkedIn precisam do Chrome debug aberto
-                            porque o LinkedIn carrega as descrições via JavaScript.
-                        </blockquote>
+                            <blockquote class="docs-note">
+                                <strong>Nota:</strong> O scraper de keywords do LinkedIn (linkedin_keywords.py) precisa do
+                                Chrome debug aberto
+                                porque o LinkedIn carrega as descrições via JavaScript. <strong> É recomendado fazer login com uma conta do linkedin para evitar bugs e rate-limiting
+                            </blockquote>
+                        </div>
                     </div>
-                </div>
-                <div class="docs-step">
-                    <div class="docs-step-number">5</div>
-                    <div class="docs-step-content">
-                        <h3 class="docs-step-title">Analisa os resultados</h3>
-                        <p class="docs-text">Abre a web app em :</p>
-                        <a href="http://localhost:5136/Dashboard"
-                           style="color:white;">http://localhost:5136/Dashboard</a>
-                        <blockquote class="docs-note" id="manter">
-                            <strong>Nota:</strong> A porta do localhost pode variar conforme a configuração que
-                            definiste em
-                            launchSettings.json .
-                        </blockquote>
+                    <div class="docs-step">
+                        <div class="docs-step-number">5</div>
+                        <div class="docs-step-content">
+                            <h3 class="docs-step-title">Analisa os resultados</h3>
+                            <p class="docs-text">Abre a web app em :</p>
+                            <a href="http://localhost:5136/Dashboard"
+                               style="color:white;">http://localhost:5136/Dashboard</a>
+                            <blockquote class="docs-note" id="manter">
+                                <strong>Nota:</strong> A porta do localhost pode variar conforme a configuração que
+                                definiste em
+                                launchSettings.json .
+                            </blockquote>
+                        </div>
                     </div>
-                </div>
-                <hr />
-                <div class="docs-header">
-                    <h2 class="docs-title">Configurar e manter o projeto</h2>
-                    <p class="docs-subtitle">Mantem os scrapers e a app a funcionar para ti e adapta-os para as tuas
-                        necessidades. <br /> Estes passos nao servem uma ordem específica</p>
-                    </div>
-                    <div class="docs-steps">
-                        <div class="docs-step">
-                            <div class="docs-step-number">1</div>
-                            <div class="docs-step-content">
-                                <h3 class="docs-step-title">Manter e tratar da paginação dos scrapers</h3>
-                                <p class="docs-text">Para não começar sempre no `0`, a pipeline guarda o último `start`
-                                    usado
-                                    num ficheiro CSV local: <strong>`data-pipeline/scrapers/scraper_state.csv`</strong> .
-                                    Cada linha associa `source` + `query` ao último bloco percorrido.</p>
-                                    <br /> Exemplo:
-                                    <pre class="docs-code"><code>source,query,last_start
+                    <hr />
+                    <div class="docs-header">
+                        <h2 class="docs-title">Configurar e manter o projeto</h2>
+                        <p class="docs-subtitle">Mantem os scrapers e a app a funcionar para ti e adapta-os para as tuas
+                            necessidades. <br /> Estes passos nao servem uma ordem específica</p>
+                        </div>
+                        <div class="docs-steps">
+                            <div class="docs-step">
+                                <div class="docs-step-number">1</div>
+                                <div class="docs-step-content">
+                                    <h3 class="docs-step-title">Manter e tratar da paginação dos scrapers</h3>
+                                    <p class="docs-text">Para não começar sempre no `0`, a pipeline guarda o último `start`
+                                        usado
+                                        num ficheiro CSV local: <strong>`data-pipeline/scrapers/scraper_state.csv`</strong> .
+                                        Cada linha associa `source` + `query` ao último bloco percorrido.</p>
+                                        <br /> Exemplo:
+                                        <pre class="docs-code"><code>source,query,last_start
 linkedin,web developer,430
 linkedin,fullstack developer,250
 linkedin,backend developer,400
 linkedin,developer,800
 linkedin,software engineer,740
 </code></pre>
-                                    <p class="docs-text">
-                                        Caso seja necessário, ou aches relevante, podes esvaziar as logs para melhorar a procura
-                                        por
-                                        vagas mais recentes.
-                                    </p>
+                                        <p class="docs-text">
+                                            Caso seja necessário, ou aches relevante, podes esvaziar as logs para melhorar a procura
+                                            por
+                                            vagas mais recentes.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="docs-step">
-                            <div class="docs-step-number">2</div>
-                            <div class="docs-step-content">
-                                <h3 class="docs-step-title">Adapta as queries conforme a tua necessidade</h3>
-                                <p class="docs-text">Neste momento as queries são definidas manualmente no codigo dos scrapers:
-                                    <strong>"linkedin.py" e "indeed.py"</strong> .
-                                    Caso queiras procurar por uma role especifica podes editar as queries.</p>
+                            <div class="docs-step">
+                                <div class="docs-step-number">2</div>
+                                <div class="docs-step-content">
+                                    <h3 class="docs-step-title">Adapta as queries conforme a tua necessidade</h3>
+                                    <p class="docs-text">Neste momento as queries são definidas manualmente no codigo dos scrapers:
+                                        <strong>"linkedin.py" e "indeed.py"</strong> .
+                                        Caso queiras procurar por uma role especifica podes editar as queries.
+                                    </p>
                                     <br /> Exemplo de query (linkedin.py):
                                     <pre class="docs-code"><code>QUERY = "Software Engineer"
 TECHNOLOGY_NAME = None
