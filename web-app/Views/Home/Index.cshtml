@@ -15,6 +15,7 @@
                 <a href="https://github.com/franciscocosta4/TechScope/blob/main/ENVIRONMENT.md"
                    class="nav-link">Documentação</a>
                 <a href="https://github.com/franciscocosta4/techscope" class="nav-link">GitHub</a>
+                <a href="#manter" class="nav-link">Configurar o projeto</a>
             </div>
             <a asp-controller="Dashboard" asp-action="Index" class="nav-cta">
                 Ver Dashboard
@@ -47,7 +48,8 @@
 
                 <!-- Description -->
                 <p class="hero-description">
-                    TechScope é uma ferramenta altamente configurável que permite recolher dados em tempo real do <strong>LinkedIn</strong>
+                    TechScope é uma ferramenta altamente configurável que permite recolher dados em tempo real do
+                    <strong>LinkedIn</strong>
                     e <strong>Indeed</strong>
                     para identificar as linguagens, frameworks e ferramentas que as empresas realmente procuram.
                     Acompanha tendências e descobre oportunidades que mais ninguém descobriu.
@@ -78,102 +80,173 @@
         </div>
     </div>
 
-</div>
-<!-- Docs Section -->
-<div class="docs-section" id="docs">
-    <div class="docs-container">
-        <div class="docs-header">
-            <h2 class="docs-title">Como rodar os scrapers</h2>
-            <p class="docs-subtitle">Recolhe dados do LinkedIn e Indeed em quatro passos.</p>
+    <!-- Featured Companies / Brands -->
+    <div class="brands-section">
+        <div class="brands-container">
+            <p class="brands-label">Tecnologias suportadas por padrão:</p>
+            <div class="brands-grid">
+                <div class="brand-item">
+                    <i class="fab fa-laravel"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-php"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-js"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-rust"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-react"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-angular"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-python"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fa-brands fa-java"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-node-js"></i>
+                </div>
+            </div>
+            <br />
+            <p id="docs" class="brands-label">e muitas mais...</p>
         </div>
-
-        <div class="docs-steps">
-            <div class="docs-step">
-                <div class="docs-step-number">1</div>
-                <div class="docs-step-content">
-                    <h3 class="docs-step-title">Instalar dependências</h3>
-                    <p class="docs-text">Antes de executar os scrapers, instala os requirements do projeto:</p>
-                    <pre class="docs-code"><code>pip install -r requirements.txt</code></pre>
-                </div>
+    </div>
+    <!-- Docs Section -->
+    <div class="docs-section">
+        <div class="docs-container">
+            <div class="docs-header">
+                <h2 class="docs-title">Como rodar os scrapers</h2>
+                <p class="docs-subtitle">Recolhe dados do LinkedIn e Indeed em quatro passos.</p>
             </div>
 
-            <div class="docs-step">
-                <div class="docs-step-number">2</div>
-                <div class="docs-step-content">
-                    <h3 class="docs-step-title">Preparar a base de dados</h3>
-                    <p class="docs-text">Na primeira execução, os scrapers criam o schema a partir de <code>data-pipeline/database/migrations/001_initial.sql</code>.</p>
-                    <pre class="docs-code"><code>psql -U postgres -d techscope -f data-pipeline/database/migrations/001_initial.sql</code></pre>
+            <div class="docs-steps">
+                <div class="docs-step">
+                    <div class="docs-step-number">1</div>
+                    <div class="docs-step-content">
+                        <h3 class="docs-step-title">Instalar dependências</h3>
+                        <p class="docs-text">Antes de executar os scrapers, instala os requirements do projeto:</p>
+                        <pre class="docs-code"><code>pip install -r requirements.txt</code></pre>
+                    </div>
                 </div>
-            </div>
 
-            <div class="docs-step">
-                <div class="docs-step-number">3</div>
-                <div class="docs-step-content">
-                    <h3 class="docs-step-title">Arrancar o Chrome para o Indeed</h3>
-                    <p class="docs-text">Para o scraper do Indeed, corre o ficheiro:</p>
-                    <pre class="docs-code"><code>start_chrome_debug.bat</code></pre>
-                    <p class="docs-text">Isto abre o Chrome com o perfil do projecto e a porta de debug activa.</p>
+                <div class="docs-step">
+                    <div class="docs-step-number">2</div>
+                    <div class="docs-step-content">
+                        <h3 class="docs-step-title">Preparar a base de dados</h3>
+                        <p class="docs-text">Na primeira execução, os scrapers criam o schema a partir de
+                            <code>data-pipeline/database/migrations/001_initial.sql</code>.
+                        </p>
+                        <pre
+                        class="docs-code"><code>psql -U postgres -d techscope -f data-pipeline/database/migrations/001_initial.sql</code></pre>
+                    </div>
                 </div>
-            </div>
 
-            <div class="docs-step">
-                <div class="docs-step-number">4</div>
-                <div class="docs-step-content">
-                    <h3 class="docs-step-title">Correr os scrapers</h3>
-                    <p class="docs-text">Executa os scrapers a partir da raiz do repositório:</p>
-                    <pre class="docs-code"><code># Scrapers de anúncios (listings)
+                <div class="docs-step">
+                    <div class="docs-step-number">3</div>
+                    <div class="docs-step-content">
+                        <h3 class="docs-step-title">Arrancar o Chrome para o Indeed</h3>
+                        <p class="docs-text">Para o scraper do Indeed, corre o ficheiro:</p>
+                        <pre class="docs-code"><code>start_chrome_debug.bat</code></pre>
+                        <p class="docs-text">Isto abre o Chrome com o perfil do projecto e a porta de debug activa.</p>
+                    </div>
+                </div>
+
+                <div class="docs-step">
+                    <div class="docs-step-number">4</div>
+                    <div class="docs-step-content">
+                        <h3 class="docs-step-title">Correr os scrapers</h3>
+                        <p class="docs-text">Executa os scrapers a partir da raiz do repositório:</p>
+                        <pre class="docs-code"><code># Scrapers de anúncios (listings)
 python data-pipeline/scrapers/indeed.py
 python data-pipeline/scrapers/linkedin.py
 
 # Scrapers de keywords (extraem descrições e analisam conteúdo)
 python data-pipeline/scrapers/indeed_keywords.py
 python data-pipeline/scrapers/linkedin_keywords.py</code></pre>
-                    <blockquote class="docs-note">
-                        <strong>Nota:</strong> Os scrapers de keywords do LinkedIn precisam do Chrome debug aberto porque o LinkedIn carrega as descrições via JavaScript.
-                    </blockquote>
+                        <blockquote class="docs-note">
+                            <strong>Nota:</strong> Os scrapers de keywords do LinkedIn precisam do Chrome debug aberto
+                            porque o LinkedIn carrega as descrições via JavaScript.
+                        </blockquote>
+                    </div>
+                </div>
+                <div class="docs-step">
+                    <div class="docs-step-number">5</div>
+                    <div class="docs-step-content">
+                        <h3 class="docs-step-title">Analisa os resultados</h3>
+                        <p class="docs-text">Abre a web app em :</p>
+                        <a href="http://localhost:5136/Dashboard"
+                           style="color:white;">http://localhost:5136/Dashboard</a>
+                        <blockquote class="docs-note" id="manter">
+                            <strong>Nota:</strong> A porta do localhost pode variar conforme a configuração que
+                            definiste em
+                            launchSettings.json .
+                        </blockquote>
+                    </div>
+                </div>
+                <hr />
+                <div class="docs-header">
+                    <h2 class="docs-title">Configurar e manter o projeto</h2>
+                    <p class="docs-subtitle">Mantem os scrapers e a app a funcionar para ti e adapta-os para as tuas
+                        necessidades. <br /> Estes passos nao servem uma ordem específica</p>
+                    </div>
+                    <div class="docs-steps">
+                        <div class="docs-step">
+                            <div class="docs-step-number">1</div>
+                            <div class="docs-step-content">
+                                <h3 class="docs-step-title">Manter e tratar da paginação dos scrapers</h3>
+                                <p class="docs-text">Para não começar sempre no `0`, a pipeline guarda o último `start`
+                                    usado
+                                    num ficheiro CSV local: <strong>`data-pipeline/scrapers/scraper_state.csv`</strong> .
+                                    Cada linha associa `source` + `query` ao último bloco percorrido.</p>
+                                    <br /> Exemplo:
+                                    <pre class="docs-code"><code>source,query,last_start
+linkedin,web developer,430
+linkedin,fullstack developer,250
+linkedin,backend developer,400
+linkedin,developer,800
+linkedin,software engineer,740
+</code></pre>
+                                    <p class="docs-text">
+                                        Caso seja necessário, ou aches relevante, podes esvaziar as logs para melhorar a procura
+                                        por
+                                        vagas mais recentes.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="docs-step">
+                            <div class="docs-step-number">2</div>
+                            <div class="docs-step-content">
+                                <h3 class="docs-step-title">Adapta as queries conforme a tua necessidade</h3>
+                                <p class="docs-text">Neste momento as queries são definidas manualmente no codigo dos scrapers:
+                                    <strong>"linkedin.py" e "indeed.py"</strong> .
+                                    Caso queiras procurar por uma role especifica podes editar as queries.</p>
+                                    <br /> Exemplo de query (linkedin.py):
+                                    <pre class="docs-code"><code>QUERY = "Software Engineer"
+TECHNOLOGY_NAME = None
+LOCATION = "Portugal"
+MAX_START = 1000
+PAGE_SIZE = 10
+SOURCE = "linkedin"
+</code></pre>
+                                    <p class="docs-text">
+                                        Também podes editar outros parametros, como a location, que pode ser ainda mais precisa,
+                                        como: "porto, porto Portugal"
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- Featured Companies / Brands -->
-<div class="brands-section">
-    <div class="brands-container">
-        <p class="brands-label">Tecnologias suportadas por padrão:</p>
-        <div class="brands-grid">
-            <div class="brand-item">
-                <i class="fab fa-laravel"></i>
-            </div>
-            <div class="brand-item">
-                <i class="fab fa-php"></i>
-            </div>
-            <div class="brand-item">
-                <i class="fab fa-js"></i>
-            </div>
-            <div class="brand-item">
-                <i class="fab fa-rust"></i>
-            </div>
-            <div class="brand-item">
-                <i class="fab fa-react"></i>
-            </div>
-            <div class="brand-item">
-                <i class="fab fa-angular"></i>
-            </div>
-            <div class="brand-item">
-                <i class="fab fa-python"></i>
-            </div>
-            <div class="brand-item">
-                <i class="fas fa-leaf"></i>
-            </div>
-            <div class="brand-item">
-                <i class="fa-brands fa-java"></i>
-            </div>
-            <div class="brand-item">
-                <i class="fab fa-node-js"></i>
-            </div>
         </div>
-        <br />
-        <p class="brands-label">e muitas mais...</p>
-    </div>
-</div>
