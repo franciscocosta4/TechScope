@@ -27,7 +27,7 @@ public class TechnologySearchResult
 }
 public class TechnologyChartData
 {
-    public int Mes { get; set; }
+    public DateOnly? Data { get; set; }
 
     public string Tecnologia { get; set; }
 

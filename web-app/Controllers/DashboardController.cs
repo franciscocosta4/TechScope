@@ -51,21 +51,21 @@ public class DashboardController : Controller
             .ToList();
 
         var tecnologiasSelecionadas = new[]
-{
-    ".net",
-    "react native",
-    "sql",
-    "c#",
-    "java",
-    "javascript",
-    "typescript",
-    "angular",
-    "react",
-    "nodejs",
-    "python",
-    "laravel",
-    "php",
-};
+        {
+            ".net",
+            "react native",
+            "sql",
+            "c#",
+            "java",
+            "javascript",
+            "typescript",
+            "angular",
+            "react",
+            "nodejs",
+            "python",
+            "laravel",
+            "php",
+        };
         var quantityTech = _context.JobKeywords // serve para o grafico de tecnologias
             .Where(jk =>
                 jk.Category == "technology" &&
@@ -73,16 +73,16 @@ public class DashboardController : Controller
                 tecnologiasSelecionadas.Contains(jk.Keyword.ToLower()))
             .GroupBy(jk => new
             {
-                Mes = jk.Job.DatePosted.Value.Month,
+                Data = jk.Job.DatePosted,
                 Tecnologia = jk.Keyword
             })
             .Select(g => new TechnologyChartData
             {
-                Mes = g.Key.Mes,
+                Data = g.Key.Data,
                 Tecnologia = g.Key.Tecnologia,
                 Total = g.Count()
             })
-            .OrderBy(x => x.Mes)
+            .OrderBy(x => x.Data)
             .ThenBy(x => x.Tecnologia)
             .ToList();
 

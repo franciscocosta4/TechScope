@@ -159,7 +159,6 @@
             }
         });
     </script>
-
     <script>
         // função dedicada a carregar o charts.js, assim podemos fazer lazy loading dos charts
         function loadScript(src) {
@@ -176,6 +175,7 @@
             // Carregar Chart.js apenas se existirem gráficos na página
             if (document.getElementById('grafico2') || document.getElementById('grafico3')) {
                 await loadScript('https://cdn.jsdelivr.net/npm/chart.js');
+                await loadScript('https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns');
                 initChart2();
                 initChart3();
             }
@@ -185,52 +185,136 @@
     </script>
 
     <script>
-        // ------------------------------------------------------------
-        // GRÁFICO 2 — Tecnologias em alta (linha)
-        // ------------------------------------------------------------
-        function initChart2() {
-        const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        const mesesAtuais = meses.slice(0, new Date().getMonth() + 1);
-        const dadosTech = @Html.Raw(tecnologiasJson);
-        const techNames = [...new Set(dadosTech.map(x => x.Tecnologia))];
-        const cores = ['#ffffff', '#7a7a7e', '#4a4a4e', '#b0b0b4', '#d0d0d4'];
-        const datasetsTech = techNames.map((nome, idx) => {
-        const valores = mesesAtuais.map((_, i) => {
-        const mes = i + 1;
-        const found = dadosTech.find(x => x.Tecnologia === nome && x.Mes === mes);
-        return found ? found.Total : 0;
-        });
+
+// ------------------------------------------------------------
+// GRÁFICO 2 — Tecnologias em alta (linha)
+// ------------------------------------------------------------
+function initChart2() {
+
+    // Obtém os dados enviados pelo backend através do Razor.
+    const dadosTech = @Html.Raw(tecnologiasJson);
+
+    // Obtém todas as tecnologias existentes nos dados.
+    const techNames = [...new Set(
+        dadosTech.map(x => x.Tecnologia)
+    )];
+
+    // Define as cores das linhas.
+    const cores = [
+        '#ffffff',
+        '#7a7a7e',
+        '#4a4a4e',
+        '#b0b0b4',
+        '#d0d0d4'
+    ];
+
+    // Cria um dataset para cada tecnologia.
+    const datasetsTech = techNames.map((nome, idx) => {
+
+        // Filtra apenas os registos pertencentes
+        // à tecnologia actualmente em processamento.
+        const dadosTecnologia = dadosTech
+            .filter(x => x.Tecnologia === nome && x.Data)
+            .sort((a, b) => a.Data.localeCompare(b.Data));
+
+        // Converte os registos para o formato
+        // { x: data, y: valor } esperado pelo Chart.js.
+        const valores = dadosTecnologia.map(x => ({
+            x: x.Data,
+            y: x.Total
+        }));
+
+        // Devolve a configuração desta linha.
         return {
-        label: nome,
-        data: valores,
-        tension: 0.2,
-        borderColor: cores[idx % cores.length],
-        backgroundColor: 'transparent',
-        pointRadius: 2,
-        borderWidth: 1.5
+            label: nome,
+            data: valores,
+            tension: 0.2,
+            borderColor: cores[idx % cores.length],
+            backgroundColor: 'transparent',
+            pointRadius: 2,
+            borderWidth: 1.5
         };
-        });
+    });
 
-        new Chart(document.getElementById('grafico2').getContext('2d'), {
-        type: 'line',
-        data: {
-        labels: mesesAtuais,
-        datasets: datasetsTech
-        },
-        options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-        legend: { labels: { color: '#f0f0f0', boxWidth: 12, padding: 12} }
-        },
-        scales: {
-        y: { beginAtZero: true, grid: { color: '#1e1e20' }, ticks: { color: '#7a7a7e' } },
-        x: { grid: { display: false }, ticks: { color: '#7a7a7e', maxRotation: 30 } }
-        }
-        }
-        });
-        }
+    // Cria o gráfico.
+    new Chart(
+        document.getElementById('grafico2').getContext('2d'),
+        {
+            type: 'line',
+            data: {
+                datasets: datasetsTech,
+            },
+            options: {
+                // Permite o redimensionamento automático.
+                responsive: true,
+                // Mantém a proporção original do canvas.
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#f0f0f0',
+                            boxWidth: 12,
+                            padding: 12
+                        }
+                    }
+                },
 
+                // Configuração dos eixos.
+                scales: {
+                    y: {
+                        beginAtZero: true,
+
+                        grid: {
+                            color: '#1e1e20'
+                        },
+
+                        ticks: {
+                            color: '#7a7a7e'
+                        }
+                    },
+
+                    x: {
+
+                        // Diz ao Chart.js que o eixo X representa datas.
+                        type: 'time',
+
+                        // Configuração da escala temporal.
+                        time: {
+
+                            // Cada divisão principal corresponde a um dia.
+                            unit: 'day',
+
+                            // Mostra uma etiqueta a cada 15 dias.
+                            stepSize: 15,
+
+                            // Formato da data apresentada no eixo.
+                            displayFormats: {
+                                day: 'dd/MM'
+                            },
+
+                            // Tooltip apresentado quando passamos
+                            // o rato sobre um ponto.
+                            tooltipFormat: 'dd/MM/yyyy'
+                        },
+
+                        // Remove a grelha vertical.
+                        grid: {
+                            display: false
+                        },
+
+                        // Define a aparência das etiquetas.
+                        ticks: {
+                            color: '#7a7a7e',
+                            maxRotation: 30
+                        }
+                    }
+                }
+            }
+        }
+    );
+}
+
+  
         // ------------------------------------------------------------
         // GRÁFICO 3 — Distribuição geográfica (doughnut / rosca)
         // ------------------------------------------------------------
