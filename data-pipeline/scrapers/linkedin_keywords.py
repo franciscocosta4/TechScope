@@ -23,6 +23,7 @@ BATCH_SIZE = 150
 
 from database import get_connection
 from keyword_extractor import extract_keywords
+from execution_logger import write_linkedin_scraper2_status
 
 
 def fetch_jobs_without_keywords(conn, source: str, limit: int) -> list[dict]:
@@ -175,4 +176,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    success = False
+    try:
+        main()
+        success = True
+    except Exception as e:
+        print(f"[LinkedIn Keywords] Erro: {e}")
+        success = False
+    finally:
+        write_linkedin_scraper2_status(success)

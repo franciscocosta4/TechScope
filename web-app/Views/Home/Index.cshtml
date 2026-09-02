@@ -50,7 +50,7 @@
 
                 <!-- Description -->
                 <p class="hero-description">
-                    TechScope é uma ferramenta altamente configurável que permite recolher dados em tempo real do
+                    TechScope é uma ferramenta altamente configurável que permite recolher dados diariamente do
                     <strong>LinkedIn</strong>
                     e <strong>Indeed</strong>
                     para identificar as linguagens, frameworks e ferramentas que as empresas realmente procuram.
@@ -136,7 +136,7 @@
                     <h2 class="docs-title">Como rodar os scrapers</h2>
                     <p class="docs-subtitle">Recolhe dados do LinkedIn e Indeed em quatro passos.</p>
                     <blockquote class="docs-note">
-                        <strong>Nota:</strong> Os scrapers <strong>NÃO são executados automaticamente</strong>. Sempre que quiseres atualizar a informação da Dashboard com novos anúncios, tens de voltar a executar os scrapers.
+                        <strong>Nota:</strong> Os scrapers <strong>NÃO são executados automaticamente por padrão</strong>. Deves executá-los diariamente para atualizar a informação da Dashboard com novos anúncios.
                     </blockquote>
                 </div>
 
@@ -205,7 +205,9 @@ python data-pipeline/scrapers/linkedin_keywords.py</code></pre>
                             </blockquote>
                         </div>
                     </div>
+                    <br />
                     <hr />
+                    <br />
                     <div class="docs-header">
                         <h2 class="docs-title">Configurar e manter o projeto</h2>
                         <p class="docs-subtitle">Mantem os scrapers e a app a funcionar para ti e adapta-os para as tuas
@@ -214,30 +216,6 @@ python data-pipeline/scrapers/linkedin_keywords.py</code></pre>
                         <div class="docs-steps">
                             <div class="docs-step">
                                 <div class="docs-step-number">1</div>
-                                <div class="docs-step-content">
-                                    <h3 class="docs-step-title">Manter e tratar da paginação dos scrapers</h3>
-                                    <p class="docs-text">Para não começar sempre no `0`, a pipeline guarda o último `start`
-                                        usado
-                                        num ficheiro CSV local: <strong>`data-pipeline/scrapers/scraper_state.csv`</strong> .
-                                        Cada linha associa `source` + `query` ao último bloco percorrido.</p>
-                                        <br /> Exemplo:
-                                        <pre class="docs-code"><code>source,query,last_start
-linkedin,web developer,430
-linkedin,fullstack developer,250
-linkedin,backend developer,400
-linkedin,developer,800
-linkedin,software engineer,740
-</code></pre>
-                                        <p class="docs-text">
-                                            Caso seja necessário, ou aches relevante, podes esvaziar as logs para melhorar a procura
-                                            por
-                                            vagas mais recentes.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="docs-step">
-                                <div class="docs-step-number">2</div>
                                 <div class="docs-step-content">
                                     <h3 class="docs-step-title">Adapta as queries conforme a tua necessidade</h3>
                                     <p class="docs-text">Neste momento as queries são definidas manualmente no codigo dos scrapers:

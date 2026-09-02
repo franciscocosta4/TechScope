@@ -12,6 +12,7 @@ __pycache__/
 .vscode/
 
 data-pipeline/scrapers/chrome-profile/
+chrome-profile/
 
 web-app/[Bb]in/
 web-app/[Oo]bj/

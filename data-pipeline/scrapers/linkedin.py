@@ -14,14 +14,14 @@ if str(PIPELINE_ROOT) not in sys.path:
     sys.path.insert(0, str(PIPELINE_ROOT))
 
 from database import ensure_schema, get_connection, save_jobs
-from state import get_next_start, update_last_start
+from execution_logger import write_linkedin_scraper1_status
 
 # QUERY é o termo usado no site (role, não tecnologia).
 # A tecnologia é extraída depois pelo scraper de keywords a partir da descrição.
 QUERY = "Software Engineer"
 TECHNOLOGY_NAME = None
-LOCATION = "Portugal"
-MAX_START = 1000
+LOCATION = "Portugal" 
+MAX_START = 100 # se aumentarmos muito até onde vai, ele econtra vagas do dia mas que já não se relacionam com a query
 PAGE_SIZE = 10
 SOURCE = "linkedin"
 HEADERS = {
@@ -36,135 +36,144 @@ HEADERS = {
 }
 
 
-# Liga à base de dados e garante que o esquema existe.
-with get_connection() as conn:
-    ensure_schema(conn)
+def main():
+    # Liga à base de dados e garante que o esquema existe.
+    with get_connection() as conn:
+        ensure_schema(conn)
 
-    total_pages = 0
-    total_cards_found = 0
-    total_jobs_ready = 0
-    total_jobs_skipped = 0
-    total_jobs_saved = 0
+        total_pages = 0
+        total_cards_found = 0
+        total_jobs_ready = 0
+        total_jobs_skipped = 0
+        total_jobs_saved = 0
 
-    # O LinkedIn devolve resultados por blocos de 25.
-    # start=0   -> primeiros 25 resultados
-    # start=25  -> resultados 26-50
-    # start=50  -> resultados 51-75
-    seen = set()
+        # O LinkedIn devolve resultados por blocos de 25.
+        # start=0   -> primeiros 25 resultados
+        # start=25  -> resultados 26-50
+        # start=50  -> resultados 51-75
+        seen = set()
 
-    # Retoma a paginação a partir do último bloco guardado para esta query.
-    start_value = get_next_start(SOURCE, QUERY, PAGE_SIZE)
+        # Começa sempre do início
+        start_value = 0
 
-    # O nosso range cresce a partir do ponto onde ficamos na ultima execução. ou seja se ficamos no start=20 o range maximo fica 1000+20
-    for start in range(start_value, MAX_START + start_value , PAGE_SIZE):
-        total_pages += 1
-        params = urlencode({"keywords": QUERY, "location": LOCATION, "start": start, "sortBy": "DD"  }) # ordenar por data (mais recente primeiro
-        url = (
-            "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
-            f"?{params}"
-        )
-        print(f"A abrir LinkedIn com start={start} url: {url}")
+        # O nosso range cresce a partir do ponto onde ficamos na ultima execução. ou seja se ficamos no start=20 o range maximo fica 1000+20
+        for start in range(start_value, MAX_START + start_value, PAGE_SIZE):
+            total_pages += 1
+            params = urlencode({"keywords": QUERY, "location": LOCATION, "start": start, "f_TPR" : "r86400"})  # ordenar por data (mais recente primeiro)
+            url = (
+                "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
+                f"?{params}"
+            )
+            print(f"A abrir LinkedIn com start={start} url: {url}")
 
-        # Pequena pausa aleatória para reduzir a probabilidade de bloqueio.
-        time.sleep(random.uniform(2, 5))
+            # Pequena pausa aleatória para reduzir a probabilidade de bloqueio.
+            time.sleep(random.uniform(2, 5))
 
-        # Faz o pedido à página de resultados.
-        response = requests.get(url, headers=HEADERS, timeout=20)
-        print(
-            f"HTTP -> status={response.status_code} | "
-            f"len_html={len(response.text)} | start={start}"
-        )
-
-        soup = BeautifulSoup(response.text, "html.parser")
-        # print(response.text)
-        job_cards = soup.select("li.base-search-card, li > div.base-card")
-        print(f"Cartões encontrados nesta página: {len(job_cards)}")
-        total_cards_found += len(job_cards)
-
-        # Conta quantos anúncios novos foram encontrados nesta página.
-        new_found = 0
-        page_jobs = []
-        skipped_jobs = 0
-
-        # Selecciona possíveis cartões de anúncio.
-        for card in job_cards:
-            title = card.select_one(".base-search-card__title")
-            company = card.select_one(".base-search-card__subtitle")
-            location = card.select_one("[class*='_location']")
-            timetag = card.select_one("[class*='job-search-card__listdate']")
-            link = card.select_one("a.base-card__full-link")
-
-            # Confirma que existem elementos essenciais antes de continuar.
-            if not title or not company or not link:
-                skipped_jobs += 1
-                continue
-
-            url_job = link.get("href")
-            if not url_job or url_job in seen:
-                skipped_jobs += 1
-                continue
-
-            seen.add(url_job)
-            new_found += 1
-
-            job_data = {
-                "title": title.get_text(strip=True),
-                "company": company.get_text(strip=True),
-                "location": location.get_text(strip=True) if location else "",
-                "date_posted": timetag["datetime"],
-                "url": url_job,
-            }
-            page_jobs.append(job_data)
-
-            # Mostra os dados principais do anúncio no terminal.
+            # Faz o pedido à página de resultados.
+            response = requests.get(url, headers=HEADERS, timeout=20)
             print(
-                new_found,
-                "|",
-                job_data["title"],
-                "|",
-                job_data["company"],
-                "|",
-                job_data["location"],
-                "|",
-                job_data["date_posted"],
-                "|",
-                # job_data["url"],
+                f"HTTP -> status={response.status_code} | "
+                f"len_html={len(response.text)} | start={start}"
             )
 
-        total_jobs_ready += len(page_jobs)
-        total_jobs_skipped += skipped_jobs
+            soup = BeautifulSoup(response.text, "html.parser")
+            job_cards = soup.select("li.base-search-card, li > div.base-card")
+            print(f"Cartões encontrados nesta página: {len(job_cards)}")
+            total_cards_found += len(job_cards)
 
-        if skipped_jobs:
-            print(f"Anúncios ignorados por falta de dados ou duplicados: {skipped_jobs}")
+            # Conta quantos anúncios novos foram encontrados nesta página.
+            new_found = 0
+            page_jobs = []
+            skipped_jobs = 0
 
-        # Guarda os anúncios recolhidos na base de dados.
-        if page_jobs:
-            # As stats vêm da camada de BD, porque é lá que a decisão
-            # real acontece: inserir, ignorar existentes ou rejeitar inválidos.
-            stats = save_jobs(
-                conn,
-                page_jobs,
-                SOURCE,
-                QUERY,
-            )
-            total_jobs_saved += stats["inserted"]
-            print(
-                "BD -> "
-                f"processados: {stats['processed']}, "
-                f"novos: {stats['inserted']}, "
-                f"existentes: {stats['skipped_existing']}, "
-                f"inválidos: {stats['skipped_invalid']}"
-            )
+            # Selecciona possíveis cartões de anúncio.
+            for card in job_cards:
+                title = card.select_one(".base-search-card__title")
+                company = card.select_one(".base-search-card__subtitle")
+                location = card.select_one("[class*='_location']")
+                timetag = card.select_one("[class*='job-search-card__listdate']")
+                link = card.select_one("a.base-card__full-link")
 
-        # Se não apareceram anúncios novos, pára a paginação.
-        if new_found == 0:
-            break
+                # Confirma que existem elementos essenciais antes de continuar.
+                if not title or not company or not link:
+                    skipped_jobs += 1
+                    continue
 
-        update_last_start(SOURCE, QUERY, start)
+                url_job = link.get("href")
+                if not url_job or url_job in seen:
+                    skipped_jobs += 1
+                    continue
 
-    print("\nResumo total do run:")
-    print(f"Páginas processadas: {total_pages}")
-    print(f"Cartões encontrados no total: {total_cards_found}")
-    print(f"Anúncios válidos preparados: {total_jobs_ready}")
-    print(f"Anúncios ignorados: {total_jobs_skipped}")
-    print(f"Anúncios inseridos na base de dados: {total_jobs_saved}")
+                seen.add(url_job)
+                new_found += 1
+
+                job_data = {
+                    "title": title.get_text(strip=True),
+                    "company": company.get_text(strip=True),
+                    "location": location.get_text(strip=True) if location else "",
+                    "date_posted": timetag["datetime"],
+                    "url": url_job,
+                }
+                page_jobs.append(job_data)
+
+                # Mostra os dados principais do anúncio no terminal.
+                print(
+                    new_found,
+                    "|",
+                    job_data["title"],
+                    "|",
+                    job_data["company"],
+                    "|",
+                    job_data["location"],
+                    "|",
+                    job_data["date_posted"],
+                    "|",
+                )
+
+            total_jobs_ready += len(page_jobs)
+            total_jobs_skipped += skipped_jobs
+
+            if skipped_jobs:
+                print(f"Anúncios ignorados por falta de dados ou duplicados: {skipped_jobs}")
+
+            # Guarda os anúncios recolhidos na base de dados.
+            if page_jobs:
+                # As stats vêm da camada de BD, porque é lá que a decisão
+                # real acontece: inserir, ignorar existentes ou rejeitar inválidos.
+                stats = save_jobs(
+                    conn,
+                    page_jobs,
+                    SOURCE,
+                    QUERY,
+                )
+                total_jobs_saved += stats["inserted"]
+                print(
+                    "BD -> "
+                    f"processados: {stats['processed']}, "
+                    f"novos: {stats['inserted']}, "
+                    f"existentes: {stats['skipped_existing']}, "
+                    f"inválidos: {stats['skipped_invalid']}"
+                )
+
+            # Se não apareceram anúncios novos, pára a paginação.
+            if new_found == 0:
+                break
+
+        print("\nResumo total do run:")
+        print(f"Páginas processadas: {total_pages}")
+        print(f"Cartões encontrados no total: {total_cards_found}")
+        print(f"Anúncios válidos preparados: {total_jobs_ready}")
+        print(f"Anúncios ignorados: {total_jobs_skipped}")
+        print(f"Anúncios inseridos na base de dados: {total_jobs_saved}")
+
+
+if __name__ == "__main__":
+    success = False
+    try:
+        main()
+        success = True
+    except Exception as e:
+        print(f"[LinkedIn] Erro fatal: {e}")
+        success = False
+    finally:
+        write_linkedin_scraper1_status(success)

@@ -69,9 +69,8 @@ erDiagram
     }
 ```
 
----
 
-# Por que não temos autenticação
+## Por que não temos autenticação
 
 A aplicação **não tem login, registo nem qualquer sistema de autenticação**. Esta decisão foi tomada porque:
 
@@ -81,15 +80,41 @@ A aplicação **não tem login, registo nem qualquer sistema de autenticação**
 
 Isto também simplifica o deployment: não precisamos de HTTPS obrigatório por causa de cookies, nem de gestão de segredos de auth.
 
----
 
-# Como evitamos empresas duplicadas
+## Por que mudámos para execução diária em vez de sob demanda
+
+O sistema passou de execução sob demanda (quando o utilizador iniciava manualmente) para **execução diária automática**. Esta mudança foi motivada por uma prioridade fundamental: **a fidelidade das estatísticas geradas**.
+
+### Porquê esta mudança?
+
+1. **Dados consistentes e comparáveis** — Ao correr diariamente, garantimos que as estatísticas refletem sempre as últimas 24h de mercado, permitindo comparações dia-a-dia fiáveis.
+
+2. **Eliminação de viés temporal** — Se o utilizador corresse o scraper manualmente, poderia haver dias sem dados ou períodos irregulares, comprometendo a análise de tendências.
+
+3. **Cobertura completa** — Os scrapers agora filtram vagas publicadas nas últimas 24h:
+   - LinkedIn: parâmetro `f_TPR=r86400` (últimas 24h)
+   - Indeed: parâmetro `fromage=1` (último dia)
+
+4. **Fidelidade sobre conveniência** — Priorizamos ter dados precisos e regulares em vez de flexibilidade manual. O dashboard mostra sempre o estado atualizado do mercado.
+
+### Como funciona agora?
+
+- O user deve correr os scrapers todos os dias (no futuro irá haver opção de automação com ai)
+- Cada execução recolhe vagas das últimas 24h
+- O `execution.json` regista o estado de cada execução
+- Não existe estado entre execuções (cada execução é independente)
+- O dashboard reflete sempre os dados mais recentes
+
+Esta abordagem assegura que as estatísticas são sempre relevantes e atualizadas, tornando o dashboard uma ferramenta fiável para análise de mercado.
+
+
+## Como evitamos empresas duplicadas
 
 A tabela `companies` tem `UNIQUE(name)` porque o mesmo nome deve representar a mesma empresa ao longo da pipeline.
 Antes de guardar um job, o script confirma se a empresa já existe e reutiliza o `company_id` dessa linha.
 Se não existir, a empresa é criada primeiro.
 
-# Fluxo para gravar uma empresa e um job
+## Fluxo para gravar uma empresa e um job
 
 Primeiro o script garante que a empresa existe na tabela `companies`.
 Se a empresa ainda não existir, ela é criada e o código recebe o `company_id` dessa linha.
@@ -126,19 +151,11 @@ As categorias guardadas em `JobKeywords`:
 | `experience` | 1+ anos, 2-3 anos, 5+ anos |
 | `work_model` | remote, híbrido, presencial |
 
-## Como funciona a paginação guardada
 
-Para não começar sempre no `0`, a pipeline guarda o último `start` usado num ficheiro CSV local: `data-pipeline/scrapers/scraper_state.csv`.
-Cada linha associa `source` + `query` ao último bloco percorrido.
 
-Na execução seguinte, o scraper lê esse ficheiro e retoma a partir de `last_start + PAGE_SIZE`.
-Se a `QUERY` mudar, a chave muda também e a paginação volta automaticamente a `0`.
+## Performance Optimizations
 
-Isto mantém a lógica simples e evita repetir sempre as mesmas páginas quando o script é corrido várias vezes seguidas.
-
-# Performance Optimizations
-
-## Lazy Loading de Gráficos
+### Lazy Loading de Gráficos
 
 Gráficos Chart.js são carregados apenas quando necessário:
 - Dashboard: lazy load com Intersection Observer
@@ -146,18 +163,18 @@ Gráficos Chart.js são carregados apenas quando necessário:
 - Technology Detail: lazy load com Intersection Observer
 Isso reduz render-blocking requests e melhora LCP.
 
-## Defer de Scripts não críticos
+### Defer de Scripts não críticos
 
 - `site.js` carregado com `defer` para não bloquear render
 - `aspnetcore-browser-refresh.js` removido em produção
 
-## Otimização de Fonts
+### Otimização de Fonts
 
 - Google Fonts: `&display=swap` adicionado para evitarFOIT (Flash of Invisible Text)
 - Font Awesome: `font-display: swap` configurado
 - Preconnect hints para CDNs: `fonts.googleapis.com`, `fonts.gstatic.com`, `cdnjs.cloudflare.com`
 
-## Defer de CSS não crítico
+### Defer de CSS não crítico
 
 - `style.css` carregado assincronicamente com `media="print"` technique
 - CSS crítico inline no `<head>` para primeiramente renderizar
@@ -165,9 +182,9 @@ Isso reduz render-blocking requests e melhora LCP.
 
 ---
 
-# Como reduzimos rate limiting e verificações
+## Como reduzimos rate limiting e verificações
 
-   ## LinkedIn
+   ### LinkedIn
 
    No LinkedIn tentamos reduzir bloqueios sem forçar demasiado o site:
 
@@ -176,7 +193,7 @@ Isso reduz render-blocking requests e melhora LCP.
    - fazemos uma pausa aleatória antes de cada pedido
    - evitamos correr muitas páginas seguidas sem necessidade
 
-   ## Indeed
+   ### Indeed
 
    No Indeed o problema é mais agressivo, porque pode surgir verificação logo no início.
 
@@ -225,11 +242,11 @@ O schema original usava `snake_case` (`id`, `created_at`, `company_id`). Mudámo
 
 ---
 
-# Feature: JobKeywords
+## Feature: JobKeywords
 
 A tabela `JobKeywords` guarda keywords extraídas das descrições dos anúncios: seniority, anos de experiência, modelo de trabalho e tecnologias complementares.
 
-## Por que uma tabela separada?
+### Por que uma tabela separada?
 
 Em vez de guardar a descrição completa na tabela `Jobs`, optámos por extrair apenas as keywords relevantes e guardá-las numa tabela pivot. Razões:
 
@@ -238,7 +255,7 @@ Em vez de guardar a descrição completa na tabela `Jobs`, optámos por extrair 
 3. **Privacidade** — não armazenamos conteúdo sensível dos anúncios (nomes de pessoas, detalhes de contacto, etc.).
 4. **Simplicidade** — o motor de análise funciona com contagens de keywords, não com texto livre.
 
-## Categorias de keywords
+### Categorias de keywords
 
 | Categoria | Exemplos |
 |---|---|
@@ -247,7 +264,7 @@ Em vez de guardar a descrição completa na tabela `Jobs`, optámos por extrair 
 | `work_model` | remoto, híbrido, presencial |
 | `technology` | react, docker, postgresql, typescript |
 
-## Como funciona a extração
+### Como funciona a extração
 
 Usamos **regex simples** em vez de NLP ou machine learning porque:
 
@@ -258,7 +275,7 @@ Usamos **regex simples** em vez de NLP ou machine learning porque:
 
 Procuramos por tecnologias na descrição para que possamos ter a capacidade de encontrar padrões e tecnologias relacionadas.
 
-## Normalização de tecnologias
+### Normalização de tecnologias
 
 Para evitar duplicação de variantes da mesma tecnologia (ex: `.net`, `.net framework`, `asp.net`, `c#`), aplicamos uma normalização antes de guardar as keywords.
 
@@ -271,7 +288,7 @@ tech = _normalize_tech_keyword(tech)  # .net framework → .net
 
 Isto garante que na base de dados temos termos canónicos, facilitando queries agregadas.
 
-## Scrapers de keywords
+### Scrapers de keywords
 
 São dois scripts separados que percorrem a base de dados e extraem keywords:
 
@@ -287,7 +304,7 @@ Ambos partilham a mesma lógica:
 2. **Extração** — abre a página do anúncio, extrai a descrição, aplica regex.
 3. **Persistência** — guarda as keywords encontradas na tabela `JobKeywords`.
 
-## Por que o LinkedIn usa Playwright
+### Por que o LinkedIn usa Playwright
 
 O LinkedIn carrega a descrição do anúncio via **JavaScript**. Quando acedemos à página com `requests + BeautifulSoup`, recebemos apenas o HTML inicial, que não contém a descrição.
 
