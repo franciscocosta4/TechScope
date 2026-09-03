@@ -1,14 +1,10 @@
 {
     "l": {
-        "last_run": "2026-09-02T12:30:13Z",
-        "status": "success",
-        "rodarscraper1": "success",
-        "rodarscraper2": "success"
+        "last_run": "2026-09-03T17:44:14Z",
+        "status": "success"
     },
     "i": {
-        "last_run": "2026-09-02T10:33:55Z",
-        "status": "error",
-        "rodarscraper1": "error",
-        "rodarscraper2": "error"
+        "last_run": "2026-09-03T17:47:07Z",
+        "status": "error"
     }
 }

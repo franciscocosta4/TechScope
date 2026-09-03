@@ -15,7 +15,7 @@ if str(PIPELINE_ROOT) not in sys.path:
 CHROME_CDP_URL = "http://localhost:9222"
 
 from database import ensure_schema, get_connection, save_jobs
-from execution_logger import write_indeed_scraper1_status
+from execution_logger import _write_scraper_status
 
 # QUERY é o termo usado no site (role, não tecnologia).
 # A tecnologia é extraída depois pelo scraper de keywords a partir da descrição.
@@ -180,4 +180,4 @@ if __name__ == "__main__":
         print(f"[Indeed] Erro fatal: {e}")
         success = False
     finally:
-        write_indeed_scraper1_status(success)
+        _write_scraper_status("i", success)

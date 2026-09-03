@@ -61,7 +61,6 @@ def _write_execution_json_atomically(data: dict) -> None:
 # ----------------------------------------------------------------------
 def _write_scraper_status(
     target: str,
-    scraper_key: str,
     success: bool,
     *,
     run_timestamp: str | None = None,
@@ -89,34 +88,9 @@ def _write_scraper_status(
         {
             "last_run": timestamp,
             "status": result,
-            scraper_key: result,
         }
     )
 
     _write_execution_json_atomically(data)
 
 
-# ----------------------------------------------------------------------
-# Funções públicas — LinkedIn
-# ----------------------------------------------------------------------
-def write_linkedin_scraper1_status(success: bool, *, run_timestamp: str | None = None) -> None:
-    """Regista o estado de linkedin.py (scraper 1) na chave 'l'."""
-    _write_scraper_status("l", "rodarscraper1", success, run_timestamp=run_timestamp)
-
-
-def write_linkedin_scraper2_status(success: bool, *, run_timestamp: str | None = None) -> None:
-    """Regista o estado de linkedin_keywords.py (scraper 2) na chave 'l'."""
-    _write_scraper_status("l", "rodarscraper2", success, run_timestamp=run_timestamp)
-
-
-# ----------------------------------------------------------------------
-# Funções públicas — Indeed
-# ----------------------------------------------------------------------
-def write_indeed_scraper1_status(success: bool, *, run_timestamp: str | None = None) -> None:
-    """Regista o estado de indeed.py (scraper 1) na chave 'i'."""
-    _write_scraper_status("i", "rodarscraper1", success, run_timestamp=run_timestamp)
-
-
-def write_indeed_scraper2_status(success: bool, *, run_timestamp: str | None = None) -> None:
-    """Regista o estado de indeed_keywords.py (scraper 2) na chave 'i'."""
-    _write_scraper_status("i", "rodarscraper2", success, run_timestamp=run_timestamp)

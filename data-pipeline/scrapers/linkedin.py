@@ -14,14 +14,14 @@ if str(PIPELINE_ROOT) not in sys.path:
     sys.path.insert(0, str(PIPELINE_ROOT))
 
 from database import ensure_schema, get_connection, save_jobs
-from execution_logger import write_linkedin_scraper1_status
+from execution_logger import _write_scraper_status
 
 # QUERY é o termo usado no site (role, não tecnologia).
 # A tecnologia é extraída depois pelo scraper de keywords a partir da descrição.
 QUERY = "Software Engineer"
 TECHNOLOGY_NAME = None
 LOCATION = "Portugal" 
-MAX_START = 100 # se aumentarmos muito até onde vai, ele econtra vagas do dia mas que já não se relacionam com a query
+MAX_START = 10 # se aumentarmos muito até onde vai, ele econtra vagas do dia mas que já não se relacionam com a query
 PAGE_SIZE = 10
 SOURCE = "linkedin"
 HEADERS = {
@@ -176,4 +176,4 @@ if __name__ == "__main__":
         print(f"[LinkedIn] Erro fatal: {e}")
         success = False
     finally:
-        write_linkedin_scraper1_status(success)
+        _write_scraper_status("l", success)
