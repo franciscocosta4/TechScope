@@ -311,3 +311,8 @@ O LinkedIn carrega a descrição do anúncio via **JavaScript**. Quando acedemos
 Para contornar isto, o `linkedin_keywords.py` usa **Playwright via CDP** (igual ao scraper do Indeed).
 Isto significa que o Chrome debug (`start_chrome_debug.bat`) tem de estar aberto quando correres os scrapers de keywords do LinkedIn. O Indeed não tem este problema porque o scraper original já usava Playwright. Mantivemos a consistência.
 
+## Porque o gráfico "Tecnologias em alta" não engloba vagas do indeed
+
+Porque, como o indeed não informa sobre quando uma vaga foi postada no seu website, não temos como extrair a 'DatePosted' para a base de dados, o que acaba por afetar o gráfico das tecnolgias em alta, visto que este depende da data em que uma vaga foi postada.
+
+Assim, o gráfico apenas contém tecnologias mencionadas em vagas do linkedin.

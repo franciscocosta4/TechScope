@@ -423,6 +423,10 @@ img {
   line-height: 1.7;
   margin-bottom: var(--spacing-sm);
 }
+.docs-text strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
 
 .docs-text code {
   background: var(--bg-secondary);
@@ -457,11 +461,21 @@ img {
   color: var(--text-tertiary);
   font-size: var(--font-size-sm);
 }
-
 .docs-note strong {
   color: var(--text-secondary);
   font-weight: 600;
 }
+
+.agent-images{
+  display:flex;
+  flex-direction:row;
+}
+.agent-images-item{
+  width:10%;
+  margin-left: 20px;
+}
+
+
 
 @media (max-width: 768px) {
   .docs-section {

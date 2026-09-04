@@ -45,7 +45,7 @@
 
                 <!-- Tagline -->
                 <p class="hero-tagline">
-                    Corre diariamente ou integra com o teu agente. Acompanha a evolução do mercado.
+                    Corre diariamente ou <a href="#agent" style="color:white">integra com o teu agente</a>. Acompanha a evolução do mercado.
                 </p>
 
                 <!-- Description -->
@@ -126,17 +126,18 @@
     <div class="docs-section">
         <div class="docs-container">
 
-            <h2 class="docs-title">Encontras-te algum bug? </h2>
-            <p class="docs-subtitle">Cria um issue em: <a href="https://github.com/franciscocosta4/TechScope/issues"
+            <h2 >Encontras-te algum bug? </h2>
+            <br />
+            <p class="docs-text">Cria um issue em: <a href="https://github.com/franciscocosta4/TechScope/issues"
                                                               style="color:white;">TechScope/issues</a></p>
-                <br />
                 <hr />
                 <br />
                 <div class="docs-header">
                     <h2 class="docs-title">Como rodar os scrapers</h2>
                     <p class="docs-subtitle">Recolhe dados do LinkedIn e Indeed em quatro passos.</p>
                     <blockquote class="docs-note">
-                        <strong>Nota:</strong> Os scrapers <strong>NÃO são executados automaticamente por padrão</strong>. Deves executá-los diariamente para atualizar a informação da Dashboard com novos anúncios.
+                        <strong>Nota:</strong> Os scrapers <strong>NÃO são executados automaticamente por padrão</strong>.
+                        Deves executá-los diariamente para atualizar a informação da Dashboard com novos anúncios.
                     </blockquote>
                 </div>
 
@@ -177,17 +178,21 @@
                         <div class="docs-step-content">
                             <h3 class="docs-step-title">Correr os scrapers</h3>
                             <p class="docs-text">Executa os scrapers a partir da raiz do repositório:</p>
-                            <pre class="docs-code"><code># Scrapers de anúncios (listings)
+                            <pre class="docs-code"><code>
+# Scrapers de anúncios (listings)
 python data-pipeline/scrapers/indeed.py
 python data-pipeline/scrapers/linkedin.py
 
 # Scrapers de keywords (extraem descrições e analisam conteúdo)
 python data-pipeline/scrapers/indeed_keywords.py
-python data-pipeline/scrapers/linkedin_keywords.py</code></pre>
+python data-pipeline/scrapers/linkedin_keywords.py
+                            </code>
+                            </pre>
                             <blockquote class="docs-note">
                                 <strong>Nota:</strong> O scraper de keywords do LinkedIn (linkedin_keywords.py) precisa do
                                 Chrome debug aberto
-                                porque o LinkedIn carrega as descrições via JavaScript. <strong> É recomendado fazer login com uma conta do linkedin para evitar bugs e rate-limiting
+                                porque o LinkedIn carrega as descrições via JavaScript. <strong> É recomendado fazer login
+                                com uma conta do linkedin para evitar bugs e rate-limiting</strong>
                             </blockquote>
                         </div>
                     </div>
@@ -195,7 +200,7 @@ python data-pipeline/scrapers/linkedin_keywords.py</code></pre>
                         <div class="docs-step-number">5</div>
                         <div class="docs-step-content">
                             <h3 class="docs-step-title">Analisa os resultados</h3>
-                            <p class="docs-text">Abre a web app em :</p>
+                            <p class="docs-text">Abre a web app em:</p>
                             <a href="http://localhost:5136/Dashboard"
                                style="color:white;">http://localhost:5136/Dashboard</a>
                             <blockquote class="docs-note" id="manter">
@@ -205,9 +210,8 @@ python data-pipeline/scrapers/linkedin_keywords.py</code></pre>
                             </blockquote>
                         </div>
                     </div>
-                    <br />
+
                     <hr />
-                    <br />
                     <div class="docs-header">
                         <h2 class="docs-title">Configurar e manter o projeto</h2>
                         <p class="docs-subtitle">Mantem os scrapers e a app a funcionar para ti e adapta-os para as tuas
@@ -218,7 +222,8 @@ python data-pipeline/scrapers/linkedin_keywords.py</code></pre>
                                 <div class="docs-step-number">1</div>
                                 <div class="docs-step-content">
                                     <h3 class="docs-step-title">Adapta as queries conforme a tua necessidade</h3>
-                                    <p class="docs-text">Neste momento as queries são definidas manualmente no codigo dos scrapers:
+                                    <p class="docs-text">Neste momento as queries são definidas manualmente no codigo dos
+                                        scrapers:
                                         <strong>"linkedin.py" e "indeed.py"</strong> .
                                         Caso queiras procurar por uma role especifica podes editar as queries.
                                     </p>
@@ -230,14 +235,59 @@ MAX_START = 1000
 PAGE_SIZE = 10
 SOURCE = "linkedin"
 </code></pre>
-                                    <p class="docs-text">
+                                    <p class="docs-text"  id="agent">
                                         Também podes editar outros parametros, como a location, que pode ser ainda mais precisa,
                                         como: "porto, porto Portugal"
                                     </p>
                                 </div>
                             </div>
+                            <div class="docs-step">
+                                <div class="docs-step-number">2</div>
+                                <div class="docs-step-content">
+                                    <h3 class="docs-step-title">Integra com o teu ai agent favorito</h3>
+                                    <div class="docs-code">
+                                        <p >Agents compativeis:</p> 
+                                        <br />
+                                        <div class="agent-images">
+                                            <img src="~/assets/img/claude-code.svg" class="agent-images-item" alt="claude code" loading="lazy">
+                                            <img src="~/assets/img/codex-dark.svg" class="agent-images-item" alt="codex"  loading="lazy">
+                                            <img src="~/assets/img/pi.png" alt="pi agent" class="agent-images-item" loading="lazy">
+                                            <img src="~/assets/img/cursor.svg" alt="cursor" class="agent-images-item" loading="lazy">
+                                            <img src="~/assets/img/opencode.svg" alt="open code" class="agent-images-item" loading="lazy">
+                                        </div> 
+                                    </div> 
+                                    <br />
+                                    <p class="docs-text">
+                                        A techscope oferece uma estrutura base de um <strong>AGENTS.md </strong>para que possas implementar
+                                        automação na execução dos scrapers.
+                                        Como os scrapers guardam logs em <strong>execution.json </strong> o teu agente facilmente verifica,<strong> a cada nova sessão</strong>, se foram executados e pergunta-te se
+                                        os queres executar, caso ainda não tenham sido.
+                                    </p>
+                                    <br />
+                                    <p > Exemplo do execution.json:</p>
+                                    <pre class="docs-code"><code>{
+    "l": {
+        "last_run": "2026-09-03T17:44:14Z",
+        "status": "success"
+    },
+    "i": {
+        "last_run": "2026-09-03T17:47:07Z",
+        "status": "error"
+    }
+}
+</code></pre>
+                                    <br /> 
+                                    <p > Transfere e experimenta agora o AGENTS.md personalizado: </p>
+                                    <br /> 
+                                    <a href="~/agents-techscope.md" class="btn btn-secondary" download>AGENTS.md</a>
+                                    <blockquote class="docs-note" id="manter">
+                                        <strong>Nota:</strong> Deves alterar : 'SET THE FULL PATH TO THE TECHSCOPE DIRECTORY HERE' para o diretório onde instalas-te a techscope. <br />
+                                         <strong>Exemplo:</strong> USER: "C:\Users\Utilizador\CODE\TechScope"
+                                    </blockquote>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </div>  
                 </div>
             </div>
 
