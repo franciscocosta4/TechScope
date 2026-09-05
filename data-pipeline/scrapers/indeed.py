@@ -19,12 +19,12 @@ from execution_logger import _write_scraper_status
 
 # QUERY é o termo usado no site (role, não tecnologia).
 # A tecnologia é extraída depois pelo scraper de keywords a partir da descrição.
-QUERY = "web developer"
+QUERY = "Software Engineer"
 TECHNOLOGY_NAME = None
 LOCATION = "Portugal"
-RADIUS = 50
+# RADIUS = 50
 PAGE_SIZE = 15
-MAX_START = 30 # provavelmente só ha 2 paginas com vagas novas do dia, se for muito alto fica a rodar infinitamente o scraper, sem encontrar nada novo
+MAX_START = 45 # se aumentarmos muito até onde vai, ele econtra vagas do dia mas que já não se relacionam com a query
 SOURCE = "indeed"
 
 
@@ -49,7 +49,7 @@ def main():
                     {
                         "q": QUERY,
                         "l": LOCATION,
-                        "radius": RADIUS,
+                        # "radius": RADIUS,
                         "start": start,
                         "fromage": 1,
                     }

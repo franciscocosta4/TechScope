@@ -18,10 +18,10 @@ from execution_logger import _write_scraper_status
 
 # QUERY é o termo usado no site (role, não tecnologia).
 # A tecnologia é extraída depois pelo scraper de keywords a partir da descrição.
-QUERY = "Software Engineer"
+QUERY = '"Software Engineer" OR "Backend Engineer" OR "Frontend Engineer" OR "Full Stack Engineer"'
 TECHNOLOGY_NAME = None
 LOCATION = "Portugal" 
-MAX_START = 10 # se aumentarmos muito até onde vai, ele econtra vagas do dia mas que já não se relacionam com a query
+MAX_START = 200 # se aumentarmos muito até onde vai, ele econtra vagas do dia mas que já não se relacionam com a query
 PAGE_SIZE = 10
 SOURCE = "linkedin"
 HEADERS = {

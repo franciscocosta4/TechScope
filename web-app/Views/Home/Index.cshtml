@@ -52,7 +52,7 @@
                 <p class="hero-description">
                     TechScope é uma ferramenta altamente configurável que permite recolher dados diariamente do
                     <strong>LinkedIn</strong>
-                    e <strong>Indeed</strong>
+                    e <strong>Indeed</strong> (priorizando o LinkedIn)
                     para identificar as linguagens, frameworks e ferramentas que as empresas realmente procuram.
                     Acompanha tendências e descobre oportunidades que mais ninguém descobriu.
                 </p>
@@ -225,13 +225,13 @@ python data-pipeline/scrapers/linkedin_keywords.py
                                     <p class="docs-text">Neste momento as queries são definidas manualmente no codigo dos
                                         scrapers:
                                         <strong>"linkedin.py" e "indeed.py"</strong> .
-                                        Caso queiras procurar por uma role especifica podes editar as queries.
+                                        Caso queiras procurar por uma role especifica podes editar as queries. Também podes editar o max start para valores mais altos, quanto mais alto mais vagas encontras mas <strong>menos precisão</strong> tens no tipo de vaga.
                                     </p>
                                     <br /> Exemplo de query (linkedin.py):
-                                    <pre class="docs-code"><code>QUERY = "Software Engineer"
+                                    <pre class="docs-code"><code>QUERY = '"Software Engineer" OR "Backend Engineer" OR "Full Stack Engineer"'
 TECHNOLOGY_NAME = None
 LOCATION = "Portugal"
-MAX_START = 1000
+MAX_START = 200
 PAGE_SIZE = 10
 SOURCE = "linkedin"
 </code></pre>
