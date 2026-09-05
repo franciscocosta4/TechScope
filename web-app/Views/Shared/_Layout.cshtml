@@ -51,8 +51,11 @@
     <div class="app-grid">
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div class="logo">TechScope</div>
-
+            <div class="logo">
+                <a asp-controller="Home" asp-action="Index" style="text-decoration:none; color:white;" >
+                        TechScope
+                    </a>
+            </div>
             <nav>
                 <a asp-controller="Dashboard" asp-action="Index" class="nav-item active">
                     <i class="fas fa-chart-pie"></i> Painel

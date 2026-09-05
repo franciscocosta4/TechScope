@@ -13,7 +13,7 @@ A TechScope é uma ferramenta de análise do mercado tecnológico que avalia a p
 
 A TechScope recolhe anúncios de emprego do **LinkedIn** e **Indeed**, analisa cada oferta e transforma-a em indicadores úteis sobre o mercado tech atual.
 </br>
-<strong>O LinkedIn é a nossa principal fonte de dados</strong>, não só pela sua dimensão no mercado português mas também pela variedade de informação disponível. A plataforma combina ofertas de emprego com mais informação que o indeed, como, por exemplo, a data em que a vaga foi publicada.
+<strong>O LinkedIn é a principal fonte de dados</strong>, não só pela sua dimensão no mercado português mas também pela variedade de informação disponível. A plataforma combina ofertas de emprego com mais informação que o indeed, como, por exemplo, a data em que a vaga foi publicada.
 Por esse motivo, o desenvolvimento e a robustez dos nossos scrapers estão especialmente focados no LinkedIn. A TechScope mantém  suporte para o Indeed, permitindo complementar os dados recolhidos e obter uma visão mais abrangente do mercado.
 
 A aplicação permite:

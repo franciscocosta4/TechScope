@@ -42,21 +42,21 @@
                     Descobre todas as tendências do
                     <span class="hero-subtitle-accent">mercado</span>
                 </h1>
+                <br />
+                <br />
 
                 <!-- Tagline -->
                 <p class="hero-tagline">
                     Corre diariamente ou <a href="#agent" style="color:white">integra com o teu agente</a>. Acompanha a evolução do mercado.
                 </p>
-
-                <!-- Description -->
+                @* <!-- Description -->
                 <p class="hero-description">
                     TechScope é uma ferramenta altamente configurável que permite recolher dados diariamente do
                     <strong>LinkedIn</strong>
                     e <strong>Indeed</strong> (priorizando o LinkedIn)
                     para identificar as linguagens, frameworks e ferramentas que as empresas realmente procuram.
                     Acompanha tendências e descobre oportunidades que mais ninguém descobriu.
-                </p>
-
+                </p> *@
                 <!-- CTA Buttons -->
                 <div class="hero-actions">
                     <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary">
@@ -78,6 +78,36 @@
         <div class="hero-visual">
             <div class="product-showcase">
                 <img src="~/assets/img/dashboard.jpg" alt="TechScope Dashboard" class="product-image" loading="lazy">
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="hero-section">
+        <div class="hero-container">
+            <!-- Left Column: Content -->
+            <div class="hero-content">
+                <!-- Main Headline -->
+                <h2 >
+                    Sobre o projeto
+                </h2>
+                <!-- Description -->
+                <p class="hero-description">
+                    TechScope é uma ferramenta altamente configurável que permite recolher dados diariamente do
+                    <strong>LinkedIn</strong>
+                    e <strong>Indeed</strong>
+                    para identificar as linguagens, frameworks e ferramentas que as empresas realmente procuram.
+                    Acompanha tendências e descobre oportunidades que mais ninguém descobriu.
+                    <br/>
+<strong>O LinkedIn é a principal fonte de dados</strong>, não só pela sua dimensão no mercado português mas também pela variedade de informação disponível. A plataforma combina ofertas de emprego com mais informação que o indeed, como, por exemplo, a data em que a vaga foi publicada.
+Por esse motivo, o desenvolvimento e a robustez dos nossos scrapers estão especialmente focados no LinkedIn. A TechScope mantém  suporte para o Indeed, permitindo complementar os dados recolhidos e obter uma visão mais abrangente do mercado.
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Column: Visual -->
+        <div class="hero-visual">
+            <div class="product-showcase">
+                <img src="~/assets/img/jobs.jpg" alt="TechScope Dashboard" class="product-image" loading="lazy">
             </div>
         </div>
     </div>
