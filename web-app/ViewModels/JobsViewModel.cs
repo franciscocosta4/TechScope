@@ -5,7 +5,7 @@ public class JobsViewModel
     public int TotalJobs { get; set; }
     public int ResultsCounter { get; set; }
     public List<JobsSearchResult> SearchResults { get; set; } = new();
-    public List<jobsByMonthChartData> JobsByMonth { get; set; }
+    public List<jobsByDayChartData> JobsByDay { get; set; }
 
     public List<RecentJobsItem> RecentJobs { get; set; } = new();
     public string? SearchString { get; set; }
@@ -19,9 +19,9 @@ public class JobsViewModel
 
 }
 
-public class jobsByMonthChartData
+public class jobsByDayChartData
 {
-    public int Mes { get; set; }
+    public DateOnly? Data { get; set; }
     public int Total { get; set; }
 }
 

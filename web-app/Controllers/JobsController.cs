@@ -21,19 +21,20 @@ public class JobsController : Controller
     {
         var totalJobs = await _context.Jobs.CountAsync();
 
-        var jobsByMonth = _context.Jobs  // grafico de vagas por mes do ano
+        var JobsByDay = _context.Jobs 
             .Where(j => j.DatePosted.HasValue)
-            .GroupBy(j => j.DatePosted.Value.Month)
-            .Select(g => new jobsByMonthChartData
+            .GroupBy(j => j.DatePosted.Value)
+            .Select(g => new jobsByDayChartData
             {
-                Mes = g.Key,
+                Data = g.Key,
                 Total = g.Count()
             })
-            .OrderBy(x => x.Mes)
+            .OrderBy(x => x.Data)
             .ToList();
 
 
         var RecentJobs = await _context.Jobs
+            .Where(x => x.DatePosted != null) // assim evitamos vagas do indeed, q nao tem data
             .OrderByDescending(x => x.DatePosted)
             .Take(20)
             .Select(j => new RecentJobsItem
@@ -52,7 +53,7 @@ public class JobsController : Controller
             RecentJobs = RecentJobs,
             SearchString = searchString,
             Seniority = Seniority,
-            JobsByMonth = jobsByMonth,
+            JobsByDay = JobsByDay,
             PageNumber = pageNumber,
             PageSize = pageSize
         };
