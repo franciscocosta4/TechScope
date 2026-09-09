@@ -4,13 +4,14 @@ public class JobsViewModel
 {
     public int TotalJobs { get; set; }
     public int ResultsCounter { get; set; }
+    public List<string> JobLocations { get; set; } = new();
     public List<JobsSearchResult> SearchResults { get; set; } = new();
     public List<jobsByDayChartData> JobsByDay { get; set; }
-
     public List<RecentJobsItem> RecentJobs { get; set; } = new();
     public string? SearchString { get; set; }
     public string? Seniority { get; set; }
     public string? WorkModel { get; set; }
+    public List<string> Locations { get; set; } = new();
     public int PageNumber { get; set; }
     public int PageSize { get; set; }
     

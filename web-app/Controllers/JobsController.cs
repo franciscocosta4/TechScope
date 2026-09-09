@@ -17,7 +17,7 @@ public class JobsController : Controller
     }
 
 
-    public async Task<IActionResult> Index(string? searchString, string? Seniority,string? WorkModel, int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> Index(string? searchString, string? Seniority,string? WorkModel, List<string> Locations, int pageNumber = 1, int pageSize = 10)
     {
         var totalJobs = await _context.Jobs.CountAsync();
 
@@ -45,14 +45,20 @@ public class JobsController : Controller
             })
             .ToListAsync();
         
+        var jobLocations =  _context.Jobs //pega em todas as locations registadas na base de dados
+            .Select(job => job.Location)
+            .Distinct()
+            .ToList();
         
-
         var model = new JobsViewModel
         {
             TotalJobs = totalJobs,
             RecentJobs = RecentJobs,
+            JobLocations = jobLocations,
             SearchString = searchString,
             Seniority = Seniority,
+            WorkModel = WorkModel,
+            Locations = Locations ?? new List<string>(),
             JobsByDay = JobsByDay,
             PageNumber = pageNumber,
             PageSize = pageSize
@@ -82,6 +88,21 @@ public class JobsController : Controller
                     j.Keywords.Any(k =>k.Keyword != null && k.Keyword.ToUpper().Contains(WorkModelTerm.ToUpper())));
             } 
 
+            if (model.Locations != null && model.Locations.Any()) 
+            {
+                // pegamos nos termos de locations na url
+                var locationTerms = model.Locations
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Select(x => x.Trim().ToUpper())
+                    .ToList();
+
+                if (locationTerms.Any())
+                {
+                    query = query.Where(j =>
+                        j.Location != null &&
+                        locationTerms.Any(location => j.Location.ToUpper().Contains(location))); // verfificamos se existem vagas com algum dos termos 
+                }
+            }
             // só conta depois de passar pelos filtros
             model.ResultsCounter = query.Count();
 

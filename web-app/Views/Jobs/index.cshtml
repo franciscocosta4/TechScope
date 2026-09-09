@@ -30,7 +30,7 @@
                 color: #f0f0f0;
                 border: 1px solid #1e1e20;
                 border-radius: 0;
-                padding: 8px 12px;
+                padding: 10px 12px;
                 font-size: 0.9rem;
                 cursor: pointer;
                 ">
@@ -53,7 +53,7 @@
                 color: #f0f0f0;
                 border: 1px solid #1e1e20;
                 border-radius: 0;
-                padding: 8px 12px;
+                padding: 10px 12px;
                 font-size: 0.9rem;
                 cursor: pointer;
                 ">
@@ -71,6 +71,27 @@
                     Híbrido 
                 </option>
             </select>
+            <div class="location-dropdown" id="locationDropdown">
+            <button type="button" class="location-dropdown-button" id="locationDropdownButton">
+                <span id="locationDropdownText">Todas as localizações</span>
+                <span class="location-dropdown-arrow">▼</span>
+            </button>
+            <div class="location-dropdown-menu" id="locationDropdownMenu">
+
+                @foreach (var location in Model.JobLocations)
+                {
+                    <label class="location-option">
+                        <input type="checkbox"
+                            name="Locations"
+                            value="@location"
+                            @(Model.Locations.Contains(location) ? "checked" : "") />
+
+                        <span>@location</span>
+                    </label>
+                }
+
+            </div>
+        </div>
         </div>
         <div style="margin-top: 0.2rem; font-size: 0.85rem; color: #a0a0a4;">
             <strong>Nota:</strong> A filtragem é baseada em <em>matching</em> automático no texto das descrições dos
@@ -161,6 +182,69 @@
 }
 
 @section Scripts {
+    <script>
+    const dropdown = document.getElementById('locationDropdown');
+    const button = document.getElementById('locationDropdownButton');
+    const menu = document.getElementById('locationDropdownMenu');
+    const text = document.getElementById('locationDropdownText');
+
+    // Abre/fecha o dropdown quando clicamos no botão.
+    button.addEventListener('click', function () {
+        dropdown.classList.toggle('open');
+    });
+
+    // Atualiza o texto apresentado no botão.
+     function updateLocationText() {
+
+        // Obtém todas as localizações seleccionadas.
+        const selected = menu.querySelectorAll(
+            'input[name="Locations"]:checked'
+        );
+
+        // Se nenhuma estiver seleccionada.
+        if (selected.length === 0) {
+            text.textContent = 'Todas as localizações';
+            return;
+        }
+
+        // Obtém os nomes das localizações seleccionadas.
+        const locations = Array.from(selected).map(
+            checkbox => checkbox.value
+        );
+
+        // Se houver apenas uma localização.
+        if (locations.length === 1) {
+            text.textContent = locations[0];
+            return;
+        }
+
+        // Se houver duas localizações, mostra ambas.
+        if (locations.length === 2) {
+            text.textContent = `${locations[0]}; ${locations[1]}`;
+            return;
+        }
+
+        // Se houver mais de duas, mostra as duas primeiras + "...".
+        text.textContent = `${locations[0]}; ${locations[1]}; ...`;
+    }
+
+    // Atualiza o texto sempre que uma localização é seleccionada/desseleccionada.
+    menu.addEventListener('change', function () {
+        updateLocationText();
+    });
+
+    // Fecha o dropdown quando clicamos fora dele.
+    document.addEventListener('click', function (event) {
+
+        if (!dropdown.contains(event.target)) {
+            dropdown.classList.remove('open');
+        }
+    });
+
+    // Inicializa o texto caso já existam localizações seleccionadas.
+    updateLocationText();
+</script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
