@@ -38,6 +38,20 @@ public class DashboardController : Controller
             })
             .ToListAsync();
 
+        var techMarketShares  =  await _context.JobKeywords
+            .Where(jk => jk.Category == "technology")
+            .GroupBy(jk => jk.Keyword)
+            .OrderByDescending(g => g.Count())
+            // .Take(20)
+            .Select(g => new TechMarketSharesItem
+            {
+                Name = g.Key,
+                MarketShares =  100 * g.Count() / totalJobs
+            })
+            .Where(x => x.MarketShares > 0)
+            .ToListAsync();
+
+
         var jobLocations =  _context.Jobs //pie de locations
             .Where(j => j.Location != null)
             .GroupBy(jk => jk.Location)
@@ -92,6 +106,7 @@ public class DashboardController : Controller
             TotalTechnologies = totalTechnologies,
             TotalCompanies = totalCompanies,
             TopTechnologies = topTechnologies,
+            TechMarketShares = techMarketShares,
             SearchString = searchString,
             QuantityTech = quantityTech,
             JobLocations = jobLocations,

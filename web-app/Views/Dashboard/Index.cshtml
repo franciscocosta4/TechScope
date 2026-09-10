@@ -7,6 +7,7 @@
     @* var jobsByMonthJson = JsonSerializer.Serialize(Model.JobsByMonth); *@
     var tecnologiasJson = JsonSerializer.Serialize(Model.QuantityTech);
     var locationsJson = JsonSerializer.Serialize(Model.JobLocations);
+    var sharesJson= JsonSerializer.Serialize(Model.TechMarketShares);
 }
 
 <div class="dashboard-header">
@@ -138,6 +139,39 @@
         </div>
         <!-- a legenda será renderizada pelo Chart.js em position: bottom -->
     </div>
+
+    <!-- Tabela Top Tecnologias -->
+    <div class="card">
+        <div class="card-header">
+            <span>Quota de mercado de cada tecnologia</span>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tecnologia</th>
+                        <th style="text-align: right;">Quota do mercado</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-resultados">
+                    @foreach (var item in Model.TechMarketShares)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td style="text-align: right; font-weight: 500;">@item.MarketShares%</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Gráfico de quota de mercado -->
+    <div class="card" style="display: flex; flex-direction: column;">
+        <div class="card-header">Quota de mercado</div>
+        <div class="chart-container" style="flex: 1;">
+            <canvas id="grafico4"></canvas>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
@@ -178,6 +212,7 @@
                 await loadScript('https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns');
                 initChart2();
                 initChart3();
+                initChart4();
             }
         }
 
@@ -319,38 +354,101 @@ function initChart2() {
         // GRÁFICO 3 — Distribuição geográfica (doughnut / rosca)
         // ------------------------------------------------------------
         function initChart3() {
-        const dadosLoc = @Html.Raw(locationsJson);
-        const labelsLoc = dadosLoc.map(x => x.Location);
-        const valoresLoc = dadosLoc.map(x => x.Count);
+            const dadosLoc = @Html.Raw(locationsJson);
+            const labelsLoc = dadosLoc.map(x => x.Location);
+            const valoresLoc = dadosLoc.map(x => x.Count);
 
-        new Chart(document.getElementById('grafico3').getContext('2d'), {
-        type: 'doughnut',
-        data: {
-        labels: labelsLoc,
-        datasets: [{
-        data: valoresLoc,
-        backgroundColor: ['#ffffff', '#7a7a7e', '#4a4a4e', '#b0b0b4', '#d0d0d4', '#2a2a2e'],
-        borderColor: '#0b0b0d',
-        borderWidth: 2
-        }]
-        },
-        options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-        legend: {
-        position: 'bottom',
-        labels: {
-        color: '#f0f0f0',
-        boxWidth: 12,
-        padding: 8,
-        font: { size: 11 }
+            new Chart(document.getElementById('grafico3').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: labelsLoc,
+                    datasets: [{
+                        data: valoresLoc,
+                        backgroundColor: ['#ffffff', '#7a7a7e', '#4a4a4e', '#b0b0b4', '#d0d0d4', '#2a2a2e'],
+                        borderColor: '#0b0b0d',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#f0f0f0',
+                                boxWidth: 12,
+                                padding: 8,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
         }
-        }
-        },
-        cutout: '60%'
-        }
+// ------------------------------------------------------------
+// GRÁFICO 4 — Quota de mercado
+// ------------------------------------------------------------
+    async function initChart4() {
+        const techMarketShares = @Html.Raw(Json.Serialize(Model.TechMarketShares));
+
+        const labels = techMarketShares.map(item => item.name);
+        const values = techMarketShares.map(item => item.marketShares);
+
+        const ctx = document
+            .getElementById('grafico4')
+            .getContext('2d');
+
+        new Chart(ctx, {
+            type: 'bar',
+
+            data: {
+                labels: labels,
+
+                datasets: [{
+                    label: 'Quota de mercado (%)',
+                    backgroundColor :'#b0b0b4',
+                    data: values,
+
+                    borderWidth: 1
+                }]
+            },
+
+            options: {
+                responsive: true,
+
+                // Barras horizontais.
+                indexAxis: 'y',
+
+                maintainAspectRatio: false, // permite aumentar a altura ou largura sem manter o ratio
+
+                scales: {
+                    x: {
+                        beginAtZero: true,
+
+                        ticks: {
+                            callback: function (value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                },
+
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return context.parsed.x.toFixed(2) + '%';
+                            }
+                        }
+                    }
+                }
+            }
         });
-        }
+    }
+
     </script>
 }
