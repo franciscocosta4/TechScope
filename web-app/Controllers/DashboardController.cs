@@ -67,18 +67,22 @@ public class DashboardController : Controller
         var tecnologiasSelecionadas = new[]
         {
             ".net",
-            "react native",
-            "sql",
+            "nodejs",
+            "postgresql",
+            "mongodb",
             "c#",
             "java",
+            "spring",
             "javascript",
             "typescript",
             "angular",
             "react",
-            "nodejs",
             "python",
             "laravel",
             "php",
+            "aws",
+            "azure",
+            "docker",
         };
         var quantityTech = _context.JobKeywords // serve para o grafico de tecnologias
             .Where(jk =>

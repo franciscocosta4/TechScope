@@ -14,7 +14,7 @@
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
 
     <!-- Tendência mensal -->
-    <div class="card">
+    <div  class="card">
         <div class="card-header">Tendência mensal</div>
 
 
@@ -22,7 +22,7 @@
         {
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>Mês</th><th style="text-align: right;">Anúncios</th><th style="text-align: right;">Vs. mês anterior</th></tr></thead>
+                    <thead><tr><th>Mês</th><th style="text-align: right;">Vagas que mencionam @Model.Keyword </th><th style="text-align: right;">Vs. mês anterior</th></tr></thead>
                     @{
                         int? previousJobCount = null;
                     }
@@ -71,14 +71,13 @@
             <p class="text-muted">Sem dados de tendência.</p>
         }
     </div>
-
-    <!-- Tecnologias relacionadas -->
-    <div class="card">
-        <div class="card-header">Tecnologias relacionadas</div>
-    <!-- Gráfico de rosca (doughnut)  -->
-    <div class="chart-container">
-        <canvas id="grafico3"></canvas>
-    </div>
+        <!-- Tecnologias relacionadas -->
+        <div class="card">
+            <div class="card-header">Tecnologias relacionadas</div>
+        <!-- Gráfico de rosca (doughnut)  -->
+        <div  class="chart-sm chart-max-height">
+            <canvas id="grafico3"></canvas>
+        </div>
     <br />
         @if (Model.RelatedTechnologies.Any())
         {
@@ -101,7 +100,7 @@
 
 <!-- Empresas -->
 <div class="card" style="margin-top: 2rem;">
-    <div class="card-header">Empresas que recrutam</div>
+    <div class="card-header">Empresas que mais recrutam</div>
     @if (Model.TopCompanies.Any())
     {
         <div class="table-wrapper">
@@ -133,7 +132,7 @@
     <div class="card-header">Anúncios recentes</div>
     @if (Model.RecentJobs.Any())
     {
-        <div class="table-wrapper">
+        <div class="table-wrapper" id="lista-resultados">
             <table>
                 <thead>
                     <tr><th>Título</th><th>Empresa</th><th>Fonte</th><th style="text-align: right;">Data</th></tr>
@@ -156,10 +155,27 @@
     {
         <p class="text-muted">Sem anúncios recentes.</p>
     }
+        <!-- Paginação -->
+            <nav>
+                <ul class="pagination">
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li><a class="page-link" asp-action="Detail" asp-route-keyword="@Model.Keyword"
+                                   asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize">Anterior</a>
+                        </li>
+                    }
+                    @if (Model.PageNumber < Model.TotalPages)
+                    {
+                        <li><a class="page-link" asp-action="Detail" asp-route-keyword="@Model.Keyword"
+                                   asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize">Seguinte</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
 </div>
 
 @section Scripts {
-    @*  Script que faz o autoscroll para a tabela de top tech *@
+    @*  Script que faz o autoscroll para a lista de Anúncios recentes *@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const params = new URLSearchParams(window.location.search);

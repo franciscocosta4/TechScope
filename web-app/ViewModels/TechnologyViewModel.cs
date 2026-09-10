@@ -11,6 +11,10 @@ public class TechnologyDetailViewModel
     public List<RelatedTechChartData> RelatedTechChart { get; set; } = new();
     public List<CompanyInfo> TopCompanies { get; set; } = new();
     public List<RecentJobInfo> RecentJobs { get; set; } = new();
+    public int PageNumber { get; set; }
+    public int PageSize { get; set; }
+    public int TotalPages => (int)Math.Ceiling((double)TotalJobs / PageSize);
+
 }
 
 public class MonthlyTrend

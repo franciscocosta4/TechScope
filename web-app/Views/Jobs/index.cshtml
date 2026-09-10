@@ -19,7 +19,7 @@
           style="display: flex; flex-direction: column; align-items: flex-start; gap: 1.5rem;">
         <div style="display: flex; gap: 0.5rem; align-items: center; width: 100%;">
             <input class="search-input" type="text" name="searchString" value="@Model.SearchString"
-                   placeholder="Pesquisar vaga (ex: Web developer...)" />
+                   placeholder="Pesquisar vagas pelo título. (ex: Web developer...)" />
             <button type="submit" class="btn btn-sm">
                 <i class="fa-solid fa-magnifying-glass"></i> Pesquisar
             </button>
@@ -93,10 +93,7 @@
             </div>
         </div>
         </div>
-        <div style="margin-top: 0.2rem; font-size: 0.85rem; color: #a0a0a4;">
-            <strong>Nota:</strong> A filtragem é baseada em <em>matching</em> automático no texto das descrições dos
-            anúncios. Podem não corresponder realmente ao que é pedido na vaga ou não capturar todos os casos.
-        </div>
+<div style="margin-top: 0.2rem; font-size: 0.85rem; color: #a0a0a4;"> <strong>Nota:</strong> A pesquisa por texto procura correspondências no <em>título</em> das vagas. Para procurar vagas relacionadas com uma tecnologia específica, utiliza a pesquisa por <em>Tecnologias</em>. <br /> Os filtros são baseados em <em>matching</em> automático nas descrições dos anúncios, podendo existir correspondências incorretas ou casos não capturados. </div>
         <input type="hidden" name="pageNumber" value="1" />
         <input type="hidden" name="pageSize" value="@Model.PageSize" />
     </form>

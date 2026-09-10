@@ -16,7 +16,7 @@ public class TechnologyController : Controller
     }
 
     // GET: /technologies/{keyword}
-    public async Task<IActionResult> Detail(string keyword)
+    public async Task<IActionResult> Detail(string keyword, int pageNumber = 1, int pageSize = 10)
     {
         if (string.IsNullOrWhiteSpace(keyword))
             return BadRequest();
@@ -102,7 +102,7 @@ public class TechnologyController : Controller
                 JobCount = g.Select(jk => jk.JobId).Distinct().Count()
             })
             .OrderByDescending(c => c.JobCount)
-            .Take(10)
+            .Take(5) //top 5
             .ToListAsync();
 
         // Anúncios recentes relacionados
@@ -119,7 +119,8 @@ public class TechnologyController : Controller
             })
             .Distinct()
             .OrderByDescending(j => j.DatePosted)
-            .Take(20)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
 
         var model = new TechnologyDetailViewModel
@@ -130,7 +131,9 @@ public class TechnologyController : Controller
             RelatedTechnologies = relatedTechnologies,
             RelatedTechChart = relatedTechChart,
             TopCompanies = topCompanies,
-            RecentJobs = recentJobs
+            RecentJobs = recentJobs,
+            PageSize = pageSize,
+            PageNumber = pageNumber,
         };
 
         return View(model);

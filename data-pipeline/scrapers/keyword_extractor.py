@@ -56,6 +56,7 @@ COMMON_TECH_PATTERNS = [
     r'\bblazor\b',                 # blazor
     r'\.net[\s-]framework\b',     # .net framework
     r'\b(php)\b',
+    r'\b(laravel)\b',
     r'\b(ruby|ruby[\s-]?on[\s-]?rails|rails)\b',
     r'\b(golang|go)\b',
     r'\b(rust)\b',
@@ -216,8 +217,8 @@ TECH_ALIASES: dict[str, str] = {
     'asp.net core': '.net',
     'aspnet': '.net',
     'dotnet': '.net',
-    'c#': '.net',
-    'csharp': '.net',
+    'c#': 'c#',
+    'csharp': 'c#',
     'blazor': '.net',
     'entity framework': '.net',
 

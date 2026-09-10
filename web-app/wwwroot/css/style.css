@@ -13,21 +13,39 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   background: #0b0b0d;
   color: #f0f0f0;
   line-height: 1.5;
 }
 
 /* tipografia */
-h1, h2, h3, h4, .display {
+h1,
+h2,
+h3,
+h4,
+.display {
   font-weight: 500;
   letter-spacing: -0.025em;
   color: #ffffff;
 }
-h1 { font-size: 2.8rem; font-weight: 600; letter-spacing: -0.03em; }
-h2 { font-size: 2rem; font-weight: 500; }
-h3 { font-size: 1.25rem; font-weight: 500; }
+h1 {
+  font-size: 2.8rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+h2 {
+  font-size: 2rem;
+  font-weight: 500;
+}
+h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
 
 .text-muted {
   color: #7a7a7e;
@@ -94,13 +112,17 @@ h3 { font-size: 1.25rem; font-weight: 500; }
   color: #ffffff;
   border-left-color: #ffffff;
 }
-.nav-item.active i { color: #ffffff; }
+.nav-item.active i {
+  color: #ffffff;
+}
 
 .nav-item:hover {
   background: #141416;
   color: #ffffff;
 }
-.nav-item:hover i { color: #ffffff; }
+.nav-item:hover i {
+  color: #ffffff;
+}
 
 /* ============================================
    MAIN CONTENT
@@ -147,12 +169,12 @@ h3 { font-size: 1.25rem; font-weight: 500; }
   /* gap: 1px; */
   /* background: #1e1e20; */
   margin-bottom: 2.5rem;
-  border:solid,  0.1rem, #1e1e20 ; 
+  border: solid, 0.1rem, #1e1e20;
 }
 
 .stat-card {
   /* background: #141416; */
-  border:solid,  0.1rem, #1e1e20 ; 
+  border: solid, 0.1rem, #1e1e20;
   padding: 1.8rem 1.5rem;
   text-align: left;
 }
@@ -237,7 +259,7 @@ td {
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.1s ease;
-  text-decoration: none
+  text-decoration: none;
 }
 .btn:hover {
   background: #e8e8e8;
@@ -276,7 +298,7 @@ td {
   border: 1px solid #1e1e20;
   color: #f0f0f0;
   font-size: 1rem;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   transition: border 0.1s;
 }
 .search-input:focus {
@@ -288,84 +310,84 @@ td {
 }
 
 .location-dropdown {
-    position: relative;
-    width: 30rem;
+  position: relative;
+  width: 30rem;
 }
 
 .location-dropdown-button {
-    width: 100%;
-    height: 38px;
-    padding: 8px 12px;
+  width: 100%;
+  height: 38px;
+  padding: 8px 12px;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-    background-color: #141416;
-    color: #f0f0f0;
+  background-color: #141416;
+  color: #f0f0f0;
 
-    border: 1px solid #1e1e20;
-    border-radius: 0;
+  border: 1px solid #1e1e20;
+  border-radius: 0;
 
-    font-size: 0.9rem;
-    cursor: pointer;
+  font-size: 0.9rem;
+  cursor: pointer;
 
-    text-align: left;
+  text-align: left;
 }
 
 .location-dropdown-button:hover {
-    border-color: #333337;
+  border-color: #333337;
 }
 
 .location-dropdown-arrow {
-    font-size: 0.7rem;
-    transition: transform 0.2s ease;
+  font-size: 0.7rem;
+  transition: transform 0.2s ease;
 }
 
 .location-dropdown.open .location-dropdown-arrow {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .location-dropdown-menu {
-    display: none;
+  display: none;
 
-    position: absolute;
-    top: calc(100% + 2px);
-    left: 0;
-    right: 0;
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
 
-    max-height: 200px;
-    overflow-y: auto;
+  max-height: 200px;
+  overflow-y: auto;
 
-    background-color: #141416;
-    border: 1px solid #1e1e20;
+  background-color: #141416;
+  border: 1px solid #1e1e20;
 
-    z-index: 1000;
+  z-index: 1000;
 }
 
 .location-dropdown.open .location-dropdown-menu {
-    display: block;
+  display: block;
 }
 
 .location-option {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 
-    padding: 9px 12px;
+  padding: 9px 12px;
 
-    color: #f0f0f0;
-    font-size: 0.9rem;
+  color: #f0f0f0;
+  font-size: 0.9rem;
 
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .location-option:hover {
-    background-color: #1e1e20;
+  background-color: #1e1e20;
 }
 
 .location-option input {
-    cursor: pointer;
+  cursor: pointer;
 }
 /* ============================================
    PAGINATION
@@ -410,12 +432,22 @@ td {
   flex-direction: column;
   height: auto; /* sem altura fixa */
 }
+/* Tamanho reduzido do gráfico no detalhe da tecnologia */
+.chart-sm {
+  margin-left: 25%;
+  height: 250px; /* altura fixa – ajuste conforme precisar */
+  min-height: 200px; /* garante que não fique muito pequeno em telas grandes */
+}
+
+/* Limita a altura do gráfico sem distorcer a proporção */
+.chart-max-height {
+  max-height: 250px; /* ajuste este valor conforme desejar */
+}
 
 .chart-doughnut-wrapper .chart-container {
   flex: 1;
   min-height: 200px; /* apenas para garantir visibilidade, mas cresce com o conteúdo */
 }
-
 
 /* ============================================
    UTILITY GRID
@@ -464,4 +496,3 @@ td {
     min-width: 140px;
   }
 }
-

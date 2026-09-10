@@ -68,7 +68,7 @@ public class JobsController : Controller
         {
             var term = searchString.Trim();
             
-            // query base procura por titulos que contenham o termo
+            // query base procura por titulos que contenham o termo 
             var query = _context.Jobs.AsQueryable();
             query = query.Where(j => j.Title != null && j.Title.ToUpper().Contains(term.ToUpper()));
 
