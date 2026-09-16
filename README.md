@@ -133,7 +133,7 @@ Cada scraper processa um batch de até 150 jobs por execução. Corre-os várias
 
 * [x] Pesquisa e análise individual de tecnologias
 * [x] Contagem de anúncios por tecnologia
-* [ ] Cálculo da quota de mercado de cada tecnologia
+* [x] Cálculo da quota de mercado de cada tecnologia
 * [x] Análise do crescimento da procura ao longo do tempo
 * [ ] Identificação automática de tendências de mercado
 * [ ] Comparação entre tecnologias

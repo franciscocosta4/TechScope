@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechScope · Landing</title>
+
+    <!-- Preconnect to font CDNs for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Font Inter with display swap -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (defer loading with media="print" technique and load on demand) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" media="print" onload="this.media='all'">
+
+    <!-- Inline critical CSS from style.css (above-the-fold only) -->
+    <style>
+        .app-grid { display: flex; min-height: 100vh; }
+        .sidebar { position: sticky; top: 0; height: 100vh; width: 240px; border-right: 1px solid #1e1e20; padding: 2rem 1.2rem; background: #0b0b0d; flex-shrink: 0; }
+        .main-content { flex: 1; padding: 2.5rem 3rem; background: #0b0b0d; }
+        .card { background: #141416; border: 1px solid #1e1e20; border-radius: 0; padding: 1.6rem 2rem; margin-bottom: 2rem; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0b0b0d; color: #f0f0f0; line-height: 1.5; margin: 0; }
+        .nav-item { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-left: 2px solid transparent; color: #7a7a7e; text-decoration: none; font-weight: 450; font-size: 0.95rem; transition: all 0.1s ease; margin-bottom: 4px; }
+        .nav-item.active { background: #141416; color: #ffffff; border-left-color: #ffffff; }
+        .search-input { padding: 12px 16px; background: #141416; border: 1px solid #1e1e20; color: #f0f0f0; font-size: 1rem; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; background: #ffffff; color: #0b0b0d; border: 1px solid #ffffff; font-weight: 500; font-size: 0.9rem; cursor: pointer; transition: all 0.1s ease; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="landing">
+        <div class="container">
+           
+<div class="landing-page">
+    <!-- Navbar -->
+    <nav class="landing-navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <a href="#badge" class="nav-link">
+                    <span class="brand-logo">techscope</span>
+                </a>
+            </div>
+            <div class="navbar-menu">
+                <a href="https://github.com/franciscocosta4/TechScope/blob/main/ENVIRONMENT.md"
+                   class="nav-link">Documentação</a>
+                <a href="https://github.com/franciscocosta4/techscope" class="nav-link">GitHub</a>
+                <a href="#manter" class="nav-link">Configurar o projeto</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-container">
+
+            <!-- Left Column: Content -->
+            <div class="hero-content">
+
+                <!-- Badge -->
+                <div class="hero-badge" id="badge">
+                    De um dev, para toda a comunidade.
+                </div>
+
+                <!-- Main Headline -->
+                <h1 class="hero-title">
+                    Descobre todas as tendências do
+                    <span class="hero-subtitle-accent">mercado</span>
+                </h1>
+                <br />
+                <br />
+
+                <!-- Tagline -->
+                <p class="hero-tagline">
+                    Corre diariamente ou <a href="#agent" style="color:white">integra com o teu agente</a>. Acompanha a evolução do mercado.
+                </p>
+                <!-- CTA Buttons -->
+                <div class="hero-actions">
+                  <a href="http://localhost:5136/Dashboard" class="btn btn-primary">
+                        Ver Dashboard
+                    </a>
+                    <a href="#docs" class="btn btn-secondary">
+                        Aprende como recolher os dados
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Right Column: Visual -->
+        <div class="hero-visual">
+            <div class="product-showcase">
+                <img src="web-app/wwwroot/assets/img/dashboard.jpg" alt="TechScope Dashboard" class="product-image" loading="lazy">
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="hero-section">
+        <div class="hero-container">
+            <!-- Left Column: Content -->
+            <div class="hero-content">
+                <!-- Main Headline -->
+                <h2 >
+                    Sobre o projeto
+                </h2>
+                <!-- Description -->
+                <p class="hero-description">
+                    TechScope é uma ferramenta altamente configurável que permite recolher dados diariamente do
+                    <strong>LinkedIn</strong>
+                    e <strong>Indeed</strong>
+                    para identificar as linguagens, frameworks e ferramentas que as empresas realmente procuram.
+                    Acompanha tendências e descobre oportunidades que mais ninguém descobriu.
+                    <br/>
+<strong>O LinkedIn é a principal plataforma</strong> para os scrapers, não só pela sua dimensão e relevância no mercado português, mas também por disponibilizar dados adicionais que não estão presentes no Indeed, como, por exemplo, a data de publicação da vaga.
+
+Por este motivo, o foco do desenvolvimento dos nossos scrapers foi o LinkedIn. A TechScope mantém, contudo, suporte para o Indeed, permitindo complementar os dados recolhidos e construir uma visão mais abrangente do mercado de trabalho.
+
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Column: Visual -->
+        <div class="hero-visual">
+            <div class="product-showcase">
+                <img src="web-app/wwwroot/assets/img/jobs.jpg" alt="TechScope Dashboard" class="product-image" loading="lazy">
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Companies / Brands -->
+    <div class="brands-section">
+        <div class="brands-container">
+            <p class="brands-label">Tecnologias suportadas por padrão:</p>
+            <div class="brands-grid">
+                <div class="brand-item">
+                    <i class="fab fa-laravel"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-php"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-js"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-rust"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-react"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-angular"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-python"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fa-brands fa-java"></i>
+                </div>
+                <div class="brand-item">
+                    <i class="fab fa-node-js"></i>
+                </div>
+            </div>
+            <br />
+            <p id="docs" class="brands-label">e muitas mais...</p>
+        </div>
+    </div>
+    <!-- Docs Section -->
+    <div class="docs-section">
+        <div class="docs-container">
+
+            <h2 >Encontras-te algum bug? </h2>
+            <br />
+            <p class="docs-text">Cria um issue em: <a href="https://github.com/franciscocosta4/TechScope/issues"
+                                                              style="color:white;">TechScope/issues</a></p>
+                <hr />
+                <br />
+                <div class="docs-header">
+                    <h2 class="docs-title">Como rodar os scrapers</h2>
+                    <p class="docs-subtitle">Recolhe dados do LinkedIn e Indeed em quatro passos.</p>
+                    <blockquote class="docs-note">
+                        <strong>Nota:</strong> Os scrapers <strong>NÃO são executados automaticamente por padrão</strong>.
+                        Deves executá-los diariamente para atualizar a informação da Dashboard com novos anúncios.
+                    </blockquote>
+                </div>
+
+                <div class="docs-steps">
+                    <div class="docs-step">
+                        <div class="docs-step-number">1</div>
+                        <div class="docs-step-content">
+                            <h3 class="docs-step-title">Instalar dependências</h3>
+                            <p class="docs-text">Antes de executar os scrapers, instala os requirements do projeto:</p>
+                            <pre class="docs-code"><code>pip install -r requirements.txt</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="docs-step">
+                        <div class="docs-step-number">2</div>
+                        <div class="docs-step-content">
+                            <h3 class="docs-step-title">Preparar a base de dados</h3>
+                            <p class="docs-text">Na primeira execução, os scrapers criam o schema a partir de
+                                <code>data-pipeline/database/migrations/001_initial.sql</code>.
+                            </p>
+                            <pre
+                            class="docs-code"><code>psql -U postgres -d techscope -f data-pipeline/database/migrations/001_initial.sql</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="docs-step">
+                        <div class="docs-step-number">3</div>
+                        <div class="docs-step-content">
+                            <h3 class="docs-step-title">Arrancar o Chrome para o Indeed</h3>
+                            <p class="docs-text">Para o scraper do Indeed, corre o ficheiro:</p>
+                            <pre class="docs-code"><code>start_chrome_debug.bat</code></pre>
+                            <p class="docs-text">Isto abre o Chrome com o perfil do projecto e a porta de debug activa.</p>
+                        </div>
+                    </div>
+
+                    <div class="docs-step">
+                        <div class="docs-step-number">4</div>
+                        <div class="docs-step-content">
+                            <h3 class="docs-step-title">Correr os scrapers</h3>
+                            <p class="docs-text">Executa os scrapers a partir da raiz do repositório:</p>
+                            <pre class="docs-code"><code>
+# Scrapers de anúncios (listings)
+python data-pipeline/scrapers/indeed.py
+python data-pipeline/scrapers/linkedin.py
+
+# Scrapers de keywords (extraem descrições e analisam conteúdo)
+python data-pipeline/scrapers/indeed_keywords.py
+python data-pipeline/scrapers/linkedin_keywords.py
+                            </code>
+                            </pre>
+                            <p class="docs-text">Vais poder acompanhar o progresso do scraping pelo terminal, através de logs.</p>
+                            <blockquote class="docs-note">
+                                <strong>Nota:</strong> O scraper de keywords do LinkedIn (linkedin_keywords.py) precisa do
+                                Chrome debug aberto
+                                porque o LinkedIn carrega as descrições via JavaScript. <strong> É recomendado fazer login
+                                com uma conta do linkedin para evitar bugs e rate-limiting</strong>
+                            </blockquote>
+                        </div>
+                    </div>
+                    <div class="docs-step">
+                        <div class="docs-step-number">5</div>
+                        <div class="docs-step-content">
+                            <h3 class="docs-step-title">Analisa os resultados</h3>
+                            <p class="docs-text">Abre a web app em:</p>
+                            <a href="http://localhost:5136/Dashboard"
+                               style="color:white;">http://localhost:5136/Dashboard</a>
+                            <blockquote class="docs-note" id="manter">
+                                <strong>Nota:</strong> A porta do localhost pode variar conforme a configuração que
+                                definiste em
+                                launchSettings.json .
+                            </blockquote>
+                        </div>
+                    </div>
+
+                    <hr />
+                    <div class="docs-header">
+                        <h2 class="docs-title">Configurar e manter o projeto</h2>
+                        <p class="docs-subtitle">Mantem os scrapers e a app a funcionar para ti e adapta-os para as tuas
+                            necessidades. <br /> Estes passos nao servem uma ordem específica</p>
+                        </div>
+                        <div class="docs-steps">
+                            <div class="docs-step">
+                                <div class="docs-step-number">1</div>
+                                <div class="docs-step-content">
+                                    <h3 class="docs-step-title">Adapta as queries conforme a tua necessidade</h3>
+                                    <p class="docs-text">Neste momento as queries são definidas manualmente no codigo dos
+                                        scrapers:
+                                        <strong>"linkedin.py" e "indeed.py"</strong> .
+                                        Caso queiras procurar por uma role especifica podes editar as queries. Também podes editar o max start para valores mais altos, quanto mais alto mais vagas encontras mas <strong>menos precisão</strong> tens no tipo de vaga.
+                                    </p>
+                                    <br /> Exemplo de query (linkedin.py):
+                                    <pre class="docs-code"><code>QUERY = '"Software Engineer" OR "Backend Engineer" OR "Full Stack Engineer"'
+TECHNOLOGY_NAME = None
+LOCATION = "Portugal"
+MAX_START = 200
+PAGE_SIZE = 10
+SOURCE = "linkedin"
+</code></pre>
+                                    <p class="docs-text"  id="agent">
+                                        Também podes editar outros parametros, como a location, que pode ser ainda mais precisa,
+                                        como: "porto, porto Portugal"
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="docs-step">
+                                <div class="docs-step-number">2</div>
+                                <div class="docs-step-content">
+                                    <h3 class="docs-step-title">Integra com o teu ai agent favorito</h3>
+                                    <div class="docs-code">
+                                        <p >Agents compativeis:</p> 
+                                        <br />
+                                        <div class="agent-images">
+                                            <img src="web-app/wwwroot/assets/img/claude-code.svg" class="agent-images-item" alt="claude code" loading="lazy">
+                                            <img src="web-app/wwwroot/assets/img/codex-dark.svg" class="agent-images-item" alt="codex"  loading="lazy">
+                                            <img src="web-app/wwwroot/assets/img/pi.png" alt="pi agent" class="agent-images-item" loading="lazy">
+                                            <img src="web-app/wwwroot/assets/img/cursor.svg" alt="cursor" class="agent-images-item" loading="lazy">
+                                            <img src="web-app/wwwroot/assets/img/opencode.svg" alt="open code" class="agent-images-item" loading="lazy">
+                                        </div> 
+                                    </div> 
+                                    <br />
+                                    <p class="docs-text">
+                                        A techscope oferece uma estrutura base de um <strong>AGENTS.md </strong>para que possas implementar
+                                        automação na execução dos scrapers.
+                                        Como os scrapers guardam logs em <strong>execution.json </strong> o teu agente facilmente verifica,<strong> a cada nova sessão</strong>, se foram executados e pergunta-te se
+                                        os queres executar, caso ainda não tenham sido.
+                                    </p>
+                                    <br />
+                                    <p > Exemplo do execution.json:</p>
+                                    <pre class="docs-code"><code>{
+    "l": {
+        "last_run": "2026-09-03T17:44:14Z",
+        "status": "success"
+    },
+    "i": {
+        "last_run": "2026-09-03T17:47:07Z",
+        "status": "error"
+    }
+}
+</code></pre>
+                                    <br /> 
+                                    <p > Transfere e experimenta agora o AGENTS.md personalizado: </p>
+                                    <br /> 
+                                    <a href="web-app/wwwroot/agents-techscope.md" class="btn btn-secondary" download>AGENTS.md</a>
+                                    <blockquote class="docs-note" id="manter">
+                                        <strong>Nota:</strong> Deves alterar : 'SET THE FULL PATH TO THE TECHSCOPE DIRECTORY HERE' para o diretório onde instalas-te a techscope. <br />
+                                         <strong>Exemplo:</strong> USER: "C:\Users\Utilizador\CODE\TechScope"
+                                    </blockquote>
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+
+        </div>
+
+        </div>
+    </div>
+</body>
+</html>
+<style>
+/* ============================================
+   TECHSCOPE LANDING PAGE
+   Clean, Professional Design (BankLink-inspired)
+   ============================================ */
+
+:root {
+  /* Core Colors — alinhados com style.css */
+  --bg-primary: #0b0b0d;
+  --bg-secondary: #141416;
+  --bg-tertiary: #1e1e20;
+
+  --text-primary: #ffffff;
+  --text-secondary: #f0f0f0;
+  --text-tertiary: #7a7a7e;
+  --text-muted: #5a5a5e;
+
+  --border-color: #1e1e20;
+  --border-hover: #2a2a2e;
+  --accent-white: #ffffff;
+
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --spacing-2xl: 4rem;
+
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  --font-size-4xl: 2.5rem;
+  --font-size-5xl: 3.5rem;
+
+  /* No rounded corners — matches style.css */
+  --radius: 0;
+
+  /* Transitions */
+  --transition-fast: 0.1s ease;
+  --transition-normal: 0.15s ease;
+  --transition-slow: 0.3s ease;
+}
+
+/* ============================================
+   RESET & BASE
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: var(--font-size-base);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ============================================
+   LANDING PAGE CONTAINER
+   ============================================ */
+
+.landing-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   NAVBAR / HEADER
+   ============================================ */
+
+.landing-navbar {
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  background: rgba(11, 11, 13, 0.95);
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.4rem var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xl);
+}
+
+.navbar-brand {
+  flex-shrink: 0;
+}
+
+.brand-logo {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-transform: lowercase;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: var(--spacing-xl);
+  flex: 1;
+  align-items: center;
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+}
+
+.nav-cta {
+  background: var(--accent-white);
+  color: var(--bg-primary);
+  padding: 10px 24px;
+  border-radius: 0;
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.nav-cta:hover {
+  background: #e8e8e8;
+  color: var(--bg-primary);
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+
+.hero-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  background: var(--bg-primary);
+}
+
+.hero-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 30fr 1fr;
+  gap: var(--spacing-2xl);
+  align-items: center;
+}
+
+/* Hero Content - Left Column */
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* Badge */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  width: fit-content;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.badge-icon {
+  font-size: var(--font-size-lg);
+}
+
+/* Main Title */
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, var(--font-size-5xl));
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.hero-subtitle-accent {
+  color: var(--text-primary);
+}
+
+/* Tagline (smaller subtitle) */
+.hero-tagline {
+  font-size: var(--font-size-xl);
+  font-weight: 500;
+  color: var(--text-secondary);
+  max-width: 500px;
+}
+
+/* Description */
+.hero-description {
+  font-size: var(--font-size-base);
+  color: var(--text-tertiary);
+  max-width: 550px;
+  line-height: 1.7;
+}
+
+.hero-description strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* CTA Buttons */
+.hero-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 14px 28px;
+  border: none;
+  border-radius: 0;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--accent-white);
+  color: var(--bg-primary);
+}
+
+.btn-primary:hover {
+  background: #e8e8e8;
+  color: var(--bg-primary);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--text-secondary);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-secondary);
+  border-color: var(--text-primary);
+}
+
+.btn i {
+  font-size: var(--font-size-base);
+}
+
+/* Stats Row */
+.hero-stats {
+  display: flex;
+  gap: var(--spacing-2xl);
+  margin-top: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-value {
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+/* Trust Line */
+.hero-trust {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  margin-top: var(--spacing-md);
+}
+
+/* Hero Visual - Right Column */
+.hero-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.product-showcase {
+  width: 100%;
+  max-width: 1260px;
+  position: relative;
+}
+
+.product-image {
+  width: 100%;
+  height: auto;
+  border-radius: 0;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.product-showcase {
+  width: 100%;
+  position: relative;
+}
+
+/* ============================================
+   DOCS SECTION
+   ============================================ */
+
+.docs-section {
+  border-top: 1px solid var(--border-color);
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  background: var(--bg-primary);
+}
+
+.docs-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.docs-header {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.docs-title {
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.docs-subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--text-tertiary);
+}
+
+.docs-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.docs-step {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: flex-start;
+}
+
+.docs-step-number {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.docs-step-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.docs-step-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.docs-text {
+  font-size: var(--font-size-base);
+  color: var(--text-tertiary);
+  line-height: 1.7;
+  margin-bottom: var(--spacing-sm);
+}
+.docs-text strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.docs-text code {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 2px 6px;
+  font-size: 0.85em;
+  color: var(--text-secondary);
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+.docs-code {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-md);
+  margin: var(--spacing-sm) 0;
+  overflow-x: auto;
+}
+
+.docs-code code {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  white-space: pre;
+}
+
+.docs-note {
+  border-left: 2px solid var(--border-color);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-top: var(--spacing-md);
+  background: var(--bg-secondary);
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+}
+.docs-note strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.agent-images{
+  display:flex;
+  flex-direction:row;
+}
+.agent-images-item{
+  width:10%;
+  margin-left: 20px;
+}
+
+
+
+@media (max-width: 768px) {
+  .docs-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .docs-step {
+    gap: var(--spacing-md);
+  }
+
+  .docs-step-number {
+    width: 32px;
+    height: 32px;
+    font-size: var(--font-size-sm);
+  }
+
+  .docs-code {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* ============================================
+   BRANDS / TRUST SECTION
+   ============================================ */
+
+.brands-section {
+  border-top: 1px solid var(--border-color);
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  background: var(--bg-secondary);
+}
+
+.brands-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.brands-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  /* text-transform: uppercase; */
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.brands-grid {
+  display: flex;
+  gap: var(--spacing-xl);
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.brand-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  font-size: 1.8rem;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.brand-item:hover {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+
+  .hero-visual {
+    order: -1; /* Move visual above content on smaller screens */
+  }
+
+  .product-image {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+
+  .navbar-menu {
+    display: none; /* Hide on mobile */
+  }
+
+  .hero-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .hero-title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .hero-tagline {
+    font-size: var(--font-size-lg);
+  }
+
+  .hero-stats {
+    gap: var(--spacing-lg);
+  }
+
+  .stat-value {
+    font-size: var(--font-size-2xl);
+  }
+
+  .brands-grid {
+    gap: var(--spacing-md);
+  }
+
+  .brand-item {
+    width: 50px;
+    height: 50px;
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-container {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .nav-cta {
+    width: 100%;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .hero-tagline {
+    font-size: var(--font-size-base);
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-stats {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .brands-grid {
+    gap: var(--spacing-sm);
+  }
+
+  .brand-item {
+    width: 45px;
+    height: 45px;
+    font-size: 1.2rem;
+  }
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+
+/* Smooth scroll behavior */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus states for accessibility */
+.btn:focus,
+.nav-link:focus,
+.nav-cta:focus {
+  outline: 1px solid var(--text-primary);
+  outline-offset: 2px;
+}
+</style>

@@ -32,9 +32,9 @@ public class TechnologyController : Controller
 
         // Tendência mensal (últimos 12 meses)
         var twelveMonthsAgo = DateOnly.FromDateTime(DateTime.UtcNow).AddMonths(-12);
-        
+
         var monthlyTrendData = await _context.JobKeywords
-            .Where(jk => jk.Category == "technology" 
+            .Where(jk => jk.Category == "technology"
                       && jk.Keyword.ToLower() == keywordLower
                       && jk.Job.DatePosted >= twelveMonthsAgo)
             .GroupBy(jk => new { jk.Job.DatePosted.Value.Year, jk.Job.DatePosted.Value.Month })
@@ -60,30 +60,30 @@ public class TechnologyController : Controller
         var relatedTechnologies = await _context.JobKeywords
             .Where(jk => jk.Category == "technology" && jk.Keyword.ToLower() == keywordLower)
             .SelectMany(jk => _context.JobKeywords
-                .Where(related => related.JobId == jk.JobId 
-                               && related.Category == "technology" 
+                .Where(related => related.JobId == jk.JobId
+                               && related.Category == "technology"
                                && related.Keyword.ToLower() != keywordLower)
                 .Select(related => related.Keyword))
             .GroupBy(k => k)
             .Select(g => new TechnologyInfo
             {
                 Keyword = g.Key,
-                JobCount = g.Count()    
+                JobCount = g.Count()
             })
             .OrderByDescending(t => t.JobCount)
             .Take(10)
             .ToListAsync();
-        
-        var relatedTechChart =  _context.JobKeywords //pie de related tech
+
+        var relatedTechChart = _context.JobKeywords //pie de related tech
             .Where(jk => jk.Category == "technology" && jk.Keyword.ToLower() == keywordLower)
             .SelectMany(jk => _context.JobKeywords
-                .Where(related => related.JobId == jk.JobId 
-                               && related.Category == "technology" 
+                .Where(related => related.JobId == jk.JobId
+                               && related.Category == "technology"
                                && related.Keyword.ToLower() != keywordLower)
                 .Select(related => related.Keyword))
             .GroupBy(k => k)
             .OrderByDescending(g => g.Count())
-            .Take(10) 
+            .Take(10)
             .Select(g => new RelatedTechChartData
             {
                 Keyword = g.Key,
