@@ -81,7 +81,7 @@
                         Ver Dashboard
                     </a>
                     <a href="#docs" class="btn btn-secondary">
-                        Aprende como recolher os dados
+                        Começa Agora
                     </a>
                 </div>
 
@@ -198,7 +198,7 @@ Por este motivo, o foco do desenvolvimento dos nossos scrapers foi o LinkedIn. A
                         </div>
                     </div>
                     <div class="docs-step">
-                        <div class="docs-step-number">1</div>
+                        <div class="docs-step-number">2</div>
                         <div class="docs-step-content">
                             <h3 class="docs-step-title">Instalar dependências</h3>
                             <p class="docs-text">Antes de executar os scrapers, instala os requirements do projeto:</p>
@@ -207,7 +207,7 @@ Por este motivo, o foco do desenvolvimento dos nossos scrapers foi o LinkedIn. A
                     </div>
 
                     <div class="docs-step">
-                        <div class="docs-step-number">2</div>
+                        <div class="docs-step-number">3</div>
                         <div class="docs-step-content">
                             <h3 class="docs-step-title">Preparar a base de dados</h3>
                             <p class="docs-text">Na primeira execução, os scrapers criam o schema a partir de
@@ -219,7 +219,7 @@ Por este motivo, o foco do desenvolvimento dos nossos scrapers foi o LinkedIn. A
                     </div>
 
                     <div class="docs-step">
-                        <div class="docs-step-number">3</div>
+                        <div class="docs-step-number">4</div>
                         <div class="docs-step-content">
                             <h3 class="docs-step-title">Arrancar o Chrome para o Indeed</h3>
                             <p class="docs-text">Para o scraper do Indeed, corre o ficheiro:</p>
@@ -229,7 +229,7 @@ Por este motivo, o foco do desenvolvimento dos nossos scrapers foi o LinkedIn. A
                     </div>
 
                     <div class="docs-step">
-                        <div class="docs-step-number">4</div>
+                        <div class="docs-step-number">5</div>
                         <div class="docs-step-content">
                             <h3 class="docs-step-title">Correr os scrapers</h3>
                             <p class="docs-text">Executa os scrapers a partir da raiz do repositório:</p>
@@ -253,10 +253,14 @@ python data-pipeline/scrapers/linkedin_keywords.py
                         </div>
                     </div>
                     <div class="docs-step">
-                        <div class="docs-step-number">5</div>
+                        <div class="docs-step-number">6</div>
                         <div class="docs-step-content">
-                            <h3 class="docs-step-title">Analisa os resultados</h3>
-                            <p class="docs-text">Abre a web app em:</p>
+                            <h3 class="docs-step-title">Analisa os dados na dashboard</h3>
+                            <p class="docs-text">Inicializa a web app em TechScope/web-app com:</p>
+                            <pre class="docs-code"><code>
+dotnet run
+                            </code></pre>
+                            <p class="docs-text">E abre a dashboard em:</p>
                             <a href="http://localhost:5136/Dashboard"
                                style="color:white;">http://localhost:5136/Dashboard</a>
                             <blockquote class="docs-note" id="manter">
