@@ -252,8 +252,35 @@ python data-pipeline/scrapers/linkedin_keywords.py
                             </blockquote>
                         </div>
                     </div>
+                <hr/>
+                <div>
+                    <h2 class="docs-title">Web app</h2>
+                    <p class="docs-subtitle">Após recolheres os primeiros dados já podes abrir a web app para os analisares.</p>
+                </div>
                     <div class="docs-step">
-                        <div class="docs-step-number">6</div>
+                        <div class="docs-step-number">1</div>
+                        <div class="docs-step-content">
+                            <h3 class="docs-step-title">Configurar variáveis de ambiente</h3>
+                            <p class="docs-text">Cria um ficheiro <code>.env</code> na raiz do projeto. Podes copiar a partir de <code>.env.example</code>:</p>
+                            <pre class="docs-code"><code>
+copy .env.example .env
+                            </code></pre>
+                            <p class="docs-text">Exemplo de um <code>.env</code> configurado:</p>
+                            <pre class="docs-code"><code>
+DATABASE_URL=postgresql://postgres:minhaPassword@localhost:5432/techscope
+PGHOST=localhost
+PGPORT=5432
+PGDATABASE=techscope
+PGUSER=postgres
+PGPASSWORD=minhaPassword
+                            </code></pre>
+                            <blockquote class="docs-note" id="manter">
+                                <strong>Nota:</strong> Deves adaptar as variáveis de acordo com a configuração da tua instância PostgreSQL.
+                            </blockquote>
+                        </div>
+                    </div>
+                    <div class="docs-step">
+                        <div class="docs-step-number">2</div>
                         <div class="docs-step-content">
                             <h3 class="docs-step-title">Analisa os dados na dashboard</h3>
                             <p class="docs-text">Inicializa a web app em TechScope/web-app com:</p>

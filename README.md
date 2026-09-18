@@ -3,18 +3,28 @@
 # TechScope
 
 
-A TechScope é uma ferramenta de análise do mercado tecnológico que avalia a procura por linguagens de programação, frameworks e ferramentas com base em dados reais de anúncios de emprego.
+Ferramenta de análise do mercado tech que avalia a procura por linguagens de programação, frameworks e ferramentas com base em vagas publicadas online.
+
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white) 
-</div>
+![.net](https://img.shields.io/badge/.net-%23313292.svg?style=for-the-badge&logo=.net&logoColor=white) 
+<br>
+<a href="https://franciscocosta4.github.io/TechScope/">
+Website do projeto</a>
+.
+<a href="https://franciscocosta4.github.io/TechScope/#manter">
+Configurar e manter o projeto</a>
 
+
+<img style="height:300px; width:auto;" src="web-app\wwwroot\assets\img\dashboard.jpg">
+</div>
 
 ## Sobre o projeto
 
-A TechScope recolhe anúncios de emprego do **LinkedIn** e **Indeed**, analisa cada oferta e transforma-a em indicadores úteis sobre o mercado tech atual.
+A TechScope recolhe anúncios de emprego do **LinkedIn**, suportando também o **Indeed**, analisa cada oferta e transforma-a em indicadores úteis sobre o mercado tech atual.
 </br>
-<strong>O LinkedIn é a principal fonte de dados</strong>, não só pela sua dimensão no mercado português mas também pela variedade de informação disponível. A plataforma combina ofertas de emprego com mais informação que o indeed, como, por exemplo, a data em que a vaga foi publicada.
-Por esse motivo, o desenvolvimento e a robustez dos nossos scrapers estão especialmente focados no LinkedIn. A TechScope mantém  suporte para o Indeed, permitindo complementar os dados recolhidos e obter uma visão mais abrangente do mercado.
+O objetivo é ajudar devs e pessoas que pretendem mudar de carreira a tomar decisões mais informadas sobre o que aprender e onde investir o seu tempo.
+
 
 A aplicação permite:
 - **Pesquisar por tecnologias** — pesquisa e análise individual de tecnologias presentes nos anúncios.
@@ -26,14 +36,15 @@ A aplicação permite:
 - **Ver empresas que recrutam** — quais empresas estão a procurar perfis de determinada tecnologia
 - **Normalização de tecnologias** — variantes como `.net`, `.net framework`, `asp.net` e `c#` são agrupadas sob `.net`; `node.js` → `nodejs`, `js` → `javascript`, etc.
 - **Extrair informação sobre requisitos** — extrai e organiza dados como senioridade, experiência, modelo de trabalho e tecnologias mencionadas nos anúncios.
-
-O objetivo é ajudar devs e pessoas que pretendem mudar de carreira a tomar decisões mais informadas sobre o que aprender e onde investir o seu tempo.
+- **Integrar com o agentes de ai** — Fornecemos instruções para os agentes, permitindo ao utilizador implementar automação de maneira simples. (<a href="https://franciscocosta4.github.io/TechScope/#manter">
+aprende como aqui</a>)
 
 
 ## Começando com o projeto
 
 ### 1. Pré-requisitos
 - .NET 8.0
+- Windows 10 ou 11
 - Python 3.11+ 
 (beautifulsoup4
 playwright
@@ -135,7 +146,6 @@ Cada scraper processa um batch de até 150 jobs por execução. Corre-os várias
 * [x] Contagem de anúncios por tecnologia
 * [x] Cálculo da quota de mercado de cada tecnologia
 * [x] Análise do crescimento da procura ao longo do tempo
-* [ ] Identificação automática de tendências de mercado
 * [ ] Comparação entre tecnologias
 * [x] Identificação de relações entre tecnologias frequentemente utilizadas em conjunto
 
@@ -146,11 +156,9 @@ Cada scraper processa um batch de até 150 jobs por execução. Corre-os várias
 * [x] Pesquisa e filtragem de tecnologias
 * [x] Página de detalhe de tecnologia
 * [x] Página de anúncios com filtros
-* [ ] Comparação entre tecnologias
 * [x] Tendências de mercado
 
 ### Análise Regional
 
 * [x] Análise regional do mercado tecnológico
-* [ ] Comparação da procura por tecnologia entre regiões
 
