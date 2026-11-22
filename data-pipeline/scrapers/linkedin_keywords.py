@@ -4,7 +4,7 @@ Percorre a base de dados, abre cada página de anúncio num browser real
 (Playwright via CDP), extrai a descrição e guarda as keywords encontradas
 na tabela JobKeywords.
 """
-
+import os 
 import random
 import sys
 import time
@@ -130,6 +130,8 @@ def save_keywords(conn, job_id, keywords: dict[str, list[str]]) -> None:
 
 
 def main():
+    os.startfile(r"start_chrome_debug.bat")
+    time.sleep(4) # espera 4 sec para o browser abrir a tempo
     with get_connection() as conn:
         jobs = fetch_jobs_without_keywords(conn, SOURCE, BATCH_SIZE)
 
