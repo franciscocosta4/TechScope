@@ -14,6 +14,7 @@ if str(PIPELINE_ROOT) not in sys.path:
 
 CHROME_CDP_URL = "http://localhost:9222"
 
+from chrome_debug import ensure_chrome_debug
 from database import ensure_schema, get_connection, save_jobs
 from execution_logger import _write_scraper_status
 
@@ -29,6 +30,10 @@ SOURCE = "indeed"
 
 
 def main():
+    # O scraper liga-se a um Chrome real via CDP; garante que está aberto.
+    if not ensure_chrome_debug():
+        raise RuntimeError("Não foi possível arrancar o Chrome em modo debug.")
+
     # Liga à base de dados e garante que o esquema existe.
     with get_connection() as conn:
         ensure_schema(conn)

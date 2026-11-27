@@ -1,5 +1,3 @@
 @echo off
-set CHROME_PATH=C:\Program Files (x86)\Google\Chrome\Application\chrome.exe
-set PROFILE_DIR=%~dp0chrome-profile
-
-"%CHROME_PATH%" --remote-debugging-port=9222 --user-data-dir="%PROFILE_DIR%"
+REM Atalho de conveniencia para Windows. A logica esta em start_chrome_debug.py.
+python "%~dp0start_chrome_debug.py" %*

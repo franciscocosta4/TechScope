@@ -44,7 +44,7 @@ aprende como aqui</a>)
 
 ### 1. Pré-requisitos
 - .NET 8.0
-- Windows 10 ou 11
+- Windows 10 ou 11, macOS ou Linux
 - Python 3.11+ 
 (beautifulsoup4
 playwright
@@ -60,7 +60,11 @@ python-dotenv)
 Cria um ficheiro `.env` na raiz do projeto. Podes copiar a partir de `.env.example`:
 
 ```bash
+# Windows
 copy .env.example .env
+
+# macOS / Linux
+cp .env.example .env
 ```
 
 Os scrapers e a app lêem as seguintes variáveis do `.env`:
@@ -88,31 +92,54 @@ A app fica disponível em `https://localhost:5136` (ou a porta configurada).
 
 ### 4. Instalar requirements.txt
 
-Antes de executar os scrapers precisa correr: 
+O projeto deve usar uma **virtual environment** (venv). Isto evita conflitos com os pacotes do sistema e, no Linux/macOS, contorna o erro `externally-managed-environment` (PEP 668). A pasta `.venv/` já está no `.gitignore`.
 
 ```bash
-# instala os requirements do python para o projeto
- pip install -r requirements.txt
+# criar a venv (só uma vez)
+python3 -m venv .venv
+
+# ativar — Linux/macOS
+source .venv/bin/activate
+
+# ativar — Windows (PowerShell/CMD)
+.venv\Scripts\activate
+
+# instalar as dependências
+python -m pip install --upgrade pip
+pip install -r requirements.txt
 ```
+
+Com a venv ativa, usa `python` normalmente (`python data-pipeline/scrapers/linkedin.py`). Para sair: `deactivate`. Sem ativar, usa o caminho direto: `.venv/bin/python` (Linux/macOS) ou `.venv\Scripts\python.exe` (Windows).
+
+> **Nota:** se `python3 -m venv` falhar com `ensurepip is not available`, instala `python3-venv` (`sudo apt install python3-venv`). Não é preciso `playwright install`: os scrapers ligam-se ao Chrome real via CDP.
 
 ### 5. Preparar a base de dados
 
-Na primeira execução, os scrapers criam o schema a partir de `data-pipeline/database/migrations/001_initial.sql`.
+Só precisas da base de dados `techscope` criada; não é necessária nenhuma ferramenta gráfica (DBeaver, pgAdmin, etc.). O `psql` chega:
 
 ```bash
-# Aplica a migration (apenas uma vez)
+# Só na primeira vez
+psql -U postgres -c "CREATE DATABASE techscope;"
+
+# Aplica a migration (opcional: os scrapers também o fazem automaticamente)
 psql -U postgres -d techscope -f data-pipeline/database/migrations/001_initial.sql
 ```
 
-### 5. Arrancar o Chrome para o Indeed
+### 5. Arrancar o Chrome em modo debug
 
-Para o scraper do Indeed, corre o ficheiro:
+O scraper do Indeed e os scrapers de keywords ligam-se a um Chrome real com a porta `9222` aberta. Os próprios scrapers já arrancam o browser automaticamente, mas podes fazê-lo manualmente:
 
 ```bash
-start_chrome_debug.bat
+python start_chrome_debug.py
 ```
 
-Isto abre o Chrome com o perfil do projecto e a porta de debug activa.
+Para apenas verificar se já está a correr:
+
+```bash
+python start_chrome_debug.py --check
+```
+
+O script funciona em Windows, macOS e Linux: procura o Chrome instalado (ou usa `CHROME_PATH`), abre-o com o perfil do projeto em `chrome-profile/` e espera que a porta de debug fique disponível. No Windows podes continuar a usar `start_chrome_debug.bat`, que apenas chama o script Python.
 
 ### 6. Correr os scrapers
 

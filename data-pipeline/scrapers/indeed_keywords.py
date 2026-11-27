@@ -3,7 +3,6 @@
 Percorre a base de dados, abre cada página de anúncio,
 extrai a descrição e guarda as keywords encontradas na tabela JobKeywords.
 """
-import os
 import random
 import sys
 import time
@@ -24,6 +23,7 @@ BATCH_SIZE = 150
 from database import get_connection
 from keyword_extractor import extract_keywords
 from execution_logger import _write_scraper_status
+from chrome_debug import ensure_chrome_debug
 
 
 def fetch_jobs_without_keywords(conn, source: str, limit: int) -> list[dict]:
@@ -106,8 +106,9 @@ def save_keywords(conn, job_id, keywords: dict[str, list[str]]) -> None:
 
 
 def main():
-    os.startfile(r"start_chrome_debug.bat")
-    time.sleep(4) # espera 4 sec para o browser abrir a tempo
+    # Garante o Chrome com remote debugging aberto (Windows, macOS ou Linux).
+    if not ensure_chrome_debug():
+        raise RuntimeError("Não foi possível arrancar o Chrome em modo debug.")
     with get_connection() as conn:
         jobs = fetch_jobs_without_keywords(conn, SOURCE, BATCH_SIZE)
 

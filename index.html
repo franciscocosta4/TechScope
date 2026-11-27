@@ -177,11 +177,27 @@ Por este motivo, o foco do desenvolvimento dos nossos scrapers foi o LinkedIn. A
             <br />
             <p class="docs-text">Cria um issue em: <a href="https://github.com/franciscocosta4/TechScope/issues"
                                                               style="color:white;">TechScope/issues</a></p>
+            <br />
+            <h3 class="docs-step-title">Requisitos</h3>
+            <ul class="requirements-list">
+                <li>.NET 8.0</li>
+                <li>Python 3.11+
+                    <ul>
+                        <li>beautifulsoup4</li>
+                        <li>playwright</li>
+                        <li>psycopg[binary]</li>
+                        <li>requests</li>
+                        <li>python-dotenv</li>
+                    </ul>
+                </li>
+                <li>PostgreSQL</li>
+                <li>Google Chrome instalado (para o scraper do Indeed)</li>
+            </ul>
                 <hr />
                 <br />
                 <div class="docs-header">
                     <h2 class="docs-title">Como rodar os scrapers</h2>
-                    <p class="docs-subtitle">Recolhe dados do LinkedIn e Indeed em quatro passos.</p>
+                    <p class="docs-subtitle">Recolhe dados do LinkedIn e Indeed em seis passos.</p>
                     <blockquote class="docs-note">
                         <strong>Nota:</strong> Os scrapers <strong>NÃO são executados automaticamente por padrão</strong>.
                         Deves executá-los diariamente para atualizar a informação da Dashboard com novos anúncios.
@@ -201,33 +217,70 @@ Por este motivo, o foco do desenvolvimento dos nossos scrapers foi o LinkedIn. A
                         <div class="docs-step-number">2</div>
                         <div class="docs-step-content">
                             <h3 class="docs-step-title">Instalar dependências</h3>
-                            <p class="docs-text">Antes de executar os scrapers, instala os requirements do projeto:</p>
-                            <pre class="docs-code"><code>pip install -r requirements.txt</code></pre>
+                            <p class="docs-text">Cria uma <strong>virtual environment</strong> para não misturar as dependências com o Python do sistema. Além de ser boa prática, no Linux e macOS evita o erro
+                                <code>externally-managed-environment</code> (PEP 668).</p>
+                            <pre class="docs-code"><code>
+# criar a venv (só uma vez)
+python3 -m venv .venv
+
+# ativar - Linux / macOS
+source .venv/bin/activate
+
+# ativar - Windows (PowerShell / CMD)
+.venv\Scripts\activate
+
+# instalar as dependências
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+                            </code></pre>
+                            <p class="docs-text">Com a venv ativa, o <code>python</code> dos passos seguintes já usa as dependências certas. Para sair: <code>deactivate</code>.</p>
+                            <blockquote class="docs-note">
+                                <strong>Nota:</strong> se o comando <code>python3 -m venv</code> falhar com
+                                <code>ensurepip is not available</code>, instala o pacote <code>python3-venv</code>
+                                (<code>sudo apt install python3-venv</code>). Não é necessário correr
+                                <code>playwright install</code>: os scrapers ligam-se ao Chrome real via CDP.
+                            </blockquote>
                         </div>
                     </div>
 
                     <div class="docs-step">
                         <div class="docs-step-number">3</div>
                         <div class="docs-step-content">
-                            <h3 class="docs-step-title">Preparar a base de dados</h3>
-                            <p class="docs-text">Na primeira execução, os scrapers criam o schema a partir de
-                                <code>data-pipeline/database/migrations/001_initial.sql</code>.
-                            </p>
-                            <pre
-                            class="docs-code"><code>psql -U postgres -d techscope -f data-pipeline/database/migrations/001_initial.sql</code></pre>
+                            <h3 class="docs-step-title">Configurar variáveis de ambiente</h3>
+                            <p class="docs-text">Cria um ficheiro <code>.env</code> na raiz do projeto. Podes copiar a partir de <code>.env.example</code>:</p>
+                            <pre class="docs-code"><code>
+# Windows
+copy .env.example .env
+
+# macOS / Linux
+cp .env.example .env
+                            </code></pre>
+                            <p class="docs-text">Exemplo de um <code>.env</code> configurado:</p>
+                            <pre class="docs-code"><code>
+DATABASE_URL=postgresql://postgres:minhaPassword@localhost:5432/techscope
+PGHOST=localhost
+PGPORT=5432
+PGDATABASE=techscope
+PGUSER=postgres
+PGPASSWORD=minhaPassword
+                            </code></pre>
+                            <blockquote class="docs-note">
+                                <strong>Nota:</strong> Deves adaptar as variáveis de acordo com a configuração da tua instância PostgreSQL.
+                                Este passo é o mesmo que o <strong>passo 1 da web app</strong>.
+                            </blockquote>
                         </div>
                     </div>
 
                     <div class="docs-step">
                         <div class="docs-step-number">4</div>
                         <div class="docs-step-content">
-                            <h3 class="docs-step-title">Arrancar o Chrome para o Indeed</h3>
-                            <p class="docs-text">Para o scraper do Indeed, corre o ficheiro:</p>
-                            <pre class="docs-code"><code>start_chrome_debug.bat</code></pre>
-                            <p class="docs-text">Isto abre o Chrome com o perfil do projecto e a porta de debug activa.</p>
+                            <h3 class="docs-step-title">Preparar a base de dados</h3>
+                            <p class="docs-text">Só precisas da base de dados <code>techscope</code> criada.</p>
+                            <p class="docs-text">Se ainda não tens a base de dados, cria-a uma única vez:</p>
+                            <pre class="docs-code"><code>psql -U postgres -c "CREATE DATABASE techscope;"</code></pre>
+
                         </div>
                     </div>
-
                     <div class="docs-step">
                         <div class="docs-step-number">5</div>
                         <div class="docs-step-content">
@@ -247,7 +300,8 @@ python data-pipeline/scrapers/linkedin_keywords.py
                             <blockquote class="docs-note">
                                 <strong>Nota:</strong> O scraper de keywords do LinkedIn (linkedin_keywords.py) precisa do
                                 Chrome debug aberto
-                                porque o LinkedIn carrega as descrições via JavaScript. <strong> É recomendado fazer login
+                                porque o LinkedIn carrega as descrições via JavaScript. Os scrapers já o arrancam
+                                automaticamente (passo 5). <strong> É recomendado fazer login
                                 com uma conta do linkedin para evitar bugs e rate-limiting</strong>
                             </blockquote>
                         </div>
@@ -263,7 +317,11 @@ python data-pipeline/scrapers/linkedin_keywords.py
                             <h3 class="docs-step-title">Configurar variáveis de ambiente</h3>
                             <p class="docs-text">Cria um ficheiro <code>.env</code> na raiz do projeto. Podes copiar a partir de <code>.env.example</code>:</p>
                             <pre class="docs-code"><code>
+# Windows
 copy .env.example .env
+
+# macOS / Linux
+cp .env.example .env
                             </code></pre>
                             <p class="docs-text">Exemplo de um <code>.env</code> configurado:</p>
                             <pre class="docs-code"><code>
@@ -274,8 +332,11 @@ PGDATABASE=techscope
 PGUSER=postgres
 PGPASSWORD=minhaPassword
                             </code></pre>
+                            <p class="docs-text">Este é o mesmo passo que o <strong>passo 3 dos scrapers</strong>: se já o fizeste, podes avançar.</p>
                             <blockquote class="docs-note" id="manter">
                                 <strong>Nota:</strong> Deves adaptar as variáveis de acordo com a configuração da tua instância PostgreSQL.
+                                A web app lê apenas as variáveis <code>PGHOST</code>, <code>PGPORT</code>, <code>PGDATABASE</code>,
+                                <code>PGUSER</code> e <code>PGPASSWORD</code> — preencher só o <code>DATABASE_URL</code> não chega para a dashboard.
                             </blockquote>
                         </div>
                     </div>
@@ -851,6 +912,51 @@ img {
 .docs-note strong {
   color: var(--text-secondary);
   font-weight: 600;
+}
+
+.requirements-list {
+  list-style: none;
+  margin: 0 0 var(--spacing-lg);
+  padding: 0;
+  font-size: var(--font-size-base);
+  color: var(--text-tertiary);
+}
+
+.requirements-list li {
+  padding: 10px 0 10px 18px;
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
+  line-height: 1.6;
+}
+
+.requirements-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 18px;
+  width: 6px;
+  height: 6px;
+  background: var(--text-tertiary);
+}
+
+.requirements-list li ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0 0 0 4px;
+}
+
+.requirements-list li ul li {
+  border-bottom: none;
+  padding: 4px 0 4px 16px;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+.requirements-list li ul li::before {
+  top: 12px;
+  width: 4px;
+  height: 4px;
+  background: var(--text-muted);
 }
 
 .agent-images{

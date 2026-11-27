@@ -43,7 +43,7 @@ If a workflow has not run today, inform the user and ask whether they want to ru
 When the user asks to run workflow `l`, execute these steps in this exact order:
 
 1. `python data-pipeline/scrapers/linkedin.py`
-2. `start_chrome_debug.bat` located in `<TechScope directory>/start_chrome_debug.bat`
+2. `python start_chrome_debug.py` located in `<TechScope directory>/start_chrome_debug.py`
 3. `python data-pipeline/scrapers/indeed_keywords.py`
 
 Wait for each process to finish before starting the next one.
@@ -57,7 +57,7 @@ If any step fails, stop the workflow immediately and notify the user. Do not con
 When the user asks to run workflow `i`, execute these steps in this exact order:
 
 1. Check whether Chrome Debug is already running.
-2. If Chrome Debug is not running, execute `start_chrome_debug.bat` and wait for it to finish.
+2. If Chrome Debug is not running, execute `python start_chrome_debug.py` and wait for it to finish. On Windows you can also run `start_chrome_debug.bat`, which simply calls the Python script.
 3. Execute `python data-pipeline/scrapers/indeed.py` and wait for it to finish.
 4. Execute `python data-pipeline/scrapers/indeed_keywords.py` and wait for it to finish.
 

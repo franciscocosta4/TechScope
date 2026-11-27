@@ -208,9 +208,16 @@ Isso reduz render-blocking requests e melhora LCP.
    O uso do perfil persistente e do Chrome real ajuda porque o site vê um ambiente mais estável, com histórico e sessão reutilizável, em vez de uma instância nova a cada execução.
 
 O scraper do Indeed pode ligar-se a um Chrome real via `remote debugging` para reutilizar cookies e sessão do teu PC.
-Para isso existe o ficheiro `start_chrome_debug.bat`, que abre o Chrome com a porta `9222` activa.
+Para isso existe o script `start_chrome_debug.py` (multi-OS), que abre o Chrome com a porta `9222` activa. O antigo `start_chrome_debug.bat` continua a existir no Windows, mas apenas chama o script Python.
 
-O perfil usado por esse browser fica em `data-pipeline/scrapers/chrome-profile/` e é criado automaticamente quando corres o Chrome desse modo ou quando o scraper o usa pela primeira vez.
+```bash
+python start_chrome_debug.py          # arranca (Windows, macOS ou Linux)
+python start_chrome_debug.py --check  # verifica se já está a correr
+```
+
+O script descobre o executável do Chrome automaticamente (registo do Windows, `/Applications` no macOS, `PATH` no Linux) e aceita `CHROME_PATH` ou `--chrome-path` para caminhos fora do padrão. Se não encontrar o Chrome, tenta o Chromium que o Playwright tenha descarregado.
+
+O perfil usado por esse browser fica em `chrome-profile/` na raiz do repositório e é criado automaticamente quando corres o Chrome desse modo ou quando o scraper o usa pela primeira vez. Podes mudar de perfil com a variável `CHROME_PROFILE_DIR`.
 
 
 ## Links base para testar
@@ -309,7 +316,7 @@ Ambos partilham a mesma lógica:
 O LinkedIn carrega a descrição do anúncio via **JavaScript**. Quando acedemos à página com `requests + BeautifulSoup`, recebemos apenas o HTML inicial, que não contém a descrição.
 
 Para contornar isto, o `linkedin_keywords.py` usa **Playwright via CDP** (igual ao scraper do Indeed).
-Isto significa que o Chrome debug (`start_chrome_debug.bat`) tem de estar aberto quando correres os scrapers de keywords do LinkedIn. O Indeed não tem este problema porque o scraper original já usava Playwright. Mantivemos a consistência.
+Isto significa que o Chrome debug (`python start_chrome_debug.py`) tem de estar aberto quando correres os scrapers de keywords do LinkedIn — ou que os deixes arrancá-lo automaticamente. O Indeed não tem este problema porque o scraper original já usava Playwright. Mantivemos a consistência.
 
 ## Porque o gráfico "Tecnologias em alta" não engloba vagas do indeed
 
